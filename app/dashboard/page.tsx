@@ -32,7 +32,7 @@ export default function DashboardPage() {
         return;
       }
 
-      // Charger uniquement les companies du propriétaire
+      // 🔒 Charger uniquement les companies du PME connecté
       const { data, error } = await supabase
         .from("companies")
         .select(`
@@ -41,7 +41,8 @@ export default function DashboardPage() {
           slug,
           is_active,
           feedbacks:feedback(id, comment, created_at)
-        `);
+        `)
+        .eq("owner_id", authData.user.id); // <-- IMPORTANT
 
       if (error) {
         console.error("Erreur chargement companies:", error);
@@ -58,7 +59,7 @@ export default function DashboardPage() {
   if (loading) return <p style={{ textAlign: "center" }}>Chargement du dashboard...</p>;
 
   return (
-    <main style={{ padding: "40px", maxWidth: "800px", margin: "0 auto" }}>
+    <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
       <h1>Dashboard PME</h1>
 
       {companies.length === 0 ? (
@@ -66,10 +67,24 @@ export default function DashboardPage() {
       ) : (
         <ul style={{ marginTop: "20px" }}>
           {companies.map((company) => (
-            <li key={company.id} style={{ padding: "15px", border: "1px solid #ddd", borderRadius: "6px", marginBottom: "20px" }}>
+            <li
+              key={company.id}
+              style={{
+                padding: "15px",
+                border: "1px solid #ddd",
+                borderRadius: "6px",
+                marginBottom: "20px",
+              }}
+            >
               <strong>{company.name}</strong> ({company.is_active ? "Active ✅" : "Inactive ❌"})
               <br />
-              <a href={`/avis/${company.slug}`} target="_blank" style={{ color: "blue" }}>Voir page avis</a>
+              <a
+                href={`/avis/${company.slug}`}
+                target="_blank"
+                style={{ color: "blue" }}
+              >
+                Voir page avis
+              </a>
 
               {company.feedbacks && company.feedbacks.length > 0 && (
                 <div style={{ marginTop: "10px" }}>
