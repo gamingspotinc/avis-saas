@@ -23,7 +23,7 @@ export default function HomePage() {
       >
         <div
           style={{
-            backgroundColor: "rgba(0,0,0,0.5)",
+            backgroundColor: "rgba(0,0,0,0.85)", // rectangle plus foncé
             padding: "20px",
             borderRadius: "10px"
           }}
@@ -53,9 +53,10 @@ export default function HomePage() {
             marginTop: "40px"
           }}
         >
+          {/* Avis clients */}
           <div style={{ maxWidth: "250px", textAlign: "center" }}>
             <Image
-              src="https://images.unsplash.com/photo-1590608897129-79f12774d1d4?auto=format&fit=crop&w=800&q=80"
+              src="/avis.jpg" // mettre votre image ici
               alt="Avis clients"
               width={250}
               height={150}
@@ -65,9 +66,10 @@ export default function HomePage() {
             <p>Les clients laissent un avis directement sur votre page.</p>
           </div>
 
+          {/* Dashboard */}
           <div style={{ maxWidth: "250px", textAlign: "center" }}>
             <Image
-              src="https://images.unsplash.com/photo-1581091012184-42ff5483e243?auto=format&fit=crop&w=800&q=80"
+              src="/dashboard.jpg" // mettre votre image ici
               alt="Dashboard"
               width={250}
               height={150}
@@ -77,10 +79,11 @@ export default function HomePage() {
             <p>Visualisez tous vos commentaires et avis en un seul endroit.</p>
           </div>
 
+          {/* Réputation */}
           <div style={{ maxWidth: "250px", textAlign: "center" }}>
             <Image
-              src="https://images.unsplash.com/photo-1581091870629-f16dfd5d7d45?auto=format&fit=crop&w=800&q=80"
-              alt="Reputation"
+              src="/reputation.jpg" // mettre votre image ici
+              alt="Réputation"
               width={250}
               height={150}
               style={{ borderRadius: "10px" }}
