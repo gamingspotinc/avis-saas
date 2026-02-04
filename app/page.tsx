@@ -43,7 +43,7 @@ export default function HomePage() {
 
         <div style={{ marginTop: "40px" }}>
           <Image
-            src="/hero.jpg"
+            src="/5stars.jpg"
             alt="Hero image"
             width={900}
             height={500}
@@ -75,8 +75,8 @@ export default function HomePage() {
       <section style={{ backgroundColor: "#f4f4f4", padding: "60px 20px" }}>
         <h2 style={{ textAlign: "center", marginBottom: "40px" }}>Témoignages</h2>
         <div style={{ maxWidth: "700px", margin: "0 auto", textAlign: "center", fontStyle: "italic" }}>
-          <p>"Grâce à AvisPME, nous avons augmenté nos avis clients de 50% en 1 mois !" – PME A</p>
-          <p>"Super simple et efficace, nos clients adorent !" – PME B</p>
+          <p>"Grâce à AvisPME, nous avons augmenté nos avis clients de 50% en 1 mois !" </p>
+          <p>"Super simple et efficace, nos clients adorent !" </p>
         </div>
       </section>
 
