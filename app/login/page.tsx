@@ -1,64 +1,79 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    const checkUser = async () => {
-      const { data } = await supabase.auth.getUser();
-
-      if (data.user) {
-        router.push("/dashboard");
-      }
-    };
-
-    checkUser();
-  }, [router]);
-
-  const handleLogin = async () => {
-    await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-      },
-    });
-
-    alert("Vérifie ton email pour te connecter.");
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.signInWithOtp({ email });
+    if (error) {
+      setMessage(`Erreur : ${error.message}`);
+    } else {
+      setMessage("Vérifie ton email, un lien de connexion a été envoyé !");
+    }
   };
 
   return (
-    <main
+    <div
       style={{
-        height: "100vh",
+        minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "#111",
-        color: "white",
-        flexDirection: "column",
+        backgroundImage: 'url("/5stars.jpg")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        padding: "20px"
       }}
     >
-      <h1>Connexion PME</h1>
-
-      <input
-        type="email"
-        placeholder="Votre email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{ padding: "10px", marginTop: "20px", width: "250px" }}
-      />
-
-      <button
-        onClick={handleLogin}
-        style={{ marginTop: "15px", padding: "10px 20px" }}
+      <form
+        onSubmit={handleLogin}
+        style={{
+          backgroundColor: "rgba(0,0,0,0.7)",
+          padding: "40px",
+          borderRadius: "10px",
+          color: "white",
+          maxWidth: "400px",
+          width: "100%",
+          textAlign: "center"
+        }}
       >
-        Recevoir le lien de connexion
-      </button>
-    </main>
+        <h1>Connexion PME</h1>
+        <input
+          type="email"
+          placeholder="Votre email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "10px",
+            margin: "20px 0",
+            borderRadius: "5px",
+            border: "none"
+          }}
+          required
+        />
+        <button
+          type="submit"
+          style={{
+            width: "100%",
+            padding: "10px",
+            backgroundColor: "#333",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer"
+          }}
+        >
+          Recevoir le lien de connexion
+        </button>
+
+        {message && <p style={{ marginTop: "20px" }}>{message}</p>}
+      </form>
+    </div>
   );
 }
