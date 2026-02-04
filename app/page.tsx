@@ -21,8 +21,7 @@ export default function Home() {
 
   return (
     <main style={{ textAlign: "center", marginTop: "100px" }}>
-      <h1>AvisPME</h1>
-      <p>Permet aux garages et PME de recevoir plus d'avis clients sans effort</p>
+      <h1>AvisPME permet aux petites et moyennes entreprises de recevoir plus d'avis clients sans effort.</h1>
       <a href="/login">Commencer maintenant</a>
     </main>
   );
