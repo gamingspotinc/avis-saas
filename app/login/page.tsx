@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
@@ -8,64 +8,57 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
 
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getUser();
+
+      if (data.user) {
+        router.push("/dashboard");
+      }
+    };
+
+    checkUser();
+  }, [router]);
+
   const handleLogin = async () => {
-    await supabase.auth.signInWithOtp({ email });
-    alert("Vérifiez vos emails pour le lien de connexion !");
+    await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    alert("Vérifie ton email pour te connecter.");
   };
 
   return (
     <main
       style={{
         height: "100vh",
-        backgroundImage: "url('/5stars.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        background: "#111",
+        color: "white",
+        flexDirection: "column",
       }}
     >
-      <div
-        style={{
-          backgroundColor: "rgba(0,0,0,0.6)",
-          padding: "40px",
-          borderRadius: "8px",
-          width: "350px",
-          color: "white",
-          textAlign: "center",
-        }}
+      <h1>Connexion PME</h1>
+
+      <input
+        type="email"
+        placeholder="Votre email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        style={{ padding: "10px", marginTop: "20px", width: "250px" }}
+      />
+
+      <button
+        onClick={handleLogin}
+        style={{ marginTop: "15px", padding: "10px 20px" }}
       >
-        <h1 style={{ marginBottom: "20px" }}>Connexion PME</h1>
-
-        <input
-          type="email"
-          placeholder="Votre email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "12px",
-            marginBottom: "15px",
-            borderRadius: "4px",
-            border: "none",
-          }}
-        />
-
-        <button
-          onClick={handleLogin}
-          style={{
-            width: "100%",
-            padding: "12px",
-            backgroundColor: "white",
-            color: "black",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Recevoir le lien de connexion
-        </button>
-      </div>
+        Recevoir le lien de connexion
+      </button>
     </main>
   );
 }
