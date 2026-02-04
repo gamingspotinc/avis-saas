@@ -32,7 +32,7 @@ export default function DashboardPage() {
         return;
       }
 
-      // 🔒 Charger uniquement les companies du PME connecté
+      // Charger uniquement les companies du PME connecté
       const { data, error } = await supabase
         .from("companies")
         .select(`
@@ -42,7 +42,7 @@ export default function DashboardPage() {
           is_active,
           feedbacks:feedback(id, comment, created_at)
         `)
-        .eq("owner_id", authData.user.id); // <-- IMPORTANT
+        .eq("owner_id", authData.user.id); // 🔒 Filtre RLS PME
 
       if (error) {
         console.error("Erreur chargement companies:", error);
@@ -59,7 +59,28 @@ export default function DashboardPage() {
   if (loading) return <p style={{ textAlign: "center" }}>Chargement du dashboard...</p>;
 
   return (
-    <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
+    <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto", position: "relative" }}>
+      {/* Déconnexion en haut à droite */}
+      <button
+        onClick={async () => {
+          await supabase.auth.signOut();
+          router.push("/login");
+        }}
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          padding: "10px 20px",
+          backgroundColor: "#333",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer"
+        }}
+      >
+        Déconnexion
+      </button>
+
       <h1>Dashboard PME</h1>
 
       {companies.length === 0 ? (

@@ -20,7 +20,7 @@ type Company = {
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const ADMIN_EMAIL = "test@test.com"; // ton email admin
+  const ADMIN_EMAIL = "test@test.com"; // Mets ton email admin ici
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,13 +33,13 @@ export default function AdminDashboard() {
         return;
       }
 
-      // 🔐 Vérification ADMIN
+      // 🔐 Sécurité ADMIN
       if (authData.user.email !== ADMIN_EMAIL) {
-        router.push("/dashboard"); // redirige PME
+        router.push("/dashboard"); // redirige vers dashboard PME
         return;
       }
 
-      // Charger toutes les companies et tous les feedbacks
+      // Charger toutes les companies et leurs feedbacks
       const { data, error } = await supabase
         .from("companies")
         .select(`
@@ -65,7 +65,28 @@ export default function AdminDashboard() {
   if (loading) return <p style={{ textAlign: "center" }}>Chargement admin...</p>;
 
   return (
-    <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto" }}>
+    <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto", position: "relative" }}>
+      {/* Déconnexion en haut à droite */}
+      <button
+        onClick={async () => {
+          await supabase.auth.signOut();
+          router.push("/login");
+        }}
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          padding: "10px 20px",
+          backgroundColor: "#333",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer"
+        }}
+      >
+        Déconnexion
+      </button>
+
       <h1>Admin Dashboard</h1>
 
       {companies.length === 0 ? (
@@ -73,10 +94,24 @@ export default function AdminDashboard() {
       ) : (
         <ul style={{ marginTop: "20px" }}>
           {companies.map((company) => (
-            <li key={company.id} style={{ padding: "15px", border: "1px solid #ddd", borderRadius: "6px", marginBottom: "20px" }}>
+            <li
+              key={company.id}
+              style={{
+                padding: "15px",
+                border: "1px solid #ddd",
+                borderRadius: "6px",
+                marginBottom: "20px",
+              }}
+            >
               <strong>{company.name}</strong> ({company.is_active ? "Active ✅" : "Inactive ❌"})
               <br />
-              <a href={`/avis/${company.slug}`} target="_blank" style={{ color: "blue" }}>Voir page avis</a>
+              <a
+                href={`/avis/${company.slug}`}
+                target="_blank"
+                style={{ color: "blue" }}
+              >
+                Voir page avis
+              </a>
 
               {company.feedbacks && company.feedbacks.length > 0 && (
                 <div style={{ marginTop: "10px" }}>
