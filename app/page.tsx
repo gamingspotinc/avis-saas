@@ -1,89 +1,95 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 
 export default function HomePage() {
   return (
     <main style={{ fontFamily: "sans-serif" }}>
-      {/* Hero */}
+      {/* Hero Section */}
       <section
         style={{
+          position: "relative",
+          width: "100%",
+          height: "500px",
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
           justifyContent: "center",
+          alignItems: "center",
+          color: "white",
           textAlign: "center",
-          padding: "80px 20px",
-          backgroundColor: "#f4f4f4",
+          backgroundImage: 'url("https://images.unsplash.com/photo-1590608897129-79f12774d1d4?auto=format&fit=crop&w=1950&q=80")',
+          backgroundSize: "cover",
+          backgroundPosition: "center"
         }}
       >
-        <h1 style={{ fontSize: "2.5rem", marginBottom: "20px" }}>
-          AvisPME permet aux petites et moyennes entreprises de recevoir plus d'avis clients sans effort
-        </h1>
+        <div
+          style={{
+            backgroundColor: "rgba(0,0,0,0.5)",
+            padding: "20px",
+            borderRadius: "10px"
+          }}
+        >
+          <h1 style={{ fontSize: "3rem", marginBottom: "20px" }}>
+            AvisPME
+          </h1>
+          <p style={{ fontSize: "1.5rem", maxWidth: "600px", margin: "0 auto" }}>
+            Permet aux petites et moyennes entreprises de recevoir plus d'avis clients sans effort.
+          </p>
+        </div>
+      </section>
 
-        <p style={{ marginBottom: "30px", fontSize: "1.2rem", color: "#555" }}>
-          Gérez facilement vos avis clients et améliorez votre réputation en ligne.
+      {/* Content Section */}
+      <section style={{ padding: "60px 20px", textAlign: "center" }}>
+        <h2>Pourquoi utiliser AvisPME ?</h2>
+        <p style={{ maxWidth: "800px", margin: "20px auto", fontSize: "1.2rem" }}>
+          Augmentez la visibilité de votre entreprise, collectez facilement les retours clients et améliorez votre réputation en ligne. Tout cela sans effort supplémentaire !
         </p>
 
-        <Link href="/login">
-          <button
-            style={{
-              padding: "12px 30px",
-              fontSize: "1rem",
-              backgroundColor: "#000",
-              color: "#fff",
-              borderRadius: "6px",
-              cursor: "pointer",
-            }}
-          >
-            Commencer maintenant
-          </button>
-        </Link>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "30px",
+            flexWrap: "wrap",
+            marginTop: "40px"
+          }}
+        >
+          <div style={{ maxWidth: "250px", textAlign: "center" }}>
+            <Image
+              src="https://images.unsplash.com/photo-1590608897129-79f12774d1d4?auto=format&fit=crop&w=800&q=80"
+              alt="Avis clients"
+              width={250}
+              height={150}
+              style={{ borderRadius: "10px" }}
+            />
+            <h3>Collecte facile</h3>
+            <p>Les clients laissent un avis directement sur votre page.</p>
+          </div>
 
-        <div style={{ marginTop: "40px" }}>
-          <Image
-            src="/5stars.jpg"
-            alt="Hero image"
-            width={900}
-            height={500}
-            style={{ borderRadius: "10px" }}
-          />
+          <div style={{ maxWidth: "250px", textAlign: "center" }}>
+            <Image
+              src="https://images.unsplash.com/photo-1581091012184-42ff5483e243?auto=format&fit=crop&w=800&q=80"
+              alt="Dashboard"
+              width={250}
+              height={150}
+              style={{ borderRadius: "10px" }}
+            />
+            <h3>Dashboard simple</h3>
+            <p>Visualisez tous vos commentaires et avis en un seul endroit.</p>
+          </div>
+
+          <div style={{ maxWidth: "250px", textAlign: "center" }}>
+            <Image
+              src="https://images.unsplash.com/photo-1581091870629-f16dfd5d7d45?auto=format&fit=crop&w=800&q=80"
+              alt="Reputation"
+              width={250}
+              height={150}
+              style={{ borderRadius: "10px" }}
+            />
+            <h3>Améliorez votre réputation</h3>
+            <p>Transformez les retours clients en arguments de confiance pour votre entreprise.</p>
+          </div>
         </div>
       </section>
-
-      {/* Comment ça marche */}
-      <section style={{ padding: "60px 20px", maxWidth: "900px", margin: "0 auto" }}>
-        <h2 style={{ textAlign: "center", marginBottom: "40px" }}>Comment ça marche</h2>
-        <div style={{ display: "flex", justifyContent: "space-around", flexWrap: "wrap" }}>
-          <div style={{ flex: "1 1 250px", margin: "20px", textAlign: "center" }}>
-            <h3>1. Créez votre compte PME</h3>
-            <p>Je crée votre compte et vous envoie un lien de connexion sécurisé.</p>
-          </div>
-          <div style={{ flex: "1 1 250px", margin: "20px", textAlign: "center" }}>
-            <h3>2. Envoyez le lien à vos clients</h3>
-            <p>Vos clients peuvent laisser un avis facilement, sans compte supplémentaire.</p>
-          </div>
-          <div style={{ flex: "1 1 250px", margin: "20px", textAlign: "center" }}>
-            <h3>3. Consultez vos avis</h3>
-            <p>Les avis de vos clients sont visibles uniquement par vous et l’admin.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Témoignages */}
-      <section style={{ backgroundColor: "#f4f4f4", padding: "60px 20px" }}>
-        <h2 style={{ textAlign: "center", marginBottom: "40px" }}>Témoignages</h2>
-        <div style={{ maxWidth: "700px", margin: "0 auto", textAlign: "center", fontStyle: "italic" }}>
-          <p>"Grâce à AvisPME, nous avons augmenté nos avis clients de 50% en 1 mois !" </p>
-          <p>"Super simple et efficace, nos clients adorent !" </p>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer style={{ textAlign: "center", padding: "30px 20px", color: "#777" }}>
-        © 2026 AvisPME. Tous droits réservés.
-      </footer>
     </main>
   );
 }
