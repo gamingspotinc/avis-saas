@@ -130,10 +130,10 @@ export default function HomePage() {
           Pour plus d'informations ou pour mettre en place votre espace AvisPME, contactez-moi :
         </p>
         <p style={{ fontSize: "1.1rem", margin: "10px 0" }}>
-          Téléphone : <strong>+1 234 567 890</strong>
+          Téléphone : <strong>1 (450) 204-8334</strong>
         </p>
         <p style={{ fontSize: "1.1rem", margin: "10px 0" }}>
-          Email : <strong>micimas@hotmail.com</strong>
+          Email : <strong>Michael.venne@outlook.com</strong>
         </p>
       </section>
     </main>
