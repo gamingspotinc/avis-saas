@@ -24,33 +24,52 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState("");
 
-  useEffect(() => {
-    const loadDashboard = async () => {
-      const { data: authData } = await supabase.auth.getUser();
+  // Fonction pour charger les companies d'un user
+  const loadCompanies = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("companies")
+      .select(`
+        id,
+        name,
+        slug,
+        is_active,
+        feedbacks:feedback(id, comment, created_at)
+      `)
+      .eq("owner_id", userId);
 
-      if (!authData.user) {
+    if (error) console.error(error);
+    else setCompanies(data || []);
+
+    setLoading(false);
+  };
+
+  // useEffect pour gérer magic link et session
+  useEffect(() => {
+    const init = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session?.user) {
         router.push("/login");
         return;
       }
 
-      const { data, error } = await supabase
-        .from("companies")
-        .select(`
-          id,
-          name,
-          slug,
-          is_active,
-          feedbacks:feedback(id, comment, created_at)
-        `)
-        .eq("owner_id", authData.user.id);
-
-      if (error) console.error(error);
-      else setCompanies(data || []);
-
-      setLoading(false);
+      loadCompanies(session.user.id);
     };
 
-    loadDashboard();
+    init();
+
+    // Écoute les changements de session (utile après magic link)
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        loadCompanies(session.user.id);
+      } else {
+        router.push("/login");
+      }
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, [router]);
 
   const handleLogout = async () => {
@@ -86,9 +105,7 @@ export default function DashboardPage() {
         const shareLink = `${window.location.origin}/avis/${company.slug}`;
 
         const filteredFeedbacks = selectedDate
-          ? company.feedbacks.filter((fb) =>
-              fb.created_at.startsWith(selectedDate)
-            )
+          ? company.feedbacks.filter((fb) => fb.created_at.startsWith(selectedDate))
           : company.feedbacks;
 
         return (
