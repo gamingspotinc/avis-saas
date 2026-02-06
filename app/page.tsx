@@ -7,8 +7,8 @@ export default function HomePage() {
   const router = useRouter();
 
   const handleStart = () => {
-    router.push("/login"); // redirige vers la page login
-  };
+  router.push("/dashboard");
+};
 
   return (
     <main style={{ fontFamily: "sans-serif" }}>
