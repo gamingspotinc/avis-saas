@@ -6,30 +6,46 @@ import { supabase } from "@/lib/supabase";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const handleMagicLink = async () => {
       const hash = window.location.hash;
-      if (!hash) return;
+      if (!hash) {
+        setLoading(false);
+        return; // Pas de hash → afficher formulaire
+      }
 
       const params = new URLSearchParams(hash.replace("#", ""));
       const access_token = params.get("access_token");
       const refresh_token = params.get("refresh_token");
 
       if (access_token && refresh_token) {
-        await supabase.auth.setSession({ access_token, refresh_token });
-        const { data: { session } } = await supabase.auth.getSession();
-        const email = session?.user?.email ?? "";
+        // Définit la session Supabase
+        const { error } = await supabase.auth.setSession({ access_token, refresh_token });
+        if (error) {
+          console.error("Erreur setSession:", error);
+          setMessage("Impossible de se connecter, réessayez.");
+          setLoading(false);
+          return;
+        }
 
-        // Redirection selon redirect param ou email
-        const redirect = new URLSearchParams(window.location.search).get("redirect");
-        if (redirect) {
-          window.location.href = redirect;
-        } else if (email === "michael.venne@outlook.com") {
+        // Récupère la session complète
+        const { data: { session } } = await supabase.auth.getSession();
+        const emailUser = session?.user?.email ?? "";
+
+        // Redirection selon email ou param redirect
+        const redirectParam = new URLSearchParams(window.location.search).get("redirect");
+
+        if (emailUser === "michael.venne@outlook.com") {
           window.location.href = "/dashboard/admin";
+        } else if (redirectParam) {
+          window.location.href = redirectParam;
         } else {
           window.location.href = "/dashboard";
         }
+      } else {
+        setLoading(false); // Pas de token → afficher formulaire
       }
     };
 
@@ -38,6 +54,8 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage("Envoi du lien…");
+
     const { error } = await supabase.auth.signInWithOtp({ email });
     if (error) {
       setMessage(`Erreur : ${error.message}`);
@@ -45,6 +63,10 @@ export default function LoginPage() {
       setMessage("Vérifie ton email, un lien de connexion a été envoyé !");
     }
   };
+
+  if (loading) {
+    return <p style={{ textAlign: "center", marginTop: "50px" }}>Connexion en cours…</p>;
+  }
 
   return (
     <div
@@ -56,7 +78,7 @@ export default function LoginPage() {
         backgroundImage: 'url("/5stars.jpg")',
         backgroundSize: "cover",
         backgroundPosition: "center",
-        padding: "20px"
+        padding: "20px",
       }}
     >
       <form
@@ -68,7 +90,7 @@ export default function LoginPage() {
           color: "white",
           maxWidth: "400px",
           width: "100%",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         <h1>Connexion PME</h1>
@@ -82,7 +104,7 @@ export default function LoginPage() {
             padding: "10px",
             margin: "20px 0",
             borderRadius: "5px",
-            border: "none"
+            border: "none",
           }}
           required
         />
@@ -95,7 +117,7 @@ export default function LoginPage() {
             color: "white",
             border: "none",
             borderRadius: "5px",
-            cursor: "pointer"
+            cursor: "pointer",
           }}
         >
           Recevoir le lien de connexion
