@@ -20,7 +20,7 @@ type Company = {
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const ADMIN_EMAIL = "test@test.com"; // Mets ton email admin ici
+  const ADMIN_EMAIL = "michael.venne@outlook.com"; // Mets ton email admin ici
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
 

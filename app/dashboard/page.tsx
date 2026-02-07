@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
+// Types des feedbacks et companies (TS safe)
 type Feedback = {
   id: string;
   comment: string;
@@ -15,61 +16,78 @@ type Company = {
   name: string;
   slug: string;
   is_active: boolean;
-  feedbacks: Feedback[];
+  feedbacks?: Feedback[] | null; // nullable car Supabase peut renvoyer null
 };
 
-export default function DashboardPage() {
+export default function AdminDashboard() {
   const router = useRouter();
+  const ADMIN_EMAIL = "michael.venne@outlook.com"; // email admin
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Fonction pour charger les companies d'un user
-  const loadCompanies = async (userId: string) => {
-    const { data, error } = await supabase
-      .from("companies")
-      .select(`
-        id,
-        name,
-        slug,
-        is_active,
-        feedbacks:feedback(id, comment, created_at)
-      `)
-      .eq("owner_id", userId);
-
-    if (error) console.error(error);
-    else setCompanies(data || []);
-
-    setLoading(false);
-  };
-
-  // useEffect pour gérer magic link et session
   useEffect(() => {
     const init = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data, error } = await supabase.auth.getSession();
 
-      if (!session?.user) {
+      if (error) {
+        console.error("Erreur getSession:", error.message);
         router.push("/login");
         return;
       }
 
-      loadCompanies(session.user.id);
+      const sessionUser = data.session?.user;
+
+      if (!sessionUser) {
+        // écoute magic link si session pas encore disponible
+        const { data: listener } = supabase.auth.onAuthStateChange(
+          (event, session) => {
+            const email = session?.user?.email ?? null;
+            if (email) loadDashboard(email);
+            else router.push("/login");
+          }
+        );
+        return () => listener.subscription.unsubscribe();
+      }
+
+      // ✅ TS safe: email peut être null
+      const email = sessionUser.email ?? null;
+      loadDashboard(email);
+    };
+
+    const loadDashboard = async (email: string | null) => {
+      if (!email) {
+        router.push("/login");
+        return;
+      }
+
+      if (email !== ADMIN_EMAIL) {
+        router.push("/dashboard"); // redirige PME
+        return;
+      }
+
+      // Supabase select avec type explicitement défini
+      const { data, error } = await supabase
+        .from("companies")
+        .select(`
+          id,
+          name,
+          slug,
+          is_active,
+          feedbacks:feedback(id, comment, created_at)
+        `);
+
+      if (error) {
+        console.error("Erreur chargement companies:", error.message);
+        setCompanies([]);
+      } else {
+        // TS safe: forcer type
+        setCompanies((data as Company[]) || []);
+      }
+
+      setLoading(false);
     };
 
     init();
-
-    // Écoute les changements de session (utile après magic link)
-    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session?.user) {
-        loadCompanies(session.user.id);
-      } else {
-        router.push("/login");
-      }
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
   }, [router]);
 
   const handleLogout = async () => {
@@ -77,107 +95,69 @@ export default function DashboardPage() {
     router.push("/login");
   };
 
-  if (loading) return <p style={{ textAlign: "center" }}>Chargement...</p>;
+  if (loading) return <p style={{ textAlign: "center" }}>Chargement admin...</p>;
 
   return (
-    <main style={{ padding: "40px", fontFamily: "sans-serif", maxWidth: "1000px", margin: "0 auto" }}>
-      
-      {/* HEADER */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>Bienvenue sur votre Dashboard</h1>
-        <button onClick={handleLogout} style={logoutBtn}>
-          Se déconnecter
-        </button>
-      </div>
+    <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto", position: "relative" }}>
+      <button
+        onClick={handleLogout}
+        style={{
+          position: "absolute",
+          top: "20px",
+          right: "20px",
+          padding: "10px 20px",
+          backgroundColor: "#333",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer"
+        }}
+      >
+        Déconnexion
+      </button>
 
-      {/* FILTRE PAR DATE */}
-      <div style={{ marginTop: "20px" }}>
-        <label>Filtrer par date : </label>
-        <input
-          type="date"
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-          style={{ padding: "6px", borderRadius: "6px" }}
-        />
-      </div>
+      <h1>Admin Dashboard</h1>
 
-      {companies.map((company) => {
-        const shareLink = `${window.location.origin}/avis/${company.slug}`;
+      {companies.length === 0 ? (
+        <p>Aucune company enregistrée.</p>
+      ) : (
+        <ul style={{ marginTop: "20px" }}>
+          {companies.map((company) => (
+            <li
+              key={company.id}
+              style={{
+                padding: "15px",
+                border: "1px solid #ddd",
+                borderRadius: "6px",
+                marginBottom: "20px",
+              }}
+            >
+              <strong>{company.name}</strong> ({company.is_active ? "Active ✅" : "Inactive ❌"})
+              <br />
+              <a
+                href={`/avis/${company.slug}`}
+                target="_blank"
+                style={{ color: "blue" }}
+              >
+                Voir page avis
+              </a>
 
-        const filteredFeedbacks = selectedDate
-          ? company.feedbacks.filter((fb) => fb.created_at.startsWith(selectedDate))
-          : company.feedbacks;
-
-        return (
-          <div key={company.id} style={companyCard}>
-            
-            {/* TOP BAR */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <h2>{company.name}</h2>
-              <div>
-                <strong>Votre lien de partage :</strong>{" "}
-                <a href={shareLink} target="_blank" style={{ color: "blue" }}>
-                  {shareLink}
-                </a>
-              </div>
-            </div>
-
-            {/* FEEDBACK SECTION */}
-            <div style={{ marginTop: "25px" }}>
-              <h3>Commentaires reçus</h3>
-
-              {filteredFeedbacks.length === 0 ? (
-                <p>Aucun commentaire pour cette date.</p>
-              ) : (
-                filteredFeedbacks.map((fb) => (
-                  <div key={fb.id} style={feedbackCard}>
-                    <p style={{ margin: 0 }}>{fb.comment}</p>
-                    <span style={dateStyle}>
-                      {new Date(fb.created_at).toLocaleString()}
-                    </span>
-                  </div>
-                ))
+              {company.feedbacks && company.feedbacks.length > 0 && (
+                <div style={{ marginTop: "10px" }}>
+                  <h4>Commentaires :</h4>
+                  <ul>
+                    {company.feedbacks.map((fb) => (
+                      <li key={fb.id}>
+                        {fb.comment} <em>({new Date(fb.created_at).toLocaleString()})</em>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
-            </div>
-          </div>
-        );
-      })}
+            </li>
+          ))}
+        </ul>
+      )}
     </main>
   );
 }
-
-/* STYLES */
-
-const companyCard: React.CSSProperties = {
-  marginTop: "40px",
-  padding: "25px",
-  borderRadius: "10px",
-  boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-  backgroundColor: "#fff",
-};
-
-const feedbackCard: React.CSSProperties = {
-  marginTop: "15px",
-  padding: "15px",
-  borderRadius: "8px",
-  border: "1px solid #ddd",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  backgroundColor: "#f9f9f9",
-};
-
-const dateStyle: React.CSSProperties = {
-  fontSize: "0.9rem",
-  color: "gray",
-  whiteSpace: "nowrap",
-};
-
-const logoutBtn: React.CSSProperties = {
-  padding: "8px 15px",
-  backgroundColor: "#111",
-  color: "white",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer",
-};
