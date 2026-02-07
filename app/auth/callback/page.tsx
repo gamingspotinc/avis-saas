@@ -8,12 +8,19 @@ export default function AuthCallback() {
   const router = useRouter();
 
   useEffect(() => {
-    const handleAuth = async () => {
-      await supabase.auth.getSession();
-      router.replace("/dashboard");
+    const handleMagicLink = async () => {
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error || !data.session) {
+        router.push("/login");
+        return;
+      }
+
+      // Si connecté → dashboard
+      router.push("/dashboard");
     };
 
-    handleAuth();
+    handleMagicLink();
   }, [router]);
 
   return <p style={{ textAlign: "center", marginTop: "50px" }}>Connexion...</p>;
