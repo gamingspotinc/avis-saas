@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
+export const dynamic = "force-dynamic";
+
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
@@ -13,14 +17,16 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?redirect=/dashboard`,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
     if (error) {
       setMessage(`Erreur : ${error.message}`);
     } else {
-      setMessage("Vérifie ton email pour te connecter.");
+      setMessage(
+        "Vérifie ton email, un lien de connexion a été envoyé !"
+      );
     }
   };
 
@@ -34,6 +40,7 @@ export default function LoginPage() {
         backgroundImage: 'url("/5stars.jpg")',
         backgroundSize: "cover",
         backgroundPosition: "center",
+        padding: "20px",
       }}
     >
       <form
