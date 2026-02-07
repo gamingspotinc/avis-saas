@@ -1,4 +1,4 @@
-"use client";
+"use client"; // ⚠️ IMPORTANT pour pouvoir utiliser useSearchParams et supabase.auth.getSession()
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -6,12 +6,15 @@ import { supabase } from "@/lib/supabase";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const searchParams = useSearchParams(); // maintenant ok côté client
 
   useEffect(() => {
     const handleAuth = async () => {
       // Supabase lit automatiquement le token dans l'URL
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
 
       if (error) {
         console.error("Erreur session Supabase:", error.message);
@@ -20,12 +23,11 @@ export default function AuthCallbackPage() {
       }
 
       if (!session) {
-        // Si pas de session, rester sur login
         router.push("/login");
         return;
       }
 
-      // Si c'est l'admin
+      // Redirection selon le rôle
       if (session.user.email === "michael.venne@outlook.com") {
         router.push("/dashboard/admin");
       } else {
