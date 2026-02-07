@@ -1,15 +1,32 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-
-export const dynamic = "force-dynamic";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const router = useRouter();
+
+  // 🔥 C'EST ICI QUE LA MAGIE SE FAIT
+  useEffect(() => {
+    const hash = window.location.hash;
+
+    if (hash && hash.includes("access_token")) {
+      const params = new URLSearchParams(hash.substring(1));
+      const access_token = params.get("access_token");
+      const refresh_token = params.get("refresh_token");
+
+      if (access_token && refresh_token) {
+        supabase.auth
+          .setSession({ access_token, refresh_token })
+          .then(() => {
+            router.push("/dashboard");
+          });
+      }
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,16 +34,14 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/login`,
       },
     });
 
     if (error) {
       setMessage(`Erreur : ${error.message}`);
     } else {
-      setMessage(
-        "Vérifie ton email, un lien de connexion a été envoyé !"
-      );
+      setMessage("Vérifie ton email pour te connecter.");
     }
   };
 
@@ -40,7 +55,6 @@ export default function LoginPage() {
         backgroundImage: 'url("/5stars.jpg")',
         backgroundSize: "cover",
         backgroundPosition: "center",
-        padding: "20px",
       }}
     >
       <form
