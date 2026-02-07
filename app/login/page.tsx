@@ -7,34 +7,35 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
-  // 1️⃣ Lecture du magic link
   useEffect(() => {
-  const handleMagicLink = async () => {
-    const hash = window.location.hash;
-    if (!hash) return;
+    const handleMagicLink = async () => {
+      const hash = window.location.hash;
+      if (!hash) return;
 
-    const params = new URLSearchParams(hash.replace("#", ""));
-    const access_token = params.get("access_token");
-    const refresh_token = params.get("refresh_token");
+      const params = new URLSearchParams(hash.replace("#", ""));
+      const access_token = params.get("access_token");
+      const refresh_token = params.get("refresh_token");
 
-    if (access_token && refresh_token) {
-      await supabase.auth.setSession({ access_token, refresh_token });
+      if (access_token && refresh_token) {
+        await supabase.auth.setSession({ access_token, refresh_token });
+        const { data: { session } } = await supabase.auth.getSession();
+        const email = session?.user?.email ?? "";
 
-      const { data: { session } } = await supabase.auth.getSession();
-      const email = session?.user?.email ?? "";
-
-      if (email === "michael.venne@outlook.com") {
-        window.location.href = "/dashboard/admin";
-      } else {
-        window.location.href = "/dashboard";
+        // Redirection selon redirect param ou email
+        const redirect = new URLSearchParams(window.location.search).get("redirect");
+        if (redirect) {
+          window.location.href = redirect;
+        } else if (email === "michael.venne@outlook.com") {
+          window.location.href = "/dashboard/admin";
+        } else {
+          window.location.href = "/dashboard";
+        }
       }
-    }
-  };
+    };
 
-  handleMagicLink();
-}, []);
+    handleMagicLink();
+  }, []);
 
-  // 2️⃣ Formulaire pour demander magic link
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error } = await supabase.auth.signInWithOtp({ email });
