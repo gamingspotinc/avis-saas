@@ -1,28 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+export const dynamic = "force-dynamic";
+
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const redirectTo = searchParams.get("redirect") || "/dashboard";
-
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (session) {
-        router.push(redirectTo);
-      }
-    };
-
-    checkSession();
-  }, [router, redirectTo]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +36,6 @@ export default function LoginPage() {
         backgroundImage: 'url("/5stars.jpg")',
         backgroundSize: "cover",
         backgroundPosition: "center",
-        padding: "20px",
       }}
     >
       <form
@@ -95,7 +79,7 @@ export default function LoginPage() {
             cursor: "pointer",
           }}
         >
-          Recevoir le lien de connexion
+          Recevoir le lien
         </button>
 
         {message && <p style={{ marginTop: "20px" }}>{message}</p>}
