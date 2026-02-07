@@ -1,27 +1,51 @@
 "use client";
 
 import { useEffect } from "react";
-import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
-export default function AuthCallback() {
+export const dynamic = "force-dynamic";
+
+export default function AuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
     const handleMagicLink = async () => {
-      const { data, error } = await supabase.auth.getSession();
+      const hash = window.location.hash; // #access_token=...
+      if (!hash) return router.push("/login");
 
-      if (error || !data.session) {
-        router.push("/login");
-        return;
+      const urlParams = new URLSearchParams(hash.replace("#", "?"));
+      const access_token = urlParams.get("access_token");
+      const refresh_token = urlParams.get("refresh_token");
+
+      if (!access_token || !refresh_token) return router.push("/login");
+
+      // Crée la session
+      const { data, error } = await supabase.auth.setSession({
+        access_token,
+        refresh_token,
+      });
+
+      if (error) return router.push("/login");
+
+      // Récupère l'utilisateur
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) return router.push("/login");
+
+      // Redirige Admin / PME
+      if (userData.user.email === "michael.venne@outlook.com") {
+        router.push("/dashboard/admin");
+      } else {
+        router.push("/dashboard");
       }
-
-      // Si connecté → dashboard
-      router.push("/dashboard");
     };
 
     handleMagicLink();
   }, [router]);
 
-  return <p style={{ textAlign: "center", marginTop: "50px" }}>Connexion...</p>;
+  return (
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
+      <p>Connexion en cours...</p>
+    </div>
+  );
 }
