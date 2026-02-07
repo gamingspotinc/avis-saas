@@ -11,33 +11,37 @@ export default function LoginPage() {
 
   // 🔹 Intercepte le magic link et définit la session
   useEffect(() => {
-    const handleMagicLink = async () => {
-      const hash = window.location.hash;
-      if (!hash) return;
+  const handleMagicLink = async () => {
+    const hash = window.location.hash; // récupère #access_token=...
+    if (!hash) return;
 
-      const params = new URLSearchParams(hash.replace("#", ""));
-      const access_token = params.get("access_token");
-      const refresh_token = params.get("refresh_token");
+    const params = new URLSearchParams(hash.replace("#", ""));
+    const access_token = params.get("access_token");
+    const refresh_token = params.get("refresh_token");
 
-      if (access_token && refresh_token) {
-        const { error } = await supabase.auth.setSession({
-          access_token,
-          refresh_token,
-        });
+    if (access_token && refresh_token) {
+      const { error } = await supabase.auth.setSession({
+        access_token,
+        refresh_token,
+      });
 
-        if (error) setMessage("Erreur connexion : " + error.message);
-        else {
-          // Redirige selon l’email admin ou PME
-          const { data: { session } } = await supabase.auth.getSession();
-          const email = session?.user?.email ?? "";
-          if (email === "michael.venne@outlook.com") router.push("/dashboard/admin");
-          else router.push("/dashboard");
+      if (error) {
+        console.error("Erreur connexion :", error.message);
+      } else {
+        // Redirection selon email
+        const { data: { session } } = await supabase.auth.getSession();
+        const email = session?.user?.email ?? "";
+        if (email === "michael.venne@outlook.com") {
+          window.location.href = "/dashboard/admin";
+        } else {
+          window.location.href = "/dashboard";
         }
       }
-    };
+    }
+  };
 
-    handleMagicLink();
-  }, [router]);
+  handleMagicLink();
+}, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
