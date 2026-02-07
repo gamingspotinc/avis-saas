@@ -1,33 +1,26 @@
-"use client"; // ⚠️ IMPORTANT pour pouvoir utiliser useSearchParams et supabase.auth.getSession()
+"use client"; // ⚠️ important pour forcer Client Component
 
 import { useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+
+export const dynamic = "force-dynamic"; // ⚠️ empêche le prerendering
 
 export default function AuthCallbackPage() {
   const router = useRouter();
-  const searchParams = useSearchParams(); // maintenant ok côté client
 
   useEffect(() => {
     const handleAuth = async () => {
-      // Supabase lit automatiquement le token dans l'URL
-      const {
-        data: { session },
-        error,
-      } = await supabase.auth.getSession();
+      // Lit automatiquement le token dans l'URL magic link
+      const { data: { session }, error } = await supabase.auth.getSession();
 
-      if (error) {
-        console.error("Erreur session Supabase:", error.message);
+      if (error || !session) {
+        console.error("Erreur session Supabase:", error?.message);
         router.push("/login");
         return;
       }
 
-      if (!session) {
-        router.push("/login");
-        return;
-      }
-
-      // Redirection selon le rôle
+      // Redirection selon rôle
       if (session.user.email === "michael.venne@outlook.com") {
         router.push("/dashboard/admin");
       } else {
@@ -36,7 +29,11 @@ export default function AuthCallbackPage() {
     };
 
     handleAuth();
-  }, [router, searchParams]);
+  }, [router]);
 
-  return <p style={{ textAlign: "center", marginTop: "50px" }}>Connexion en cours...</p>;
+  return (
+    <p style={{ textAlign: "center", marginTop: "50px" }}>
+      Connexion en cours...
+    </p>
+  );
 }
