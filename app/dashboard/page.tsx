@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 
-// Types des feedbacks et companies (TS safe)
 type Feedback = {
   id: string;
   comment: string;
@@ -16,74 +15,35 @@ type Company = {
   name: string;
   slug: string;
   is_active: boolean;
-  feedbacks?: Feedback[] | null; // nullable car Supabase peut renvoyer null
+  feedbacks: Feedback[];
 };
 
-export default function AdminDashboard() {
+export default function DashboardPage() {
   const router = useRouter();
-  const ADMIN_EMAIL = "michael.venne@outlook.com"; // email admin
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedDate, setSelectedDate] = useState("");
 
   useEffect(() => {
     const init = async () => {
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error) {
-        console.error("Erreur getSession:", error.message);
-        router.push("/login");
-        return;
-      }
-
-      const sessionUser = data.session?.user;
-
-      if (!sessionUser) {
-        // écoute magic link si session pas encore disponible
-        const { data: listener } = supabase.auth.onAuthStateChange(
-          (event, session) => {
-            const email = session?.user?.email ?? null;
-            if (email) loadDashboard(email);
-            else router.push("/login");
-          }
-        );
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
+          if (session?.user) loadCompanies(session.user.id);
+          else router.push("/login");
+        });
         return () => listener.subscription.unsubscribe();
       }
-
-      // ✅ TS safe: email peut être null
-      const email = sessionUser.email ?? null;
-      loadDashboard(email);
+      loadCompanies(session.user.id);
     };
 
-    const loadDashboard = async (email: string | null) => {
-      if (!email) {
-        router.push("/login");
-        return;
-      }
-
-      if (email !== ADMIN_EMAIL) {
-        router.push("/dashboard"); // redirige PME
-        return;
-      }
-
-      // Supabase select avec type explicitement défini
+    const loadCompanies = async (userId: string) => {
       const { data, error } = await supabase
         .from("companies")
-        .select(`
-          id,
-          name,
-          slug,
-          is_active,
-          feedbacks:feedback(id, comment, created_at)
-        `);
-
-      if (error) {
-        console.error("Erreur chargement companies:", error.message);
-        setCompanies([]);
-      } else {
-        // TS safe: forcer type
-        setCompanies((data as Company[]) || []);
-      }
-
+        .select(`id,name,slug,is_active,feedbacks:feedback(id, comment, created_at)`)
+        .eq("owner_id", userId);
+      if (error) console.error(error);
+      else setCompanies(data || []);
       setLoading(false);
     };
 
@@ -95,69 +55,49 @@ export default function AdminDashboard() {
     router.push("/login");
   };
 
-  if (loading) return <p style={{ textAlign: "center" }}>Chargement admin...</p>;
+  if (loading) return <p style={{ textAlign: "center" }}>Chargement...</p>;
 
   return (
-    <main style={{ padding: "40px", maxWidth: "900px", margin: "0 auto", position: "relative" }}>
-      <button
-        onClick={handleLogout}
-        style={{
-          position: "absolute",
-          top: "20px",
-          right: "20px",
-          padding: "10px 20px",
-          backgroundColor: "#333",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer"
-        }}
-      >
-        Déconnexion
-      </button>
+    <main style={{ padding: "40px", fontFamily: "sans-serif", maxWidth: "1000px", margin: "0 auto" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h1>Bienvenue sur votre Dashboard</h1>
+        <button onClick={handleLogout} style={{ padding: "8px 15px", backgroundColor: "#111", color: "white", border: "none", borderRadius: "6px", cursor: "pointer" }}>
+          Se déconnecter
+        </button>
+      </div>
 
-      <h1>Admin Dashboard</h1>
+      <div style={{ marginTop: "20px" }}>
+        <label>Filtrer par date : </label>
+        <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)} style={{ padding: "6px", borderRadius: "6px" }} />
+      </div>
 
-      {companies.length === 0 ? (
-        <p>Aucune company enregistrée.</p>
-      ) : (
-        <ul style={{ marginTop: "20px" }}>
-          {companies.map((company) => (
-            <li
-              key={company.id}
-              style={{
-                padding: "15px",
-                border: "1px solid #ddd",
-                borderRadius: "6px",
-                marginBottom: "20px",
-              }}
-            >
-              <strong>{company.name}</strong> ({company.is_active ? "Active ✅" : "Inactive ❌"})
-              <br />
-              <a
-                href={`/avis/${company.slug}`}
-                target="_blank"
-                style={{ color: "blue" }}
-              >
-                Voir page avis
-              </a>
+      {companies.map((company) => {
+        const shareLink = `${window.location.origin}/avis/${company.slug}`;
+        const filteredFeedbacks = selectedDate ? company.feedbacks.filter(fb => fb.created_at.startsWith(selectedDate)) : company.feedbacks;
 
-              {company.feedbacks && company.feedbacks.length > 0 && (
-                <div style={{ marginTop: "10px" }}>
-                  <h4>Commentaires :</h4>
-                  <ul>
-                    {company.feedbacks.map((fb) => (
-                      <li key={fb.id}>
-                        {fb.comment} <em>({new Date(fb.created_at).toLocaleString()})</em>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+        return (
+          <div key={company.id} style={{ marginTop: "40px", padding: "25px", borderRadius: "10px", boxShadow: "0 0 10px rgba(0,0,0,0.1)", backgroundColor: "#fff" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h2>{company.name}</h2>
+              <div>
+                <strong>Votre lien de partage :</strong> <a href={shareLink} target="_blank" style={{ color: "blue" }}>{shareLink}</a>
+              </div>
+            </div>
+
+            <div style={{ marginTop: "25px" }}>
+              <h3>Commentaires reçus</h3>
+              {filteredFeedbacks.length === 0 ? <p>Aucun commentaire pour cette date.</p> : (
+                filteredFeedbacks.map(fb => (
+                  <div key={fb.id} style={{ marginTop: "15px", padding: "15px", borderRadius: "8px", border: "1px solid #ddd", display: "flex", justifyContent: "space-between", alignItems: "center", backgroundColor: "#f9f9f9" }}>
+                    <p style={{ margin: 0 }}>{fb.comment}</p>
+                    <span style={{ fontSize: "0.9rem", color: "gray", whiteSpace: "nowrap" }}>{new Date(fb.created_at).toLocaleString()}</span>
+                  </div>
+                ))
               )}
-            </li>
-          ))}
-        </ul>
-      )}
+            </div>
+          </div>
+        );
+      })}
     </main>
   );
 }

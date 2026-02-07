@@ -7,12 +7,11 @@ export default function HomePage() {
   const router = useRouter();
 
   const handleStart = () => {
-  router.push("/dashboard");
-};
+    router.push("/dashboard");
+  };
 
   return (
     <main style={{ fontFamily: "sans-serif" }}>
-      {/* Hero Section */}
       <section
         style={{
           position: "relative",
@@ -32,7 +31,7 @@ export default function HomePage() {
       >
         <div
           style={{
-            backgroundColor: "rgba(0,0,0,0.85)", // rectangle noir plus foncé
+            backgroundColor: "rgba(0,0,0,0.85)",
             padding: "20px",
             borderRadius: "10px",
             maxWidth: "700px",
@@ -50,7 +49,7 @@ export default function HomePage() {
               borderRadius: "6px",
               border: "none",
               cursor: "pointer",
-              backgroundColor: "#111", // noir comme page login
+              backgroundColor: "#111",
               color: "white",
               fontWeight: "bold",
             }}
@@ -60,7 +59,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Content Section */}
       <section style={{ padding: "60px 20px", textAlign: "center" }}>
         <h2>Pourquoi utiliser AvisPME ?</h2>
         <p style={{ maxWidth: "800px", margin: "20px auto", fontSize: "1.2rem" }}>
@@ -76,55 +74,27 @@ export default function HomePage() {
             marginTop: "40px",
           }}
         >
-          {/* Avis clients */}
           <div style={{ maxWidth: "250px", textAlign: "center" }}>
-            <Image
-              src="/avis.jpg" // mettre votre image ici
-              alt="Avis clients"
-              width={250}
-              height={150}
-              style={{ borderRadius: "10px" }}
-            />
+            <Image src="/avis.jpg" alt="Avis clients" width={250} height={150} style={{ borderRadius: "10px" }} />
             <h3>Collecte facile</h3>
             <p>Les clients laissent un avis directement sur votre page.</p>
           </div>
 
-          {/* Dashboard */}
           <div style={{ maxWidth: "250px", textAlign: "center" }}>
-            <Image
-              src="/dashboard.jpg"
-              alt="Dashboard"
-              width={250}
-              height={150}
-              style={{ borderRadius: "10px" }}
-            />
+            <Image src="/dashboard.jpg" alt="Dashboard" width={250} height={150} style={{ borderRadius: "10px" }} />
             <h3>Dashboard simple</h3>
             <p>Visualisez tous vos commentaires et avis en un seul endroit.</p>
           </div>
 
-          {/* Réputation */}
           <div style={{ maxWidth: "250px", textAlign: "center" }}>
-            <Image
-              src="/reputation.jpg"
-              alt="Réputation"
-              width={250}
-              height={150}
-              style={{ borderRadius: "10px" }}
-            />
+            <Image src="/reputation.jpg" alt="Réputation" width={250} height={150} style={{ borderRadius: "10px" }} />
             <h3>Améliorez votre réputation</h3>
             <p>Transformez les retours clients en arguments de confiance pour votre entreprise.</p>
           </div>
         </div>
       </section>
 
-      {/* À propos Section */}
-      <section
-        style={{
-          backgroundColor: "#f5f5f5",
-          padding: "60px 20px",
-          textAlign: "center",
-        }}
-      >
+      <section style={{ backgroundColor: "#f5f5f5", padding: "60px 20px", textAlign: "center" }}>
         <h2>À propos</h2>
         <p style={{ maxWidth: "800px", margin: "20px auto", fontSize: "1.2rem" }}>
           Pour plus d'informations ou pour mettre en place votre espace AvisPME, contactez-moi :

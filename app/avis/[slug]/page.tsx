@@ -13,53 +13,31 @@ export default function AvisPage() {
 
   useEffect(() => {
     const loadCompany = async () => {
-      const { data, error } = await supabase
-        .from("companies")
-        .select("id")
-        .eq("slug", slug)
-        .single();
-
-      if (!error && data) {
-        setCompanyId(data.id);
-      }
+      const { data, error } = await supabase.from("companies").select("id").eq("slug", slug).single();
+      if (!error && data) setCompanyId(data.id);
     };
-
     loadCompany();
   }, [slug]);
 
   const handleYes = () => {
-    window.location.href =
-      "https://google.com";
+    window.location.href = "https://google.com";
   };
 
   const handleSubmit = async () => {
     if (!companyId || !comment.trim()) return;
-
-    await supabase.from("feedback").insert({
-      company_id: companyId,
-      comment,
-      is_private: true,
-    });
-
+    await supabase.from("feedback").insert({ company_id: companyId, comment, is_private: true });
     setSent(true);
   };
 
-  if (sent) {
-    return <h2 style={{ textAlign: "center" }}>Merci pour votre retour 🙏</h2>;
-  }
+  if (sent) return <h2 style={{ textAlign: "center" }}>Merci pour votre retour 🙏</h2>;
 
   return (
     <main style={{ padding: 40, textAlign: "center" }}>
       <h1>Êtes-vous satisfait de votre expérience ?</h1>
-
       {!showForm ? (
         <>
-          <button onClick={handleYes} style={{ margin: 10 }}>
-            Oui 😊
-          </button>
-          <button onClick={() => setShowForm(true)} style={{ margin: 10 }}>
-            Non 😞
-          </button>
+          <button onClick={handleYes} style={{ margin: 10 }}>Oui 😊</button>
+          <button onClick={() => setShowForm(true)} style={{ margin: 10 }}>Non 😞</button>
         </>
       ) : (
         <>
@@ -70,9 +48,7 @@ export default function AvisPage() {
             style={{ width: "100%", maxWidth: 400, height: 120 }}
           />
           <br />
-          <button onClick={handleSubmit} style={{ marginTop: 10 }}>
-            Envoyer
-          </button>
+          <button onClick={handleSubmit} style={{ marginTop: 10 }}>Envoyer</button>
         </>
       )}
     </main>

@@ -9,10 +9,9 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const router = useRouter();
 
-  // ⚡ Intercepte le magic link et setSession automatiquement
+  // 🔹 Intercepte le magic link et définit la session
   useEffect(() => {
     const handleMagicLink = async () => {
-      // Récupère le hash (après #)
       const hash = window.location.hash;
       if (!hash) return;
 
@@ -21,16 +20,18 @@ export default function LoginPage() {
       const refresh_token = params.get("refresh_token");
 
       if (access_token && refresh_token) {
-        // Set la session Supabase
         const { error } = await supabase.auth.setSession({
           access_token,
           refresh_token,
         });
 
-        if (error) {
-          setMessage("Erreur de connexion : " + error.message);
-        } else {
-          router.push("/dashboard"); // Redirection après magic link
+        if (error) setMessage("Erreur connexion : " + error.message);
+        else {
+          // Redirige selon l’email admin ou PME
+          const { data: { session } } = await supabase.auth.getSession();
+          const email = session?.user?.email ?? "";
+          if (email === "michael.venne@outlook.com") router.push("/dashboard/admin");
+          else router.push("/dashboard");
         }
       }
     };
@@ -41,11 +42,8 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) {
-      setMessage(`Erreur : ${error.message}`);
-    } else {
-      setMessage("Vérifie ton email, un lien de connexion a été envoyé !");
-    }
+    if (error) setMessage(`Erreur : ${error.message}`);
+    else setMessage("Vérifie ton email, un lien de connexion a été envoyé !");
   };
 
   return (
@@ -79,13 +77,7 @@ export default function LoginPage() {
           placeholder="Votre email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "10px",
-            margin: "20px 0",
-            borderRadius: "5px",
-            border: "none",
-          }}
+          style={{ width: "100%", padding: "10px", margin: "20px 0", borderRadius: "5px", border: "none" }}
           required
         />
         <button
