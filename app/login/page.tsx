@@ -9,39 +9,30 @@ export default function LoginPage() {
 
   // 1️⃣ Lecture du magic link
   useEffect(() => {
-    const handleMagicLink = async () => {
-      const hash = window.location.hash;
-      if (!hash) return;
+  const handleMagicLink = async () => {
+    const hash = window.location.hash;
+    if (!hash) return;
 
-      const params = new URLSearchParams(hash.replace("#", ""));
-      const access_token = params.get("access_token");
-      const refresh_token = params.get("refresh_token");
+    const params = new URLSearchParams(hash.replace("#", ""));
+    const access_token = params.get("access_token");
+    const refresh_token = params.get("refresh_token");
 
-      if (access_token && refresh_token) {
-        const { error } = await supabase.auth.setSession({
-          access_token,
-          refresh_token,
-        });
+    if (access_token && refresh_token) {
+      await supabase.auth.setSession({ access_token, refresh_token });
 
-        if (error) {
-          alert("Erreur connexion : " + error.message);
-          console.error(error);
-          return;
-        }
+      const { data: { session } } = await supabase.auth.getSession();
+      const email = session?.user?.email ?? "";
 
-        const { data: { session } } = await supabase.auth.getSession();
-        const email = session?.user?.email ?? "";
-
-        if (email === "michael.venne@outlook.com") {
-          window.location.href = "/dashboard/admin";
-        } else {
-          window.location.href = "/dashboard";
-        }
+      if (email === "michael.venne@outlook.com") {
+        window.location.href = "/dashboard/admin";
+      } else {
+        window.location.href = "/dashboard";
       }
-    };
+    }
+  };
 
-    handleMagicLink();
-  }, []);
+  handleMagicLink();
+}, []);
 
   // 2️⃣ Formulaire pour demander magic link
   const handleLogin = async (e: React.FormEvent) => {
