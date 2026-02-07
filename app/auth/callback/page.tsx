@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { useRouter, useSearchParams } from "next/navigation";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -10,15 +10,22 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const handleAuth = async () => {
-      // Écoute l'état de connexion
-      supabase.auth.onAuthStateChange((_event, session) => {
-        if (session) {
-          const redirect = searchParams.get("redirect") || "/dashboard";
-          router.push(redirect);
-        } else {
-          router.push("/login");
-        }
+      // Supabase v2 met à jour la session automatiquement via magic link
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSessionFromUrl({
+        storeSession: true,
       });
+
+      if (error) {
+        console.error("Erreur magic link:", error);
+        router.push("/login");
+        return;
+      }
+
+      const redirect = searchParams.get("redirect") || "/dashboard";
+      router.push(redirect);
     };
 
     handleAuth();
