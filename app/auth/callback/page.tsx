@@ -10,7 +10,7 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const handleAuth = async () => {
-      // Récupérer la session actuelle après le redirect
+      // Vérifie la session actuelle stockée
       const { data: { session }, error } = await supabase.auth.getSession();
 
       if (error) {
@@ -20,7 +20,7 @@ export default function AuthCallbackPage() {
       }
 
       if (session) {
-        // Redirection après connexion
+        // Redirection après login
         const redirect = searchParams.get("redirect") || "/dashboard";
         router.push(redirect);
       } else {
