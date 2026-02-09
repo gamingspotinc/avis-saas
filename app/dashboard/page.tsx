@@ -1,32 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
-export default function Dashboard() {
+export default function DashboardPage() {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const init = async () => {
-      // ⚠️ IMPORTANT : on attend que Supabase termine de charger la session
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      const { data } = await supabase.auth.getSession();
-
+    supabase.auth.getSession().then(({ data }) => {
       if (!data.session) {
-        router.replace("/login");
-        return;
+        router.push("/login");
+      } else {
+        setLoading(false);
       }
+    });
+  }, [router]);
 
-      setReady(true);
-    };
-
-    init();
-  }, []);
-
-  if (!ready) return <p>Chargement du dashboard...</p>;
+  if (loading) return <p>Chargement du dashboard...</p>;
 
   return <h1>Bienvenue dans le Dashboard PME</h1>;
 }

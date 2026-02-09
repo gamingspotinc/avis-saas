@@ -1,44 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const router = useRouter();
-
-  // 🔹 Lecture du token depuis l'URL
-  useEffect(() => {
-    const hash = window.location.hash;
-    if (hash && hash.includes("access_token")) {
-      const params = new URLSearchParams(hash.substring(1));
-      const access_token = params.get("access_token");
-      const refresh_token = params.get("refresh_token");
-
-      if (access_token && refresh_token) {
-        supabase.auth
-          .setSession({ access_token, refresh_token })
-          .then(() => {
-            router.push("/dashboard");
-          });
-      }
-    }
-  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/login`,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
+
     if (error) {
       setMessage(`Erreur : ${error.message}`);
     } else {
-      setMessage("Vérifie ton email pour te connecter.");
+      setMessage(
+        "Vérifie ton email pour te connecter. Le lien est valable quelques minutes."
+      );
     }
   };
 
@@ -67,6 +51,7 @@ export default function LoginPage() {
         }}
       >
         <h1>Connexion PME</h1>
+
         <input
           type="email"
           placeholder="Votre email"
@@ -81,6 +66,7 @@ export default function LoginPage() {
           }}
           required
         />
+
         <button
           type="submit"
           style={{
@@ -95,6 +81,7 @@ export default function LoginPage() {
         >
           Recevoir le lien
         </button>
+
         {message && <p style={{ marginTop: "20px" }}>{message}</p>}
       </form>
     </div>

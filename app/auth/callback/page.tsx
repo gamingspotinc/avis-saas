@@ -1,29 +1,35 @@
 "use client";
 
 import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
 
-export default function AuthCallback() {
+export default function AuthCallbackPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const handleAuth = async () => {
-      const { error } = await supabase.auth.exchangeCodeForSession(
-        window.location.href
-      );
+      // Récupérer la session actuelle après le redirect
+      const { data: { session }, error } = await supabase.auth.getSession();
 
       if (error) {
-        console.error(error);
-        router.replace("/login");
+        console.error("Erreur session :", error.message);
+        router.push("/login");
         return;
       }
 
-      router.replace("/dashboard");
+      if (session) {
+        // Redirection après connexion
+        const redirect = searchParams.get("redirect") || "/dashboard";
+        router.push(redirect);
+      } else {
+        router.push("/login");
+      }
     };
 
     handleAuth();
-  }, []);
+  }, [router, searchParams]);
 
   return <p>Connexion en cours...</p>;
 }
