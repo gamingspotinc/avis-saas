@@ -9,10 +9,9 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const router = useRouter();
 
-  // 🔥 C'EST ICI QUE LA MAGIE SE FAIT
+  // 🔹 Lecture du token depuis l'URL
   useEffect(() => {
     const hash = window.location.hash;
-
     if (hash && hash.includes("access_token")) {
       const params = new URLSearchParams(hash.substring(1));
       const access_token = params.get("access_token");
@@ -30,14 +29,12 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: `${window.location.origin}/login`,
       },
     });
-
     if (error) {
       setMessage(`Erreur : ${error.message}`);
     } else {
@@ -70,7 +67,6 @@ export default function LoginPage() {
         }}
       >
         <h1>Connexion PME</h1>
-
         <input
           type="email"
           placeholder="Votre email"
@@ -85,7 +81,6 @@ export default function LoginPage() {
           }}
           required
         />
-
         <button
           type="submit"
           style={{
@@ -100,7 +95,6 @@ export default function LoginPage() {
         >
           Recevoir le lien
         </button>
-
         {message && <p style={{ marginTop: "20px" }}>{message}</p>}
       </form>
     </div>
