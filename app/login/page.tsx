@@ -11,11 +11,11 @@ export default function LoginPage() {
     e.preventDefault();
 
     const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
+  email,
+  options: {
+    emailRedirectTo: "https://avis-saas-xi.vercel.app/auth/callback",
+  },
+});
 
     if (error) {
       setMessage(`Erreur : ${error.message}`);
