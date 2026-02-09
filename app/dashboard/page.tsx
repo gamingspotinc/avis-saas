@@ -1,26 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (!session) {
-        router.push("/login");
+    supabase.auth.getSession().then(({ data }) => {
+      if (!data.session) {
+        router.push("/login?redirect=/dashboard");
       } else {
         setLoading(false);
       }
-    };
-
-    fetchSession();
-  }, [router]);
+    });
+  }, []);
 
   if (loading) return <p>Chargement...</p>;
 

@@ -8,23 +8,24 @@ export default function AuthCallbackClient() {
   const router = useRouter();
 
   useEffect(() => {
-    const handleMagicLink = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
+    async function handleCallback() {
+      // v2: utiliser supabase.auth.getSession() après que le Magic Link soit cliqué
+      const { data, error } = await supabase.auth.getSession();
 
       if (error) {
-        console.error("Erreur Magic Link:", error.message);
+        console.error("Erreur session Magic Link:", error.message);
         router.push("/login");
         return;
       }
 
-      if (session) {
+      if (data.session) {
         router.push("/dashboard");
       } else {
         router.push("/login");
       }
-    };
+    }
 
-    handleMagicLink();
+    handleCallback();
   }, [router]);
 
   return <p>Connexion en cours...</p>;
