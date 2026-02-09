@@ -20,9 +20,7 @@ export default function LoginPage() {
     if (error) {
       setMessage(`Erreur : ${error.message}`);
     } else {
-      setMessage(
-        "Vérifie ton email pour te connecter. Le lien est valable quelques minutes."
-      );
+      setMessage("Vérifie ton email pour te connecter.");
     }
   };
 

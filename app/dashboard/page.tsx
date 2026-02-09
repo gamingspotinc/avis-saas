@@ -4,21 +4,25 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
-export default function DashboardPage() {
+export default function Dashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) {
+    const fetchSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
         router.push("/login");
       } else {
         setLoading(false);
       }
-    });
+    };
+
+    fetchSession();
   }, [router]);
 
-  if (loading) return <p>Chargement du dashboard...</p>;
+  if (loading) return <p>Chargement...</p>;
 
   return <h1>Bienvenue dans le Dashboard PME</h1>;
 }
