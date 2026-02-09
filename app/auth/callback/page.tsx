@@ -10,7 +10,7 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const handleAuth = async () => {
-      // Vérifie la session actuelle stockée
+      // Récupère la session actuelle depuis Supabase
       const { data: { session }, error } = await supabase.auth.getSession();
 
       if (error) {
