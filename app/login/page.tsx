@@ -1,26 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
-import { useRouter, useSearchParams } from "next/navigation";
+import { createClient } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  {
+    auth: {
+      flowType: "pkce",
+      detectSessionInUrl: true,
+    },
+  }
+);
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/dashboard";
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    const checkSession = async () => {
-      const { data } = await supabase.auth.getSession();
-
+    supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
-        router.replace(redirect);
+        router.replace("/dashboard");
       }
-    };
+    });
 
-    checkSession();
-  }, []);
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        router.replace("/dashboard");
+      }
+    });
+  }, [router]);
 
   const handleLogin = async () => {
     await supabase.auth.signInWithOtp({
@@ -29,24 +40,19 @@ export default function LoginPage() {
         emailRedirectTo: "https://avis-saas-xi.vercel.app/login",
       },
     });
-
-    alert("Vérifie ton email");
+    alert("Vérifie ton email !");
   };
 
   return (
-    <div>
+    <div style={{ padding: 40 }}>
       <h1>Connexion</h1>
-
       <input
         type="email"
-        placeholder="Ton email"
+        placeholder="Votre email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-
-      <button onClick={handleLogin}>
-        Recevoir le lien magique
-      </button>
+      <button onClick={handleLogin}>Envoyer le lien magique</button>
     </div>
   );
 }
