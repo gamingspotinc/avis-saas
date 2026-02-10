@@ -12,11 +12,17 @@ export default function LoginClient() {
   const redirect = searchParams.get("redirect") || "/dashboard";
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        router.push(redirect);
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          router.push(redirect);
+        }
       }
-    });
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, [redirect, router]);
 
   const handleLogin = async () => {
@@ -42,8 +48,7 @@ export default function LoginClient() {
         style={{ padding: 10, width: 300 }}
       />
 
-      <br />
-      <br />
+      <br /><br />
 
       <button onClick={handleLogin} style={{ padding: 10 }}>
         Envoyer le lien magique
