@@ -1,58 +1,42 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  {
-    auth: {
-      flowType: "pkce",
-      detectSessionInUrl: true,
-    },
-  }
-);
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('')
+  const router = useRouter()
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) {
-        router.replace("/dashboard");
+        router.push('/dashboard')
       }
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        router.replace("/dashboard");
-      }
-    });
-  }, [router]);
+    })
+  }, [])
 
   const handleLogin = async () => {
     await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: "https://avis-saas-xi.vercel.app/login",
+        emailRedirectTo: `${location.origin}/dashboard`,
       },
-    });
-    alert("Vérifie ton email !");
-  };
+    })
+
+    alert('Vérifie ton email pour le lien magique ✉️')
+  }
 
   return (
-    <div style={{ padding: 40 }}>
+    <div>
       <h1>Connexion</h1>
       <input
         type="email"
-        placeholder="Votre email"
+        placeholder="Ton email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
-      <button onClick={handleLogin}>Envoyer le lien magique</button>
+      <button onClick={handleLogin}>Recevoir le lien magique</button>
     </div>
-  );
+  )
 }
