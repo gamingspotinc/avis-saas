@@ -8,7 +8,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const router = useRouter();
 
-  // Redirection automatique si session détectée
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) router.replace("/dashboard");
@@ -34,26 +33,39 @@ export default function LoginPage() {
   return (
     <div
       style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        position: "relative",
         minHeight: "100vh",
         backgroundImage: "url('/5stars.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
-      {/* Formulaire encadré */}
+      {/* Overlay noir avec blur */}
       <div
         style={{
+          position: "absolute",
+          inset: 0,
+          backgroundColor: "rgba(0,0,0,0.6)",
+          backdropFilter: "blur(8px)",
+        }}
+      ></div>
+
+      {/* Formulaire centré */}
+      <div
+        style={{
+          position: "relative",
           padding: 40,
           border: "2px solid black",
           borderRadius: 10,
-          backgroundColor: "rgba(255,255,255,0.85)", // semi-transparent pour voir le background
+          backgroundColor: "rgba(0,0,0,0.5)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           minWidth: 300,
+          color: "white",
         }}
       >
         <h1 style={{ marginBottom: 20 }}>Login</h1>
