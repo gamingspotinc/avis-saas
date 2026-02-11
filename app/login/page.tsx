@@ -1,18 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
+  const router = useRouter();
+
+  // Redirection automatique si session détectée
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) router.replace("/dashboard");
+    });
+  }, [router]);
 
   const handleLogin = async () => {
-    await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: "https://avis-saas-xi.vercel.app/auth/confirm",
+        emailRedirectTo: `${window.location.origin}/login`, // on revient sur login, implicit flow
       },
     });
+
+    if (error) {
+      alert("Erreur : " + error.message);
+      return;
+    }
 
     alert("Vérifie ton email pour le lien magique !");
   };

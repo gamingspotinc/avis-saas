@@ -1,35 +1,24 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function Dashboard() {
-  const cookieStore = await cookies();
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options?: any) {
-          cookieStore.set(name, value, options);
-        },
-        remove(name: string, options?: any) {
-          cookieStore.delete(name);
-        },
-      },
-    }
-  );
+export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.replace("/login");
+      } else {
+        setLoading(false);
+      }
+    });
+  }, [router]);
 
-  if (!session) {
-    redirect("/login");
-  }
+  if (loading) return <p>Chargement...</p>;
 
   return <h1>Bienvenue dans le Dashboard PME 🎉</h1>;
 }
