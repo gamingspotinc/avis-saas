@@ -2,38 +2,30 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const code = url.searchParams.get("code"); // PKCE code
 
-  const token_hash = searchParams.get("token");
-  const type = searchParams.get("type");
-
-  const cookieStore = await cookies();
+  if (!code) {
+    return NextResponse.redirect("/login?error=missing_code");
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: any) {
-          cookieStore.set({ name, value, ...options });
-        },
-        remove(name: string, options: any) {
-          cookieStore.set({ name, value: "", ...options });
-        },
-      },
+      cookies: await cookies(), // Next 16
     }
   );
 
-  if (token_hash && type) {
-    await supabase.auth.verifyOtp({
-      type: "email",
-      token_hash,
-    });
+  // Échange le code pour créer la session serveur
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (error) {
+    console.error("Erreur exchangeCodeForSession:", error.message);
+    return NextResponse.redirect(`/login?error=${error.message}`);
   }
 
-  return NextResponse.redirect(new URL("/dashboard", request.url));
+  // Redirection vers le dashboard
+  return NextResponse.redirect("/dashboard");
 }
