@@ -49,81 +49,92 @@ export default function AvisPage() {
 
   return (
     <div
+    style={{
+      minHeight: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      background: "#f4f4f4",
+      fontFamily: "Arial",
+    }}
+  >
+    <div
       style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "#f4f4f4",
-        fontFamily: "Arial",
+        background: "white",
+        padding: 40,
+        borderRadius: 10,
+        boxShadow: "0 0 20px rgba(0,0,0,0.1)",
+        width: 420,
+        textAlign: "center",
       }}
     >
-      <div
-        style={{
-          background: "white",
-          padding: 40,
-          borderRadius: 10,
-          boxShadow: "0 0 20px rgba(0,0,0,0.1)",
-          width: 400,
-          textAlign: "center",
-        }}
-      >
-        <h1>{company.name}</h1>
-        <p>Êtes-vous satisfait de notre service ?</p>
+      <h2>
+        Avez-vous été satisfait du service reçu de la part de <br />
+        <strong>« {company.name} »</strong> ?
+      </h2>
 
-        {!showForm && (
-          <div style={{ marginTop: 20 }}>
-            <button
-              onClick={() =>
-                window.location.href = company.google_review_url
-              }
-              style={{
-                padding: 10,
-                marginRight: 10,
-                cursor: "pointer",
-              }}
-            >
-              ✅ Oui
-            </button>
+      {!showForm && (
+        <div style={{ marginTop: 30, display: "flex", justifyContent: "center", gap: 30 }}>
+          <button
+            onClick={() => (window.location.href = company.google_review_url)}
+            style={{
+              fontSize: 40,
+              cursor: "pointer",
+              background: "none",
+              border: "none",
+            }}
+          >
+            👍
+          </button>
 
-            <button
-              onClick={() => setShowForm(true)}
-              style={{
-                padding: 10,
-                cursor: "pointer",
-              }}
-            >
-              ❌ Non
-            </button>
-          </div>
-        )}
+          <button
+            onClick={() => setShowForm(true)}
+            style={{
+              fontSize: 40,
+              cursor: "pointer",
+              background: "none",
+              border: "none",
+            }}
+          >
+            👎
+          </button>
+        </div>
+      )}
 
-        {showForm && (
-          <div style={{ marginTop: 20 }}>
-            <textarea
-              placeholder="Expliquez-nous ce qui n'a pas bien été..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              style={{
-                width: "100%",
-                height: 100,
-                padding: 10,
-              }}
-            />
-            <button
-              onClick={sendFeedback}
-              style={{
-                marginTop: 10,
-                padding: 10,
-                cursor: "pointer",
-                width: "100%",
-              }}
-            >
-              Envoyer le commentaire
-            </button>
-          </div>
-        )}
-      </div>
+      {showForm && (
+        <div style={{ marginTop: 25 }}>
+          <textarea
+            placeholder="Expliquez-nous ce qui n'a pas bien été..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            style={{
+              width: "100%",
+              height: 100,
+              padding: 10,
+              borderRadius: 6,
+              border: "1px solid #ccc",
+            }}
+          />
+
+          <button
+            onClick={sendFeedback}
+            style={{
+              marginTop: 15,
+              padding: 10,
+              cursor: "pointer",
+              width: "100%",
+              borderRadius: 6,
+              border: "none",
+              background: "#222",
+              color: "white",
+              fontWeight: "bold",
+            }}
+          >
+            Envoyer le commentaire
+          </button>
+        </div>
+      )}
     </div>
-  );
+  </div>
+);
 }
