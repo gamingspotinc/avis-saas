@@ -2,39 +2,43 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
-  const router = useRouter();
-
-  useEffect(() => {
-    // Si le magic link met une session, on va au dashboard
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        router.push("/dashboard");
-      }
-    });
-  }, [router]);
 
   const handleLogin = async () => {
-    await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: "https://avis-saas-xi.vercel.app/login",
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
       },
     });
 
-    alert("Vérifie ton email pour le lien magique !");
+    if (error) {
+      alert("Erreur lors de l'envoi du lien magique : " + error.message);
+    } else {
+      alert("Vérifie ton email pour le lien magique !");
+    }
   };
+
+  // On **supprime la redirection automatique** pour éviter la boucle
+  useEffect(() => {
+    // Optionnel : on peut afficher un message si déjà connecté
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        console.log("Déjà connecté, tu peux aller vers /dashboard");
+        // On ne fait pas router.push ici
+      }
+    });
+  }, []);
 
   return (
     <div
       style={{
-        backgroundImage: "url('/5stars.jpg')",
+        height: "100vh",
+        backgroundImage: "url(/5stars.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        height: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -42,40 +46,29 @@ export default function LoginPage() {
     >
       <div
         style={{
-          backdropFilter: "blur(10px)",
-          backgroundColor: "rgba(0,0,0,0.75)",
+          background: "rgba(0,0,0,0.6)",
           padding: 40,
-          borderRadius: 12,
+          borderRadius: 10,
           color: "white",
-          width: 350,
-          textAlign: "center",
-          boxShadow: "0 0 25px rgba(0,0,0,0.6)",
         }}
       >
-        <h1>Connexion PME</h1>
-
+        <h1>Se connecter</h1>
         <input
           type="email"
           placeholder="Votre email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{
-            width: "100%",
-            padding: 10,
-            marginTop: 20,
-            borderRadius: 6,
-            border: "none",
-          }}
+          style={{ padding: 10, marginTop: 10, width: "100%" }}
         />
-
         <button
           onClick={handleLogin}
           style={{
             marginTop: 20,
             width: "100%",
             padding: 10,
-            borderRadius: 6,
+            backgroundColor: "#FFD700",
             border: "none",
+            borderRadius: 5,
             cursor: "pointer",
             fontWeight: "bold",
           }}

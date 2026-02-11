@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import FeedbackList from "./FeedbackList"; // client component
+import FeedbackList from "./FeedbackList";
 
 export default async function Dashboard() {
   const cookieStore = await cookies();
@@ -23,21 +23,26 @@ export default async function Dashboard() {
     }
   );
 
-  // Vérifie la session
+  // Récupération de la session côté serveur
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  if (!session) redirect("/login");
+  // Si pas de session → reste sur la page login côté client
+  if (!session) {
+    redirect("/login"); // ok si tu es sûr que login ne redirige pas automatiquement
+  }
 
-  // Récupère la PME liée au profil
   const { data: companies } = await supabase
     .from("companies")
     .select("*")
     .eq("owner_id", session.user.id)
     .single();
 
-  if (!companies) redirect("/login"); // si pas de PME, redirige
+  if (!companies) {
+    // Si la PME n'existe pas pour cet utilisateur, reste sur dashboard vide ou login
+    redirect("/login");
+  }
 
   return (
     <div style={{ padding: 20 }}>
@@ -57,8 +62,6 @@ export default async function Dashboard() {
       </div>
 
       <h1>Bienvenue dans le Dashboard {companies.name} 🎉</h1>
-
-      {/* Client Component qui récupère les feedbacks */}
       <FeedbackList companyId={companies.id} />
     </div>
   );
