@@ -19,7 +19,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/login`, // on revient sur login, implicit flow
+        emailRedirectTo: `${window.location.origin}/login`,
       },
     });
 
@@ -32,15 +32,60 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1>Login</h1>
-      <input
-        type="email"
-        placeholder="Votre email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <button onClick={handleLogin}>Recevoir le lien magique</button>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundImage: "url('/5stars.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      {/* Formulaire encadré */}
+      <div
+        style={{
+          padding: 40,
+          border: "2px solid black",
+          borderRadius: 10,
+          backgroundColor: "rgba(255,255,255,0.85)", // semi-transparent pour voir le background
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          minWidth: 300,
+        }}
+      >
+        <h1 style={{ marginBottom: 20 }}>Login</h1>
+
+        <input
+          type="email"
+          placeholder="Votre email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={{
+            padding: 10,
+            width: "100%",
+            marginBottom: 20,
+            borderRadius: 5,
+            border: "1px solid #ccc",
+          }}
+        />
+
+        <button
+          onClick={handleLogin}
+          style={{
+            padding: 10,
+            width: "100%",
+            borderRadius: 5,
+            backgroundColor: "#000",
+            color: "#fff",
+            cursor: "pointer",
+          }}
+        >
+          Recevoir le lien magique
+        </button>
+      </div>
     </div>
   );
 }

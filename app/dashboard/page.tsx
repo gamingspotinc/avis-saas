@@ -18,7 +18,38 @@ export default function Dashboard() {
     });
   }, [router]);
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.replace("/login");
+  };
+
   if (loading) return <p>Chargement...</p>;
 
-  return <h1>Bienvenue dans le Dashboard PME 🎉</h1>;
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+      }}
+    >
+      <h1>Bienvenue dans le Dashboard PME 🎉</h1>
+      <button
+        onClick={handleLogout}
+        style={{
+          marginTop: 20,
+          padding: "10px 20px",
+          borderRadius: 5,
+          border: "none",
+          backgroundColor: "#000",
+          color: "#fff",
+          cursor: "pointer",
+        }}
+      >
+        Déconnexion
+      </button>
+    </div>
+  );
 }
