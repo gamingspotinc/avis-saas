@@ -2,144 +2,128 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useParams } from "next/navigation";
 
-export default function AvisPage({ params }: { params: { slug: string } }) {
-  const [company, setCompany] = useState<any>(null);
-  const [showForm, setShowForm] = useState(false);
+type Company = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+export default function AvisPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+
+  const [company, setCompany] = useState<Company | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [satisfaction, setSatisfaction] = useState<"yes" | "no" | null>(null);
   const [comment, setComment] = useState("");
-  const [sent, setSent] = useState(false);
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [clientName, setClientName] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [clientPhone, setClientPhone] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     const fetchCompany = async () => {
       const { data } = await supabase
         .from("companies")
         .select("*")
-        .eq("slug", params.slug)
+        .eq("slug", slug)
         .single();
 
       setCompany(data);
+      setLoading(false);
     };
 
     fetchCompany();
-  }, [params.slug]);
+  }, [slug]);
 
-  const sendFeedback = async () => {
-    if (!comment) return;
+  const handleSubmit = async () => {
+    if (!company) return;
 
     await supabase.from("feedback").insert({
       company_id: company.id,
-      comment,
-      customer_name: name,
-      customer_email: email,
-      customer_phone: phone,
+      comment: comment || (satisfaction === "yes" ? "Satisfait" : "Non satisfait"),
+      client_name: clientName || null,
+      client_email: clientEmail || null,
+      client_phone: clientPhone || null,
     });
 
-    setSent(true);
+    setSubmitted(true);
   };
 
-  if (!company) return <p>Chargement...</p>;
+  if (loading) return <p>Chargement...</p>;
+  if (!company) return <p>Entreprise introuvable.</p>;
 
-  if (sent)
-    return (
-      <div style={{ textAlign: "center", marginTop: 80 }}>
-        <h2>Merci pour votre retour 🙏</h2>
-        <p>La PME pourra vous recontacter si vous avez laissé vos coordonnées.</p>
-      </div>
-    );
+  if (submitted)
+    return <p>Merci pour votre avis !</p>;
 
   return (
-    <div style={{ textAlign: "center", marginTop: 80, padding: 20 }}>
-      <h1>
-        Avez-vous été satisfait du service reçu de la part de « {company.name} »
-        ?
-      </h1>
+    <div style={{ padding: 20, fontFamily: "sans-serif", maxWidth: 600, margin: "0 auto" }}>
+      <h1>Avez-vous été satisfait du service reçu de la part de «{company.name}» ?</h1>
 
-      <div style={{ marginTop: 40 }}>
-        <button
-          onClick={() => window.location.href = company.google_review_url}
-          style={{
-            fontSize: 60,
-            marginRight: 40,
-            cursor: "pointer",
-            background: "none",
-            border: "none",
-          }}
-        >
-          👍
-        </button>
-
-        <button
-          onClick={() => setShowForm(true)}
-          style={{
-            fontSize: 60,
-            cursor: "pointer",
-            background: "none",
-            border: "none",
-          }}
-        >
-          👎
-        </button>
-      </div>
-
-      {showForm && (
-        <div style={{ marginTop: 30, maxWidth: 500, marginInline: "auto" }}>
-          <textarea
-            placeholder="Expliquez-nous ce qui n'a pas bien été..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            style={{
-              width: "100%",
-              height: 100,
-              padding: 10,
-              borderRadius: 6,
-              border: "1px solid #ccc",
-            }}
-          />
-
-          <p style={{ marginTop: 15, fontWeight: "bold" }}>
-            Laissez vos coordonnées (optionnel) pour un retour d'appel :
-          </p>
-
-          <input
-            placeholder="Votre nom"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ width: "100%", padding: 8, marginTop: 8 }}
-          />
-
-          <input
-            placeholder="Votre email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: 8, marginTop: 8 }}
-          />
-
-          <input
-            placeholder="Votre téléphone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            style={{ width: "100%", padding: 8, marginTop: 8 }}
-          />
-
+      {!satisfaction && (
+        <div style={{ display: "flex", gap: 20, marginTop: 20 }}>
           <button
-            onClick={sendFeedback}
-            style={{
-              marginTop: 15,
-              padding: 10,
-              cursor: "pointer",
-              width: "100%",
-              borderRadius: 6,
-              border: "none",
-              background: "#222",
-              color: "white",
-              fontWeight: "bold",
+            style={{ fontSize: 24, cursor: "pointer" }}
+            onClick={() => {
+              setSatisfaction("yes");
+              setComment("Satisfait");
             }}
           >
-            Envoyer le commentaire
+            👍
+          </button>
+          <button
+            style={{ fontSize: 24, cursor: "pointer" }}
+            onClick={() => setSatisfaction("no")}
+          >
+            👎
+          </button>
+        </div>
+      )}
+
+      {satisfaction === "no" && (
+        <div style={{ marginTop: 20 }}>
+          <textarea
+            placeholder="Laissez un commentaire..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            style={{ width: "100%", height: 100, marginBottom: 10 }}
+          />
+
+          <h4>Vos informations pour un éventuel retour d'appel (optionnel)</h4>
+          <input
+            type="text"
+            placeholder="Nom"
+            value={clientName}
+            onChange={(e) => setClientName(e.target.value)}
+            style={{ width: "100%", marginBottom: 10 }}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={clientEmail}
+            onChange={(e) => setClientEmail(e.target.value)}
+            style={{ width: "100%", marginBottom: 10 }}
+          />
+          <input
+            type="tel"
+            placeholder="Téléphone"
+            value={clientPhone}
+            onChange={(e) => setClientPhone(e.target.value)}
+            style={{ width: "100%", marginBottom: 10 }}
+          />
+
+          <button onClick={handleSubmit} style={{ padding: "10px 20px", cursor: "pointer" }}>
+            Envoyer
+          </button>
+        </div>
+      )}
+
+      {satisfaction === "yes" && (
+        <div style={{ marginTop: 20 }}>
+          <button onClick={handleSubmit} style={{ padding: "10px 20px", cursor: "pointer" }}>
+            Confirmer
           </button>
         </div>
       )}
