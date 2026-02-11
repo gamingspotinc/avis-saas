@@ -5,9 +5,9 @@ import { supabase } from "@/lib/supabaseClient";
 type Feedback = {
   id: string;
   comment: string;
+  client_name?: string;
+  client_phone?: string;
   created_at: string;
-  customer_name?: string;
-  customer_phone?: string;
 };
 
 export default function FeedbackList({ companyId }: { companyId: string }) {
@@ -27,16 +27,29 @@ export default function FeedbackList({ companyId }: { companyId: string }) {
     fetchFeedback();
   }, [companyId]);
 
-  if (!feedbacks.length) return <p>Aucun feedback pour le moment.</p>;
+  if (feedbacks.length === 0) return <p>Aucun commentaire pour le moment.</p>;
 
   return (
     <div>
       {feedbacks.map((f) => (
-        <div key={f.id} style={{ border: "1px solid #ccc", padding: 10, marginBottom: 10 }}>
+        <div
+          key={f.id}
+          style={{
+            padding: 12,
+            marginBottom: 10,
+            border: "1px solid #ccc",
+            borderRadius: 6,
+            backgroundColor: "#f9f9f9",
+          }}
+        >
           <p>{f.comment}</p>
-          {f.customer_name && <p>Nom : {f.customer_name}</p>}
-          {f.customer_phone && <p>Téléphone : {f.customer_phone}</p>}
-          <small>{new Date(f.created_at).toLocaleString()}</small>
+          {f.client_name && (
+            <small>
+              Nom: {f.client_name} {f.client_phone && `| Téléphone: ${f.client_phone}`}
+            </small>
+          )}
+          <br />
+          <small>Le {new Date(f.created_at).toLocaleString()}</small>
         </div>
       ))}
     </div>

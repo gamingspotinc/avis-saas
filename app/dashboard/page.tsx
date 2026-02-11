@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import FeedbackList from "./FeedbackList"; // composant client séparé
 
 export default async function Dashboard() {
   const cookieStore = await cookies();
@@ -24,15 +25,10 @@ export default async function Dashboard() {
     }
   );
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
 
-  if (!session) {
-    redirect("/login");
-  }
+  if (!session) redirect("/login");
 
-  // Récupérer la PME de l'utilisateur connecté
   const { data: profile } = await supabase
     .from("profiles")
     .select("company_id")
@@ -45,9 +41,7 @@ export default async function Dashboard() {
     .eq("id", profile?.company_id)
     .single();
 
-  if (!company) {
-    return <div>Erreur : PME non trouvée</div>;
-  }
+  if (!company) return <div>Erreur : PME non trouvée</div>;
 
   const shareLink = `${process.env.NEXT_PUBLIC_SITE_URL}/avis/${company.slug}`;
 
@@ -60,10 +54,7 @@ export default async function Dashboard() {
             {shareLink}
           </Link>
         </div>
-        <form
-          action="/api/logout"
-          method="POST"
-        >
+        <form action="/api/logout" method="POST">
           <button
             type="submit"
             style={{
@@ -86,65 +77,6 @@ export default async function Dashboard() {
         <h2>Commentaires reçus</h2>
         <FeedbackList companyId={company.id} />
       </div>
-    </div>
-  );
-}
-
-// Composant client pour afficher les commentaires
-"use client";
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-
-type Feedback = {
-  id: string;
-  comment: string;
-  client_name?: string;
-  client_phone?: string;
-  created_at: string;
-};
-
-function FeedbackList({ companyId }: { companyId: string }) {
-  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
-
-  useEffect(() => {
-    const fetchFeedback = async () => {
-      const { data } = await supabase
-        .from("feedback")
-        .select("*")
-        .eq("company_id", companyId)
-        .order("created_at", { ascending: false });
-
-      if (data) setFeedbacks(data as Feedback[]);
-    };
-
-    fetchFeedback();
-  }, [companyId]);
-
-  if (feedbacks.length === 0) return <p>Aucun commentaire pour le moment.</p>;
-
-  return (
-    <div>
-      {feedbacks.map((f) => (
-        <div
-          key={f.id}
-          style={{
-            padding: 12,
-            marginBottom: 10,
-            border: "1px solid #ccc",
-            borderRadius: 6,
-            backgroundColor: "#f9f9f9",
-          }}
-        >
-          <p>{f.comment}</p>
-          {f.client_name && (
-            <small>
-              Nom: {f.client_name} {f.client_phone && `| Téléphone: ${f.client_phone}`}
-            </small>
-          )}
-          <br />
-          <small>Le {new Date(f.created_at).toLocaleString()}</small>
-        </div>
-      ))}
     </div>
   );
 }
