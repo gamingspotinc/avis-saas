@@ -1,13 +1,11 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient"; // <-- IMPORTANT
+import FeedbackList from "./FeedbackList"; // client component
 
 export default async function Dashboard() {
   const cookieStore = await cookies();
-
-  const supabaseServer = createServerClient(
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -15,106 +13,53 @@ export default async function Dashboard() {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options) {
+        set(name: string, value: string, options: any) {
           cookieStore.set(name, value, options);
         },
-        remove(name: string, options) {
+        remove(name: string, options: any) {
           cookieStore.delete(name);
         },
       },
     }
   );
 
+  // Vérifie la session
   const {
     data: { session },
-  } = await supabaseServer.auth.getSession();
+  } = await supabase.auth.getSession();
 
-  if (!session) {
-    redirect("/login");
-  }
+  if (!session) redirect("/login");
 
-  // On récupère la PME du user connecté
-  const { data: companies } = await supabaseServer
+  // Récupère la PME liée au profil
+  const { data: companies } = await supabase
     .from("companies")
     .select("*")
     .eq("owner_id", session.user.id)
     .single();
 
-  const companyId = companies?.id;
-  const companySlug = companies?.slug;
-  const companyName = companies?.name;
+  if (!companies) redirect("/login"); // si pas de PME, redirige
 
   return (
-    <div style={{ padding: 20, fontFamily: "sans-serif" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div style={{ padding: 20 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
           <strong>Voici votre lien de partage :</strong>{" "}
-          <span style={{ backgroundColor: "#eee", padding: "2px 6px", borderRadius: 4 }}>
-            {`https://avis-saas-xi.vercel.app/avis/${companySlug}`}
-          </span>
+          <span>{`${process.env.NEXT_PUBLIC_SITE_URL}/avis/${companies.slug}`}</span>
         </div>
-        <form action="/api/logout" method="POST">
-          <button type="submit" style={{ padding: "6px 12px", cursor: "pointer" }}>
-            Déconnexion
-          </button>
-        </form>
-      </div>
-
-      <h1 style={{ textAlign: "center", margin: "20px 0" }}>
-        Bienvenue dans le Dashboard de {companyName} 🎉
-      </h1>
-
-      <FeedbackList companyId={companyId} />
-    </div>
-  );
-}
-
-// Component client-side pour récupérer et afficher les feedbacks
-function FeedbackList({ companyId }: { companyId: string }) {
-  const [feedbacks, setFeedbacks] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchFeedback = async () => {
-      const { data } = await supabase
-        .from("feedback")
-        .select("*")
-        .eq("company_id", companyId)
-        .order("created_at", { ascending: false });
-
-      if (data) setFeedbacks(data);
-    };
-
-    fetchFeedback();
-  }, [companyId]);
-
-  if (!feedbacks) return <p>Chargement des avis...</p>;
-
-  return (
-    <div style={{ marginTop: 40, textAlign: "center" }}>
-      <h2>Avis des clients</h2>
-      {feedbacks.length === 0 && <p>Aucun avis pour l'instant.</p>}
-      {feedbacks.map((f) => (
-        <div
-          key={f.id}
-          style={{
-            backgroundColor: "#f5f5f5",
-            padding: 12,
-            borderRadius: 8,
-            marginBottom: 10,
-            maxWidth: 600,
-            margin: "10px auto",
-            textAlign: "left",
+        <button
+          onClick={async () => {
+            await supabase.auth.signOut();
+            window.location.href = "/login";
           }}
         >
-          <p>
-            <strong>Commentaire :</strong> {f.comment}
-          </p>
-          {f.client_name && <p><strong>Nom :</strong> {f.client_name}</p>}
-          {f.client_email && <p><strong>Email :</strong> {f.client_email}</p>}
-          {f.client_phone && <p><strong>Téléphone :</strong> {f.client_phone}</p>}
-          <small style={{ color: "#666" }}>{new Date(f.created_at).toLocaleString()}</small>
-        </div>
-      ))}
+          Déconnexion
+        </button>
+      </div>
+
+      <h1>Bienvenue dans le Dashboard {companies.name} 🎉</h1>
+
+      {/* Client Component qui récupère les feedbacks */}
+      <FeedbackList companyId={companies.id} />
     </div>
   );
 }
