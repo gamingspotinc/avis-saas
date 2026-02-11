@@ -7,28 +7,30 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: "https://avis-saas-xi.vercel.app/auth/confirm",
-      },
-    });
+    try {
+      await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          // Lien redirige sur le route server-side confirm
+          emailRedirectTo: "https://avis-saas-xi.vercel.app/auth/confirm",
+        },
+      });
 
-    if (error) {
-      alert("Erreur lors de l'envoi du lien : " + error.message);
-    } else {
       alert("Vérifie ton email pour le lien magique !");
+    } catch (error) {
+      console.error(error);
+      alert("Erreur lors de l'envoi du lien magique.");
     }
   };
 
   return (
     <div
       style={{
-        minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundImage: "url('/5stars.jpg')",
+        height: "100vh",
+        backgroundImage: "url(/5stars.jpg)",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -37,31 +39,29 @@ export default function LoginPage() {
         style={{
           backgroundColor: "rgba(0,0,0,0.6)",
           padding: 40,
-          borderRadius: 10,
-          color: "#fff",
-          display: "flex",
-          flexDirection: "column",
-          gap: 20,
-          minWidth: 300,
+          borderRadius: 8,
+          color: "white",
+          textAlign: "center",
         }}
       >
-        <h1 style={{ textAlign: "center" }}>Connexion</h1>
+        <h1>Se connecter</h1>
         <input
           type="email"
           placeholder="Votre email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: 10, borderRadius: 5, border: "none" }}
+          style={{ padding: 10, marginTop: 20, width: "100%", borderRadius: 4 }}
         />
         <button
           onClick={handleLogin}
           style={{
-            padding: 10,
-            borderRadius: 5,
-            border: "none",
+            marginTop: 20,
+            padding: "10px 20px",
+            borderRadius: 4,
+            cursor: "pointer",
             backgroundColor: "#fff",
             color: "#000",
-            cursor: "pointer",
+            fontWeight: "bold",
           }}
         >
           Recevoir le lien magique
