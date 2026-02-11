@@ -7,14 +7,18 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
 
   const handleLogin = async () => {
-    await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: "https://avis-saas-xi.vercel.app/auth/confirm",
       },
     });
 
-    alert("Vérifie ton email pour le lien magique !");
+    if (error) {
+      alert("Erreur lors de l'envoi du lien : " + error.message);
+    } else {
+      alert("Vérifie ton email pour le lien magique !");
+    }
   };
 
   return (

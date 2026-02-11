@@ -31,12 +31,9 @@ export default async function Dashboard() {
     redirect("/login");
   }
 
-  const companyId = session.user.id; // Ici on suppose que chaque PME est liée à son profile
-
-  // Générer le lien de partage
+  const companyId = session.user.id; // profile.id = auth.uid()
   const shareLink = `https://avis-saas-xi.vercel.app/avis/${companyId}`;
 
-  // Récupérer les feedbacks (Server Side)
   const { data: feedbacks } = await supabase
     .from("feedback")
     .select("*")
