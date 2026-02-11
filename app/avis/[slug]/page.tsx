@@ -9,8 +9,9 @@ export default function AvisPage() {
   const slug = params.slug as string;
 
   const [company, setCompany] = useState<any>(null);
+  const [showForm, setShowForm] = useState(false);
   const [comment, setComment] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [sent, setSent] = useState(false);
 
   useEffect(() => {
     const fetchCompany = async () => {
@@ -26,104 +27,103 @@ export default function AvisPage() {
     fetchCompany();
   }, [slug]);
 
-  const handleSatisfied = () => {
-    // Redirige vers Google (ou autre page avis)
-    window.location.href = `https://www.google.com/search?q=${encodeURIComponent(
-      company.name
-    )}`;
+  const sendFeedback = async () => {
+    await supabase.from("feedback").insert({
+      company_id: company.id,
+      comment,
+    });
+
+    setSent(true);
   };
 
-  const handleNotSatisfied = async () => {
-    if (!comment.trim()) return;
+  if (!company) return <div>Chargement...</div>;
 
-    const { error } = await supabase.from("comments").insert([
-      {
-        content: comment,
-        company_id: company.id,
-        created_at: new Date().toISOString(),
-      },
-    ]);
-
-    if (!error) {
-      setSubmitted(true);
-      setComment("");
-      alert("Merci pour votre commentaire !");
-    }
-  };
-
-  if (!company) return <div>Loading...</div>;
+  if (sent) {
+    return (
+      <div style={{ textAlign: "center", padding: 50 }}>
+        <h2>Merci pour votre retour 🙏</h2>
+        <p>Votre commentaire a été envoyé à l'entreprise.</p>
+      </div>
+    );
+  }
 
   return (
     <div
       style={{
         minHeight: "100vh",
         display: "flex",
-        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: 20,
-        backgroundColor: "#f0f0f0",
+        background: "#f4f4f4",
+        fontFamily: "Arial",
       }}
     >
-      <h1>Laisser un avis pour {company.name}</h1>
+      <div
+        style={{
+          background: "white",
+          padding: 40,
+          borderRadius: 10,
+          boxShadow: "0 0 20px rgba(0,0,0,0.1)",
+          width: 400,
+          textAlign: "center",
+        }}
+      >
+        <h1>{company.name}</h1>
+        <p>Êtes-vous satisfait de notre service ?</p>
 
-      {/* Boutons Satisfait / Non satisfait */}
-      <div style={{ marginTop: 20, marginBottom: 20, display: "flex", gap: 20 }}>
-        <button
-          onClick={handleSatisfied}
-          style={{
-            padding: "10px 20px",
-            borderRadius: 5,
-            border: "none",
-            backgroundColor: "green",
-            color: "#fff",
-            cursor: "pointer",
-          }}
-        >
-          Satisfait
-        </button>
+        {!showForm && (
+          <div style={{ marginTop: 20 }}>
+            <button
+              onClick={() =>
+                window.location.href = company.google_review_url
+              }
+              style={{
+                padding: 10,
+                marginRight: 10,
+                cursor: "pointer",
+              }}
+            >
+              ✅ Oui
+            </button>
 
-        <button
-          onClick={() => setSubmitted(false)}
-          style={{
-            padding: "10px 20px",
-            borderRadius: 5,
-            border: "none",
-            backgroundColor: "red",
-            color: "#fff",
-            cursor: "pointer",
-          }}
-        >
-          Non satisfait
-        </button>
+            <button
+              onClick={() => setShowForm(true)}
+              style={{
+                padding: 10,
+                cursor: "pointer",
+              }}
+            >
+              ❌ Non
+            </button>
+          </div>
+        )}
+
+        {showForm && (
+          <div style={{ marginTop: 20 }}>
+            <textarea
+              placeholder="Expliquez-nous ce qui n'a pas bien été..."
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              style={{
+                width: "100%",
+                height: 100,
+                padding: 10,
+              }}
+            />
+            <button
+              onClick={sendFeedback}
+              style={{
+                marginTop: 10,
+                padding: 10,
+                cursor: "pointer",
+                width: "100%",
+              }}
+            >
+              Envoyer le commentaire
+            </button>
+          </div>
+        )}
       </div>
-
-      {/* Formulaire pour commentaire si Non satisfait */}
-      {!submitted && (
-        <div style={{ width: "50%", display: "flex", flexDirection: "column", gap: 10 }}>
-          <textarea
-            placeholder="Écrire votre commentaire"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            rows={4}
-            style={{ padding: 10, borderRadius: 5, border: "1px solid #ccc" }}
-          />
-          <button
-            onClick={handleNotSatisfied}
-            style={{
-              padding: 10,
-              borderRadius: 5,
-              backgroundColor: "#000",
-              color: "#fff",
-              cursor: "pointer",
-            }}
-          >
-            Envoyer le commentaire
-          </button>
-        </div>
-      )}
-
-      {submitted && <p>Merci pour votre retour !</p>}
     </div>
   );
 }
