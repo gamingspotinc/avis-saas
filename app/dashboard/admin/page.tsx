@@ -2,117 +2,78 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
-
-type Company = {
-  id: string;
-  name: string;
-};
 
 type Feedback = {
   id: string;
-  content: string;
-  created_at: string;
+  comment: string;
+  client_name: string | null;
+  client_email: string | null;
+  client_phone: string | null;
   company_id: string;
+  created_at: string;
 };
 
 export default function AdminPage() {
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | "all">("all");
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const router = useRouter();
+  const [companies, setCompanies] = useState<any[]>([]);
+  const [selectedCompany, setSelectedCompany] = useState<string>("");
 
-  // Vérification admin
   useEffect(() => {
-    const checkAdmin = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session || session.user.email !== "Michael.venne@outlook.com") {
-        router.replace("/login");
-      } else {
-        setIsAdmin(true);
-        setLoading(false);
-      }
-    };
-    checkAdmin();
-  }, [router]);
+    const fetchData = async () => {
+      const { data: feedbackData } = await supabase.from("feedback").select("*");
+      const { data: companyData } = await supabase.from("companies").select("*");
 
-  // PME
-  useEffect(() => {
-    if (!isAdmin) return;
-    const fetchCompanies = async () => {
-      const { data } = await supabase.from("companies").select("*");
-      if (data) setCompanies(data);
+      if (feedbackData) setFeedbacks(feedbackData);
+      if (companyData) setCompanies(companyData);
     };
-    fetchCompanies();
-  }, [isAdmin]);
+    fetchData();
+  }, []);
 
-  // Feedbacks
-  useEffect(() => {
-    if (!isAdmin) return;
-    const fetchFeedbacks = async () => {
-      setLoading(true);
-      let query = supabase.from("feedback").select("*").order("created_at", { ascending: false });
-      if (selectedCompanyId !== "all") {
-        query = query.eq("company_id", selectedCompanyId);
-      }
-      const { data } = await query;
-      if (data) setFeedbacks(data as Feedback[]);
-      setLoading(false);
-    };
-    fetchFeedbacks();
-  }, [selectedCompanyId, isAdmin]);
-
-  if (loading) return <p>Chargement...</p>;
-  if (!isAdmin) return null;
+  const filteredFeedbacks = selectedCompany
+    ? feedbacks.filter((f) => f.company_id === selectedCompany)
+    : feedbacks;
 
   return (
-    <div style={{ padding: 20, minHeight: "100vh" }}>
-      <h1>Admin Dashboard</h1>
+    <div style={{ padding: 20 }}>
+      <h1>Admin Feedback</h1>
 
-      <div style={{ margin: "20px 0" }}>
-        <label htmlFor="companySelect" style={{ marginRight: 10, fontWeight: "bold" }}>
-          Filtrer par PME :
+      <div style={{ marginBottom: 20 }}>
+        <label>
+          Filtrer par entreprise :{" "}
+          <select
+            value={selectedCompany}
+            onChange={(e) => setSelectedCompany(e.target.value)}
+          >
+            <option value="">Toutes</option>
+            {companies.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
         </label>
-        <select
-          id="companySelect"
-          value={selectedCompanyId}
-          onChange={(e) => setSelectedCompanyId(e.target.value)}
-          style={{ padding: 5, borderRadius: 5, border: "1px solid #ccc" }}
-        >
-          <option value="all">Toutes les PME</option>
-          {companies.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
       </div>
 
-      {loading ? (
-        <p>Chargement des feedbacks...</p>
-      ) : feedbacks.length === 0 ? (
-        <p>Aucun feedback trouvé pour cette PME.</p>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {feedbacks.map((f) => (
-            <div
-              key={f.id}
-              style={{
-                padding: 10,
-                border: "1px solid #ccc",
-                borderRadius: 5,
-                backgroundColor: "#f9f9f9",
-              }}
-            >
-              <strong>{companies.find((c) => c.id === f.company_id)?.name || "PME inconnue"}</strong>
-              <p>{f.content}</p>
-              <small>{new Date(f.created_at).toLocaleString()}</small>
-            </div>
-          ))}
+      {filteredFeedbacks.map((f) => (
+        <div
+          key={f.id}
+          style={{
+            backgroundColor: "#f5f5f5",
+            padding: 12,
+            borderRadius: 8,
+            marginBottom: 10,
+            maxWidth: 600,
+          }}
+        >
+          <p>
+            <strong>Commentaire :</strong> {f.comment}
+          </p>
+          {f.client_name && <p><strong>Nom :</strong> {f.client_name}</p>}
+          {f.client_email && <p><strong>Email :</strong> {f.client_email}</p>}
+          {f.client_phone && <p><strong>Téléphone :</strong> {f.client_phone}</p>}
+          <small style={{ color: "#666" }}>{new Date(f.created_at).toLocaleString()}</small>
         </div>
-      )}
+      ))}
     </div>
   );
 }

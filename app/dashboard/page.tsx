@@ -1,136 +1,118 @@
-"use client";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient"; // <-- IMPORTANT
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
+export default async function Dashboard() {
+  const cookieStore = await cookies();
 
-type Feedback = {
-  id: string;
-  comment: string;
-  client_name?: string;
-  client_email?: string;
-  client_phone?: string;
-  created_at: string;
-};
+  const supabaseServer = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options) {
+          cookieStore.set(name, value, options);
+        },
+        remove(name: string, options) {
+          cookieStore.delete(name);
+        },
+      },
+    }
+  );
 
-type Company = {
-  id: string;
-  name: string;
-  slug: string;
-};
+  const {
+    data: { session },
+  } = await supabaseServer.auth.getSession();
 
-export default function DashboardPage() {
-  const [company, setCompany] = useState<Company | null>(null);
-  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  if (!session) {
+    redirect("/login");
+  }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+  // On récupère la PME du user connecté
+  const { data: companies } = await supabaseServer
+    .from("companies")
+    .select("*")
+    .eq("owner_id", session.user.id)
+    .single();
 
-      // Récupérer le user connecté
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        router.push("/login");
-        return;
-      }
-
-      // Vérifier si admin
-      const isAdmin = user.email === "Michael.venne@outlook.com";
-
-      // Récupérer la PME associée (si pas admin)
-      let companyData: Company | null = null;
-      if (!isAdmin) {
-        const { data: companies, error } = await supabase
-          .from("companies")
-          .select("*")
-          .eq("owner_id", user.id)
-          .single();
-
-        if (error) {
-          console.error(error);
-          setLoading(false);
-          return;
-        }
-        companyData = companies;
-        setCompany(companyData);
-      }
-
-      // Récupérer les feedbacks
-      let feedbackData: Feedback[] = [];
-      if (isAdmin) {
-        const { data, error } = await supabase
-          .from("feedback")
-          .select("*")
-          .order("created_at", { ascending: false });
-        if (error) {
-          console.error(error);
-          setLoading(false);
-          return;
-        }
-        feedbackData = data || [];
-      } else if (companyData) {
-        const { data, error } = await supabase
-          .from("feedback")
-          .select("*")
-          .eq("company_id", companyData.id)
-          .order("created_at", { ascending: false });
-        if (error) {
-          console.error(error);
-          setLoading(false);
-          return;
-        }
-        feedbackData = data || [];
-      }
-
-      setFeedbacks(feedbackData);
-      setLoading(false);
-    };
-
-    fetchData();
-  }, [router]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
-  };
-
-  if (loading) return <p style={{ padding: 20 }}>Chargement...</p>;
+  const companyId = companies?.id;
+  const companySlug = companies?.slug;
+  const companyName = companies?.name;
 
   return (
     <div style={{ padding: 20, fontFamily: "sans-serif" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
-        {company && (
-          <div>
-            <strong>Voici votre lien de partage :</strong>{" "}
-            <a
-              href={`https://avis-saas-xi.vercel.app/avis/${company.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              https://avis-saas-xi.vercel.app/avis/{company.slug}
-            </a>
-          </div>
-        )}
-        <button onClick={handleLogout} style={{ cursor: "pointer" }}>
-          Déconnexion
-        </button>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <strong>Voici votre lien de partage :</strong>{" "}
+          <span style={{ backgroundColor: "#eee", padding: "2px 6px", borderRadius: 4 }}>
+            {`https://avis-saas-xi.vercel.app/avis/${companySlug}`}
+          </span>
+        </div>
+        <form action="/api/logout" method="POST">
+          <button type="submit" style={{ padding: "6px 12px", cursor: "pointer" }}>
+            Déconnexion
+          </button>
+        </form>
       </div>
 
-      <h2>Feedbacks</h2>
-      {feedbacks.length === 0 && <p>Aucun feedback pour le moment.</p>}
+      <h1 style={{ textAlign: "center", margin: "20px 0" }}>
+        Bienvenue dans le Dashboard de {companyName} 🎉
+      </h1>
+
+      <FeedbackList companyId={companyId} />
+    </div>
+  );
+}
+
+// Component client-side pour récupérer et afficher les feedbacks
+function FeedbackList({ companyId }: { companyId: string }) {
+  const [feedbacks, setFeedbacks] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      const { data } = await supabase
+        .from("feedback")
+        .select("*")
+        .eq("company_id", companyId)
+        .order("created_at", { ascending: false });
+
+      if (data) setFeedbacks(data);
+    };
+
+    fetchFeedback();
+  }, [companyId]);
+
+  if (!feedbacks) return <p>Chargement des avis...</p>;
+
+  return (
+    <div style={{ marginTop: 40, textAlign: "center" }}>
+      <h2>Avis des clients</h2>
+      {feedbacks.length === 0 && <p>Aucun avis pour l'instant.</p>}
       {feedbacks.map((f) => (
-        <div key={f.id} style={{ border: "1px solid #ccc", padding: 10, marginBottom: 10 }}>
-          <p>{f.comment}</p>
-          {(f.client_name || f.client_email || f.client_phone) && (
-            <p style={{ fontSize: 12, color: "#555" }}>
-              {f.client_name && `Nom: ${f.client_name} `}
-              {f.client_email && `Email: ${f.client_email} `}
-              {f.client_phone && `Téléphone: ${f.client_phone}`}
-            </p>
-          )}
-          <small style={{ color: "#999" }}>{new Date(f.created_at).toLocaleString()}</small>
+        <div
+          key={f.id}
+          style={{
+            backgroundColor: "#f5f5f5",
+            padding: 12,
+            borderRadius: 8,
+            marginBottom: 10,
+            maxWidth: 600,
+            margin: "10px auto",
+            textAlign: "left",
+          }}
+        >
+          <p>
+            <strong>Commentaire :</strong> {f.comment}
+          </p>
+          {f.client_name && <p><strong>Nom :</strong> {f.client_name}</p>}
+          {f.client_email && <p><strong>Email :</strong> {f.client_email}</p>}
+          {f.client_phone && <p><strong>Téléphone :</strong> {f.client_phone}</p>}
+          <small style={{ color: "#666" }}>{new Date(f.created_at).toLocaleString()}</small>
         </div>
       ))}
     </div>
