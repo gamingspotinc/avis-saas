@@ -14,11 +14,11 @@ export async function GET(req: Request) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      cookies: await cookies(), // Next 16
+      cookies: await cookies(),
     }
   );
 
-  // Échange le code pour créer la session serveur
+  // Échange le code PKCE pour créer la session serveur
   const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
@@ -26,6 +26,6 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`/login?error=${error.message}`);
   }
 
-  // Redirection vers le dashboard
+  // Redirige vers le dashboard une fois la session créée
   return NextResponse.redirect("/dashboard");
 }
