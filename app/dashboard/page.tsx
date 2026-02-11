@@ -1,33 +1,43 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function Dashboard() {
-  const cookieStore = await cookies();
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options) {
-          cookieStore.set(name, value, options);
-        },
-        remove(name: string, options) {
-          cookieStore.delete(name);
-        },
-      },
-    }
+export default function Dashboard() {
+  const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.push("/login");
+      }
+    });
+  }, [router]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  return (
+    <div style={{ padding: 40 }}>
+      <button
+        onClick={handleLogout}
+        style={{
+          position: "absolute",
+          top: 20,
+          right: 20,
+          padding: "8px 12px",
+          cursor: "pointer",
+        }}
+      >
+        Déconnexion
+      </button>
+
+      <h1 style={{ textAlign: "center" }}>
+        Bienvenue dans le Dashboard PME 🎉
+      </h1>
+    </div>
   );
-
-  const { data: { session } } = await supabase.auth.getSession();
-
-  if (!session) {
-    redirect("/login");
-  }
-
-  return <h1>Bienvenue dans le Dashboard PME 🎉</h1>;
 }
