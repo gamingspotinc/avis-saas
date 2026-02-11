@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function Dashboard() {
-  const cookieStore = await cookies();
+  const cookieStore = await cookies(); // ✅ OBLIGATOIRE Next 16
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,13 +13,19 @@ export default async function Dashboard() {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set() {},
-        remove() {},
+        set(name: string, value: string, options) {
+          cookieStore.set(name, value, options);
+        },
+        remove(name: string, options) {
+          cookieStore.delete(name);
+        },
       },
     }
   );
 
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
   if (!session) {
     redirect("/login");
