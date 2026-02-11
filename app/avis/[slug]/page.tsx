@@ -2,107 +2,91 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { useParams } from "next/navigation";
 
-export default function AvisPage() {
-  const params = useParams();
-  const slug = params.slug as string;
-
+export default function AvisPage({ params }: { params: { slug: string } }) {
   const [company, setCompany] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
   const [comment, setComment] = useState("");
   const [sent, setSent] = useState(false);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     const fetchCompany = async () => {
       const { data } = await supabase
         .from("companies")
         .select("*")
-        .eq("slug", slug)
+        .eq("slug", params.slug)
         .single();
 
       setCompany(data);
     };
 
     fetchCompany();
-  }, [slug]);
+  }, [params.slug]);
 
   const sendFeedback = async () => {
+    if (!comment) return;
+
     await supabase.from("feedback").insert({
       company_id: company.id,
       comment,
+      customer_name: name,
+      customer_email: email,
+      customer_phone: phone,
     });
 
     setSent(true);
   };
 
-  if (!company) return <div>Chargement...</div>;
+  if (!company) return <p>Chargement...</p>;
 
-  if (sent) {
+  if (sent)
     return (
-      <div style={{ textAlign: "center", padding: 50 }}>
+      <div style={{ textAlign: "center", marginTop: 80 }}>
         <h2>Merci pour votre retour 🙏</h2>
-        <p>Votre commentaire a été envoyé à l'entreprise.</p>
+        <p>La PME pourra vous recontacter si vous avez laissé vos coordonnées.</p>
       </div>
     );
-  }
 
   return (
-    <div
-    style={{
-      minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      background: "#f4f4f4",
-      fontFamily: "Arial",
-    }}
-  >
-    <div
-      style={{
-        background: "white",
-        padding: 40,
-        borderRadius: 10,
-        boxShadow: "0 0 20px rgba(0,0,0,0.1)",
-        width: 420,
-        textAlign: "center",
-      }}
-    >
-      <h2>
-        Avez-vous été satisfait du service reçu de la part de <br />
-        <strong>« {company.name} »</strong> ?
-      </h2>
+    <div style={{ textAlign: "center", marginTop: 80, padding: 20 }}>
+      <h1>
+        Avez-vous été satisfait du service reçu de la part de « {company.name} »
+        ?
+      </h1>
 
-      {!showForm && (
-        <div style={{ marginTop: 30, display: "flex", justifyContent: "center", gap: 30 }}>
-          <button
-            onClick={() => (window.location.href = company.google_review_url)}
-            style={{
-              fontSize: 40,
-              cursor: "pointer",
-              background: "none",
-              border: "none",
-            }}
-          >
-            👍
-          </button>
+      <div style={{ marginTop: 40 }}>
+        <button
+          onClick={() => window.location.href = company.google_review_url}
+          style={{
+            fontSize: 60,
+            marginRight: 40,
+            cursor: "pointer",
+            background: "none",
+            border: "none",
+          }}
+        >
+          👍
+        </button>
 
-          <button
-            onClick={() => setShowForm(true)}
-            style={{
-              fontSize: 40,
-              cursor: "pointer",
-              background: "none",
-              border: "none",
-            }}
-          >
-            👎
-          </button>
-        </div>
-      )}
+        <button
+          onClick={() => setShowForm(true)}
+          style={{
+            fontSize: 60,
+            cursor: "pointer",
+            background: "none",
+            border: "none",
+          }}
+        >
+          👎
+        </button>
+      </div>
 
       {showForm && (
-        <div style={{ marginTop: 25 }}>
+        <div style={{ marginTop: 30, maxWidth: 500, marginInline: "auto" }}>
           <textarea
             placeholder="Expliquez-nous ce qui n'a pas bien été..."
             value={comment}
@@ -114,6 +98,31 @@ export default function AvisPage() {
               borderRadius: 6,
               border: "1px solid #ccc",
             }}
+          />
+
+          <p style={{ marginTop: 15, fontWeight: "bold" }}>
+            Laissez vos coordonnées (optionnel) pour un retour d'appel :
+          </p>
+
+          <input
+            placeholder="Votre nom"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={{ width: "100%", padding: 8, marginTop: 8 }}
+          />
+
+          <input
+            placeholder="Votre email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{ width: "100%", padding: 8, marginTop: 8 }}
+          />
+
+          <input
+            placeholder="Votre téléphone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            style={{ width: "100%", padding: 8, marginTop: 8 }}
           />
 
           <button
@@ -135,6 +144,5 @@ export default function AvisPage() {
         </div>
       )}
     </div>
-  </div>
-);
+  );
 }

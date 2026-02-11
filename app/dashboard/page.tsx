@@ -4,138 +4,98 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
-type Feedback = {
-  id: string;
-  comment: string;
-  created_at: string;
-};
-
 export default function Dashboard() {
+  const [user, setUser] = useState<any>(null);
+  const [company, setCompany] = useState<any>(null);
+  const [feedbacks, setFeedbacks] = useState<any[]>([]);
   const router = useRouter();
 
-  const [shareLink, setShareLink] = useState("");
-  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
-
   useEffect(() => {
-    const init = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!session) {
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
         router.push("/login");
         return;
       }
 
-      // 1️⃣ Trouver le profile
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("company_id")
-        .eq("id", session.user.id)
-        .single();
+      setUser(user);
 
-      if (!profile) return;
-
-      // 2️⃣ Trouver le slug de la company
       const { data: company } = await supabase
         .from("companies")
-        .select("slug")
-        .eq("id", profile.company_id)
+        .select("*")
+        .eq("user_id", user.id)
         .single();
 
-      if (company?.slug) {
-        setShareLink(
-          `https://avis-saas-xi.vercel.app/avis/${company.slug}`
-        );
-      }
+      setCompany(company);
 
-      // 3️⃣ Charger feedbacks
-      const { data: fb } = await supabase
+      const { data: feedbacks } = await supabase
         .from("feedback")
         .select("*")
+        .eq("company_id", company.id)
         .order("created_at", { ascending: false });
 
-      if (fb) setFeedbacks(fb);
+      setFeedbacks(feedbacks || []);
     };
 
-    init();
-  }, [router]);
+    load();
+  }, []);
 
-  const handleLogout = async () => {
+  const logout = async () => {
     await supabase.auth.signOut();
     router.push("/login");
   };
 
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        padding: 40,
-        background: "#f4f4f4",
-        fontFamily: "Arial",
-      }}
-    >
-      {/* Logout */}
-      <button
-        onClick={handleLogout}
-        style={{
-          position: "absolute",
-          top: 20,
-          right: 20,
-          padding: "10px 15px",
-          borderRadius: 6,
-          border: "none",
-          cursor: "pointer",
-          background: "#222",
-          color: "white",
-        }}
-      >
-        Déconnexion
-      </button>
+  if (!company) return <p>Chargement...</p>;
 
-      {/* Bloc lien */}
-      <div
-        style={{
-          background: "white",
-          padding: 20,
-          borderRadius: 10,
-          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-          marginBottom: 40,
-          maxWidth: 700,
-        }}
-      >
-        <h3>📦 Voici votre lien de partage :</h3>
-        <p style={{ wordBreak: "break-all", fontWeight: "bold" }}>
-          {shareLink}
-        </p>
+  return (
+    <div style={{ padding: 40, fontFamily: "Arial" }}>
+      {/* Header */}
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div>
+          <strong>Voici votre lien de partage :</strong>
+          <div style={{ marginTop: 5 }}>
+            <a
+              href={`${window.location.origin}/avis/${company.slug}`}
+              target="_blank"
+            >
+              {window.location.origin}/avis/{company.slug}
+            </a>
+          </div>
+        </div>
+
+        <button onClick={logout}>Déconnexion</button>
       </div>
 
-      {/* Feedback */}
-      <div
-        style={{
-          background: "white",
-          padding: 20,
-          borderRadius: 10,
-          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-          maxWidth: 700,
-          margin: "0 auto",
-        }}
-      >
-        <h2>Commentaires reçus</h2>
+      {/* Feedbacks */}
+      <h2 style={{ textAlign: "center", marginTop: 50 }}>
+        Commentaires reçus
+      </h2>
 
-        {feedbacks.length === 0 && (
-          <p>Aucun commentaire pour le moment.</p>
-        )}
+      <div style={{ maxWidth: 700, margin: "40px auto" }}>
+        {feedbacks.length === 0 && <p>Aucun commentaire pour le moment.</p>}
 
         {feedbacks.map((f) => (
           <div
             key={f.id}
             style={{
-              borderBottom: "1px solid #ddd",
-              padding: "10px 0",
+              border: "1px solid #ddd",
+              borderRadius: 8,
+              padding: 15,
+              marginBottom: 20,
+              background: "#fafafa",
             }}
           >
-            <p>{f.comment}</p>
+            <p><strong>Commentaire :</strong> {f.comment}</p>
+
+            {(f.customer_name || f.customer_email || f.customer_phone) && (
+              <div style={{ marginTop: 10, fontSize: 14 }}>
+                <strong>Coordonnées laissées par le client :</strong>
+                <p>Nom : {f.customer_name || "-"}</p>
+                <p>Email : {f.customer_email || "-"}</p>
+                <p>Téléphone : {f.customer_phone || "-"}</p>
+              </div>
+            )}
+
             <small>
               {new Date(f.created_at).toLocaleString()}
             </small>
