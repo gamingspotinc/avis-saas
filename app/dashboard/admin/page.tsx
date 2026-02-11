@@ -24,7 +24,7 @@ export default function AdminPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
-  // Vérifier l'admin
+  // Vérification admin
   useEffect(() => {
     const checkAdmin = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -38,7 +38,7 @@ export default function AdminPage() {
     checkAdmin();
   }, [router]);
 
-  // Récupérer toutes les PME
+  // PME
   useEffect(() => {
     if (!isAdmin) return;
     const fetchCompanies = async () => {
@@ -48,17 +48,15 @@ export default function AdminPage() {
     fetchCompanies();
   }, [isAdmin]);
 
-  // Récupérer les feedbacks selon la PME sélectionnée
+  // Feedbacks
   useEffect(() => {
     if (!isAdmin) return;
     const fetchFeedbacks = async () => {
       setLoading(true);
       let query = supabase.from("feedback").select("*").order("created_at", { ascending: false });
-
       if (selectedCompanyId !== "all") {
         query = query.eq("company_id", selectedCompanyId);
       }
-
       const { data } = await query;
       if (data) setFeedbacks(data as Feedback[]);
       setLoading(false);
@@ -67,13 +65,12 @@ export default function AdminPage() {
   }, [selectedCompanyId, isAdmin]);
 
   if (loading) return <p>Chargement...</p>;
-  if (!isAdmin) return null; // Sécurité front
+  if (!isAdmin) return null;
 
   return (
     <div style={{ padding: 20, minHeight: "100vh" }}>
       <h1>Admin Dashboard</h1>
 
-      {/* Sélecteur de PME */}
       <div style={{ margin: "20px 0" }}>
         <label htmlFor="companySelect" style={{ marginRight: 10, fontWeight: "bold" }}>
           Filtrer par PME :
@@ -93,7 +90,6 @@ export default function AdminPage() {
         </select>
       </div>
 
-      {/* Feedbacks */}
       {loading ? (
         <p>Chargement des feedbacks...</p>
       ) : feedbacks.length === 0 ? (
@@ -110,9 +106,7 @@ export default function AdminPage() {
                 backgroundColor: "#f9f9f9",
               }}
             >
-              <strong>
-                {companies.find((c) => c.id === f.company_id)?.name || "PME inconnue"}
-              </strong>
+              <strong>{companies.find((c) => c.id === f.company_id)?.name || "PME inconnue"}</strong>
               <p>{f.content}</p>
               <small>{new Date(f.created_at).toLocaleString()}</small>
             </div>

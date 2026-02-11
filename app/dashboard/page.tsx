@@ -1,149 +1,48 @@
-"use client";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
+export default async function Dashboard() {
+  const cookieStore = await cookies();
 
-type Comment = {
-  id: string;
-  content: string;
-  created_at: string;
-};
-
-export default function Dashboard() {
-  const [loading, setLoading] = useState(true);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState("");
-  const router = useRouter();
-
-  const shareLink = `${window.location.origin}/review/pm?companyId=123`; // changer avec id réel PME
-
-  // Vérifie la session
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) router.replace("/login");
-      else setLoading(false);
-    });
-
-    fetchComments();
-  }, [router]);
-
-  // Fetch des commentaires depuis Supabase
-  const fetchComments = async () => {
-    const { data, error } = await supabase
-      .from("comments") // table comments
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (!error && data) setComments(data);
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.replace("/login");
-  };
-
-  const handleAddComment = async () => {
-    if (!newComment.trim()) return;
-    const { error } = await supabase.from("comments").insert([
-      {
-        content: newComment,
-        created_at: new Date().toISOString(),
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options) {
+          cookieStore.set(name, value, options);
+        },
+        remove(name: string, options) {
+          cookieStore.delete(name);
+        },
       },
-    ]);
-    if (!error) {
-      setNewComment("");
-      fetchComments();
     }
-  };
+  );
 
-  if (loading) return <p>Chargement...</p>;
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    redirect("/login");
+  }
 
   return (
-    <div style={{ padding: 20, minHeight: "100vh", position: "relative" }}>
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: 20,
-        }}
-      >
-        <div style={{ backgroundColor: "#eee", padding: 10, borderRadius: 5 }}>
-          <strong>Voici votre lien de partage :</strong>{" "}
-          <span style={{ wordBreak: "break-all" }}>{shareLink}</span>
-        </div>
-
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: "10px 20px",
-            borderRadius: 5,
-            border: "none",
-            backgroundColor: "#000",
-            color: "#fff",
-            cursor: "pointer",
-          }}
-        >
-          Déconnexion
-        </button>
-      </div>
-
-      {/* Zone commentaires */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <h2>Commentaires clients</h2>
-
-        <div style={{ marginBottom: 20, width: "50%" }}>
-          <input
-            type="text"
-            placeholder="Écrire un commentaire"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            style={{
-              padding: 10,
-              width: "100%",
-              borderRadius: 5,
-              border: "1px solid #ccc",
-              marginBottom: 10,
-            }}
-          />
-          <button
-            onClick={handleAddComment}
-            style={{
-              padding: 10,
-              width: "100%",
-              borderRadius: 5,
-              backgroundColor: "#000",
-              color: "#fff",
-              cursor: "pointer",
-            }}
-          >
-            Ajouter commentaire
-          </button>
-        </div>
-
-        <div style={{ width: "50%" }}>
-          {comments.map((c) => (
-            <div
-              key={c.id}
-              style={{
-                padding: 10,
-                marginBottom: 10,
-                border: "1px solid #ccc",
-                borderRadius: 5,
-                backgroundColor: "#f9f9f9",
-              }}
-            >
-              {c.content} <small>({new Date(c.created_at).toLocaleString()})</small>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div
+      style={{
+        padding: 40,
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <h1>Bienvenue dans le Dashboard PME 🎉</h1>
+      <p>Ici tu pourras voir les commentaires laissés par tes clients</p>
     </div>
   );
 }
