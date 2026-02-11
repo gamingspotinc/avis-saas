@@ -27,20 +27,29 @@ export default function Dashboard() {
         return;
       }
 
-      // 1️⃣ Trouver la company du user
+      // 1️⃣ Trouver le profile
       const { data: profile } = await supabase
-  .from("profiles")
-  .select("company_id, companies(slug)")
-  .eq("id", session.user.id)
-  .single();
+        .from("profiles")
+        .select("company_id")
+        .eq("id", session.user.id)
+        .single();
 
-const slug = profile?.companies?.[0]?.slug;
+      if (!profile) return;
 
-if (slug) {
-  setShareLink(`https://avis-saas-xi.vercel.app/avis/${slug}`);
-}
+      // 2️⃣ Trouver le slug de la company
+      const { data: company } = await supabase
+        .from("companies")
+        .select("slug")
+        .eq("id", profile.company_id)
+        .single();
 
-      // 2️⃣ Charger les feedbacks (RLS protège déjà)
+      if (company?.slug) {
+        setShareLink(
+          `https://avis-saas-xi.vercel.app/avis/${company.slug}`
+        );
+      }
+
+      // 3️⃣ Charger feedbacks
       const { data: fb } = await supabase
         .from("feedback")
         .select("*")
@@ -58,43 +67,72 @@ if (slug) {
   };
 
   return (
-    <div style={{ padding: 40 }}>
-      {/* Bouton logout */}
+    <div
+      style={{
+        minHeight: "100vh",
+        padding: 40,
+        background: "#f4f4f4",
+        fontFamily: "Arial",
+      }}
+    >
+      {/* Logout */}
       <button
         onClick={handleLogout}
         style={{
           position: "absolute",
           top: 20,
           right: 20,
-          padding: "8px 12px",
+          padding: "10px 15px",
+          borderRadius: 6,
+          border: "none",
           cursor: "pointer",
+          background: "#222",
+          color: "white",
         }}
       >
         Déconnexion
       </button>
 
-      {/* Lien de partage */}
-      <div style={{ marginBottom: 40 }}>
+      {/* Bloc lien */}
+      <div
+        style={{
+          background: "white",
+          padding: 20,
+          borderRadius: 10,
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+          marginBottom: 40,
+          maxWidth: 700,
+        }}
+      >
         <h3>📦 Voici votre lien de partage :</h3>
-        <a href={shareLink} target="_blank">
+        <p style={{ wordBreak: "break-all", fontWeight: "bold" }}>
           {shareLink}
-        </a>
+        </p>
       </div>
 
-      {/* Feedback au centre */}
-      <div style={{ maxWidth: 700, margin: "0 auto" }}>
+      {/* Feedback */}
+      <div
+        style={{
+          background: "white",
+          padding: 20,
+          borderRadius: 10,
+          boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+          maxWidth: 700,
+          margin: "0 auto",
+        }}
+      >
         <h2>Commentaires reçus</h2>
 
-        {feedbacks.length === 0 && <p>Aucun commentaire pour le moment.</p>}
+        {feedbacks.length === 0 && (
+          <p>Aucun commentaire pour le moment.</p>
+        )}
 
         {feedbacks.map((f) => (
           <div
             key={f.id}
             style={{
-              border: "1px solid #ccc",
-              padding: 15,
-              borderRadius: 8,
-              marginTop: 15,
+              borderBottom: "1px solid #ddd",
+              padding: "10px 0",
             }}
           >
             <p>{f.comment}</p>
