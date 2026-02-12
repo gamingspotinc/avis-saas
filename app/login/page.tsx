@@ -10,8 +10,8 @@ export default function LoginPage() {
     await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo:
-          "https://avis-saas-xi.vercel.app/auth/callback",
+        // ⭐ IMPORTANT : on envoie vers le callback server
+        emailRedirectTo: "https://avis-saas-xi.vercel.app/auth/callback",
       },
     });
 
