@@ -1,44 +1,36 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
+  const router = useRouter();
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOtp({
+    await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/login`,
       },
     });
-
-    if (error) {
-      alert("Erreur lors de l'envoi du lien magique : " + error.message);
-    } else {
-      alert("Vérifie ton email pour le lien magique !");
-    }
+    alert("Vérifie ton email pour le lien magique !");
   };
 
-  // On **supprime la redirection automatique** pour éviter la boucle
   useEffect(() => {
-    // Optionnel : on peut afficher un message si déjà connecté
+    // Si le magic link a créé une session, on redirige vers le dashboard
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        console.log("Déjà connecté, tu peux aller vers /dashboard");
-        // On ne fait pas router.push ici
-      }
+      if (session) router.push("/dashboard");
     });
-  }, []);
+  }, [router]);
 
   return (
     <div
       style={{
-        height: "100vh",
         backgroundImage: "url(/5stars.jpg)",
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -46,10 +38,12 @@ export default function LoginPage() {
     >
       <div
         style={{
-          background: "rgba(0,0,0,0.6)",
+          backdropFilter: "blur(8px)",
+          backgroundColor: "rgba(0,0,0,0.6)",
           padding: 40,
           borderRadius: 10,
-          color: "white",
+          textAlign: "center",
+          color: "#fff",
         }}
       >
         <h1>Se connecter</h1>
@@ -58,19 +52,26 @@ export default function LoginPage() {
           placeholder="Votre email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: 10, marginTop: 10, width: "100%" }}
+          style={{
+            padding: 10,
+            width: "100%",
+            borderRadius: 5,
+            border: "none",
+            marginTop: 10,
+            marginBottom: 10,
+          }}
         />
         <button
           onClick={handleLogin}
           style={{
-            marginTop: 20,
-            width: "100%",
-            padding: 10,
-            backgroundColor: "#FFD700",
+            padding: "10px 20px",
+            backgroundColor: "#000",
+            color: "#fff",
             border: "none",
             borderRadius: 5,
             cursor: "pointer",
             fontWeight: "bold",
+            marginTop: 10,
           }}
         >
           Recevoir le lien magique
