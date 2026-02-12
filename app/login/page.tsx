@@ -1,31 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
-  const router = useRouter();
-
-  useEffect(() => {
-    const handleMagicLink = async () => {
-      // IMPORTANT : lit le #access_token automatiquement
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (session) {
-        router.replace("/dashboard");
-      }
-    };
-
-    handleMagicLink();
-  }, [router]);
 
   const handleLogin = async () => {
     await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: "https://avis-saas-xi.vercel.app/",
+        emailRedirectTo:
+          "https://avis-saas-xi.vercel.app/auth/callback",
       },
     });
 
