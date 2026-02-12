@@ -19,7 +19,7 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    // Si le magic link a créé une session, on redirige vers le dashboard
+    // Redirige automatiquement vers dashboard si la session existe
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) router.push("/dashboard");
     });
@@ -44,6 +44,7 @@ export default function LoginPage() {
           borderRadius: 10,
           textAlign: "center",
           color: "#fff",
+          minWidth: 320,
         }}
       >
         <h1>Se connecter</h1>

@@ -1,81 +1,122 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import FeedbackList from "./FeedbackList"; // composant client séparé
+"use client";
 
-export default async function Dashboard() {
-  const cookieStore = await cookies();
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options) {
-          cookieStore.set(name, value, options);
-        },
-        remove(name: string, options) {
-          cookieStore.delete(name);
-        },
-      },
-    }
-  );
+type Feedback = {
+  id: string;
+  comment: string;
+  created_at: string;
+  client_name?: string;
+  client_phone?: string;
+};
 
-  const { data: { session } } = await supabase.auth.getSession();
+export default function Dashboard() {
+  const router = useRouter();
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [companyName, setCompanyName] = useState<string>("");
+  const [companySlug, setCompanySlug] = useState<string>("");
+  const [loading, setLoading] = useState(true);
 
-  if (!session) redirect("/login");
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("company_id")
-    .eq("id", session.user.id)
-    .single();
+      if (!session) {
+        router.push("/login");
+        return;
+      }
 
-  const { data: company } = await supabase
-    .from("companies")
-    .select("id, name, slug")
-    .eq("id", profile?.company_id)
-    .single();
+      // Récupérer les infos de la PME du profil
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("company_id, companies(name, slug)")
+        .eq("id", session.user.id)
+        .single();
 
-  if (!company) return <div>Erreur : PME non trouvée</div>;
+      if (profileError || !profileData || !profileData.companies) {
+        alert("Erreur lors de la récupération de la PME !");
+        setLoading(false);
+        return;
+      }
 
-  const shareLink = `${process.env.NEXT_PUBLIC_SITE_URL}/avis/${company.slug}`;
+      const company = profileData.companies[0]; // <-- prend le premier élément
+      setCompanyName(company.name);
+      setCompanySlug(company.slug);
+
+      // Récupérer les feedbacks pour cette PME
+      const { data: fbData } = await supabase
+        .from("feedback")
+        .select("*")
+        .eq("company_id", profileData.company_id)
+        .order("created_at", { ascending: false });
+
+      if (fbData) setFeedbacks(fbData);
+
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [router]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  if (loading) return <p style={{ padding: 40 }}>Chargement...</p>;
 
   return (
-    <div style={{ padding: 20, fontFamily: "sans-serif" }}>
+    <div style={{ padding: 40, fontFamily: "sans-serif" }}>
+      {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
         <div>
           <strong>Voici votre lien de partage :</strong>{" "}
-          <Link href={shareLink} target="_blank" style={{ color: "blue" }}>
-            {shareLink}
-          </Link>
+          <span style={{ wordBreak: "break-all" }}>
+            {`${process.env.NEXT_PUBLIC_SITE_URL}/avis/${companySlug}`}
+          </span>
         </div>
-        <form action="/api/logout" method="POST">
-          <button
-            type="submit"
-            style={{
-              padding: "8px 16px",
-              backgroundColor: "#ff4d4f",
-              color: "#fff",
-              border: "none",
-              borderRadius: 4,
-              cursor: "pointer",
-            }}
-          >
-            Déconnexion
-          </button>
-        </form>
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: "6px 12px",
+            backgroundColor: "#000",
+            color: "#fff",
+            border: "none",
+            borderRadius: 4,
+            cursor: "pointer",
+          }}
+        >
+          Déconnexion
+        </button>
       </div>
 
-      <h1>Bienvenue sur le Dashboard PME {company.name} 🎉</h1>
-
-      <div style={{ marginTop: 40 }}>
-        <h2>Commentaires reçus</h2>
-        <FeedbackList companyId={company.id} />
+      {/* Feedbacks */}
+      <div style={{ maxWidth: 700, margin: "0 auto" }}>
+        <h2>Commentaires récents pour {companyName}</h2>
+        {feedbacks.length === 0 && <p>Aucun commentaire pour l'instant.</p>}
+        {feedbacks.map((f) => (
+          <div
+            key={f.id}
+            style={{
+              border: "1px solid #ddd",
+              padding: 12,
+              borderRadius: 6,
+              marginBottom: 12,
+              backgroundColor: "#f9f9f9",
+            }}
+          >
+            <p>{f.comment}</p>
+            {(f.client_name || f.client_phone) && (
+              <small>
+                Contact client : {f.client_name || "-"} {f.client_phone ? `(${f.client_phone})` : ""}
+              </small>
+            )}
+            <br />
+            <small style={{ color: "#666" }}>{new Date(f.created_at).toLocaleString()}</small>
+          </div>
+        ))}
       </div>
     </div>
   );

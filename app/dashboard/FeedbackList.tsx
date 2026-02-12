@@ -1,55 +1,59 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
 type Feedback = {
   id: string;
   comment: string;
-  client_name?: string;
-  client_phone?: string;
+  customer_name?: string;
+  phone?: string;
   created_at: string;
 };
 
-export default function FeedbackList({ companyId }: { companyId: string }) {
+interface Props {
+  companyId: string;
+}
+
+export default function FeedbackList({ companyId }: Props) {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
 
+  const fetchFeedbacks = async () => {
+    const { data } = await supabase
+      .from("feedback")
+      .select("*")
+      .eq("company_id", companyId)
+      .order("created_at", { ascending: false });
+
+    if (data) setFeedbacks(data as Feedback[]);
+  };
+
   useEffect(() => {
-    const fetchFeedback = async () => {
-      const { data } = await supabase
-        .from("feedback")
-        .select("*")
-        .eq("company_id", companyId)
-        .order("created_at", { ascending: false });
-
-      if (data) setFeedbacks(data as Feedback[]);
-    };
-
-    fetchFeedback();
+    fetchFeedbacks();
   }, [companyId]);
 
-  if (feedbacks.length === 0) return <p>Aucun commentaire pour le moment.</p>;
+  if (!feedbacks.length) return <p>Aucun feedback pour le moment.</p>;
 
   return (
-    <div>
+    <div style={{ marginTop: 20 }}>
       {feedbacks.map((f) => (
         <div
           key={f.id}
           style={{
-            padding: 12,
+            backgroundColor: "#f1f1f1",
+            padding: 15,
             marginBottom: 10,
-            border: "1px solid #ccc",
-            borderRadius: 6,
-            backgroundColor: "#f9f9f9",
+            borderRadius: 8,
           }}
         >
           <p>{f.comment}</p>
-          {f.client_name && (
+          {f.customer_name && (
             <small>
-              Nom: {f.client_name} {f.client_phone && `| Téléphone: ${f.client_phone}`}
+              Client: {f.customer_name} {f.phone ? `- Tel: ${f.phone}` : ""}
             </small>
           )}
           <br />
-          <small>Le {new Date(f.created_at).toLocaleString()}</small>
+          <small>Posté le: {new Date(f.created_at).toLocaleString()}</small>
         </div>
       ))}
     </div>
