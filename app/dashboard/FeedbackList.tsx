@@ -6,54 +6,49 @@ import { supabase } from "@/lib/supabaseClient";
 type Feedback = {
   id: string;
   comment: string;
-  customer_name?: string;
-  phone?: string;
   created_at: string;
+  client_name?: string;
+  client_email?: string;
 };
 
-interface Props {
-  companyId: string;
-}
-
-export default function FeedbackList({ companyId }: Props) {
+export default function FeedbackList() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
 
-  const fetchFeedbacks = async () => {
-    const { data } = await supabase
-      .from("feedback")
-      .select("*")
-      .eq("company_id", companyId)
-      .order("created_at", { ascending: false });
-
-    if (data) setFeedbacks(data as Feedback[]);
-  };
-
   useEffect(() => {
-    fetchFeedbacks();
-  }, [companyId]);
+    const fetchFeedbacks = async () => {
+      const { data } = await supabase
+        .from("feedback")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-  if (!feedbacks.length) return <p>Aucun feedback pour le moment.</p>;
+      if (data) setFeedbacks(data);
+    };
+
+    fetchFeedbacks();
+  }, []);
 
   return (
-    <div style={{ marginTop: 20 }}>
+    <div style={{ marginTop: 30 }}>
+      <h2>Commentaires reçus</h2>
+
       {feedbacks.map((f) => (
         <div
           key={f.id}
           style={{
-            backgroundColor: "#f1f1f1",
+            background: "#111",
+            color: "white",
             padding: 15,
-            marginBottom: 10,
+            marginBottom: 15,
             borderRadius: 8,
           }}
         >
           <p>{f.comment}</p>
-          {f.customer_name && (
+
+          {f.client_name && (
             <small>
-              Client: {f.customer_name} {f.phone ? `- Tel: ${f.phone}` : ""}
+              Contact: {f.client_name} ({f.client_email})
             </small>
           )}
-          <br />
-          <small>Posté le: {new Date(f.created_at).toLocaleString()}</small>
         </div>
       ))}
     </div>

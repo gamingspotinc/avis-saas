@@ -1,9 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import FeedbackList from "./FeedbackList";
 
 export default async function Dashboard() {
-  const cookieStore = await cookies(); // Next 16 obligatoirement
+  const cookieStore = await cookies();
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,21 +14,22 @@ export default async function Dashboard() {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options) {
-          cookieStore.set(name, value, options);
-        },
-        remove(name: string, options) {
-          cookieStore.delete(name);
-        },
+        set() {},
+        remove() {},
       },
     }
   );
 
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  if (!session) {
-    redirect("/login");
-  }
+  if (!session) redirect("/login");
 
-  return <h1 style={{ padding: 40 }}>Bienvenue dans le Dashboard PME 🎉</h1>;
+  return (
+    <div style={{ padding: 40 }}>
+      <h1>Dashboard PME</h1>
+      <FeedbackList />
+    </div>
+  );
 }

@@ -9,10 +9,16 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Si un magic link met une session → dashboard
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) router.push("/dashboard");
-    });
+    const handleMagicLink = async () => {
+      // IMPORTANT : lit le #access_token automatiquement
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session) {
+        router.replace("/dashboard");
+      }
+    };
+
+    handleMagicLink();
   }, [router]);
 
   const handleLogin = async () => {
@@ -71,8 +77,8 @@ export default function LoginPage() {
             width: "100%",
             borderRadius: 6,
             border: "none",
-            background: "#ffffff",
-            color: "black",
+            background: "#111",
+            color: "white",
             fontWeight: "bold",
             cursor: "pointer",
           }}
