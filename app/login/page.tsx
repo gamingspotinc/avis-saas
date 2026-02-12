@@ -1,58 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
+export default function Home() {
+  const router = useRouter();
 
-  const handleLogin = async () => {
-    await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: "https://avis-saas-xi.vercel.app/",
-      },
+  useEffect(() => {
+    // IMPORTANT : ceci lit le #access_token du magic link
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        router.push("/dashboard");
+      }
     });
-
-    alert("Vérifie ton email pour le lien magique !");
-  };
+  }, [router]);
 
   return (
     <div style={{
       height: "100vh",
+      background: "url('/5stars.jpg') no-repeat center/cover",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      background: "url('/5stars.jpg') no-repeat center/cover",
-      color: "#fff"
+      color: "white",
+      textAlign: "center"
     }}>
       <div style={{
-        padding: 40,
         background: "rgba(0,0,0,0.7)",
-        borderRadius: 12,
-        textAlign: "center"
+        padding: 50,
+        borderRadius: 12
       }}>
-        <h1>Login</h1>
-        <input
-          type="email"
-          placeholder="Votre email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ padding: 8, marginBottom: 12, width: "100%" }}
-        />
-        <button
-          onClick={handleLogin}
-          style={{
-            padding: "8px 16px",
-            background: "#ff9900",
-            border: "none",
-            borderRadius: 6,
-            cursor: "pointer",
-            fontWeight: "bold"
-          }}
-        >
-          Recevoir le lien magique
-        </button>
+        <h1>Bienvenue sur Avis SaaS</h1>
+        <a href="/login" style={{
+          marginTop: 20,
+          display: "inline-block",
+          padding: "10px 20px",
+          background: "#ff9900",
+          borderRadius: 8,
+          textDecoration: "none",
+          color: "black",
+          fontWeight: "bold"
+        }}>
+          Commencer maintenant
+        </a>
       </div>
     </div>
   );
