@@ -6,7 +6,7 @@ export const supabase = createClient(
   {
     auth: {
       detectSessionInUrl: true, // détecte automatiquement la session depuis le magic link
-      flowType: "implicit",     // flow client-side
+      // flowType implicite supprimé pour PKCE
     },
   }
 );

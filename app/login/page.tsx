@@ -1,21 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    const getSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session) {
+        router.replace("/dashboard");
+      }
+    };
+    getSession();
+  }, [router]);
 
   const handleLogin = async () => {
-    await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        // ⭐ IMPORTANT : on envoie vers le callback server
         emailRedirectTo: "https://avis-saas-xi.vercel.app/auth/callback",
       },
     });
 
-    alert("Vérifie ton email pour le lien magique !");
+    if (error) {
+      alert("Erreur : " + error.message);
+    } else {
+      alert("Vérifie ton email pour le lien magique !");
+    }
   };
 
   return (

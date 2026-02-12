@@ -1,38 +1,16 @@
-import { NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
-export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
-  const code = searchParams.get("code");
+export async function GET(req: Request) {
+  // Supabase va automatiquement détecter le token dans l'URL
+  // detectSessionInUrl = true dans supabaseClient
+  const { data: { session } } = await supabase.auth.getSession();
 
-  if (!code) {
-    return NextResponse.redirect(`${origin}/login`);
+  if (session) {
+    // On peut sauvegarder les cookies si besoin, sinon juste rediriger
+    redirect("/dashboard");
+  } else {
+    redirect("/login");
   }
-
-  // ⚠️ Next 15+ -> cookies est async
-  const cookieStore = await cookies();
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: any) {
-          cookieStore.set({ name, value, ...options });
-        },
-        remove(name: string, options: any) {
-          cookieStore.set({ name, value: "", ...options });
-        },
-      },
-    }
-  );
-
-  // ⭐ LA LIGNE QUI CRÉE LA SESSION
-  await supabase.auth.exchangeCodeForSession(code);
-
-  return NextResponse.redirect(`${origin}/dashboard`);
 }
