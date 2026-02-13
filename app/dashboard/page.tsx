@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import FeedbackList from "@/components/FeedbackList";
+import { useRouter } from "next/navigation";
 
 type Company = {
   id: string;
@@ -11,85 +11,116 @@ type Company = {
   slug: string;
 };
 
-export default function Dashboard() {
+export default function DashboardPage() {
+  const [company, setCompany] = useState<Company | null>(null);
   const router = useRouter();
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Vérifie la session
-    const checkSession = async () => {
+    const loadCompany = async () => {
+      // 1️⃣ On récupère l'utilisateur connecté
       const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (!session) {
-        router.replace("/login");
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        router.push("/login");
         return;
       }
 
-      // Récupère les entreprises de l'utilisateur
+      // 2️⃣ On récupère sa compagnie
       const { data, error } = await supabase
         .from("companies")
-        .select("*")
-        .eq("owner_id", session.user.id);
+        .select("id, name, slug")
+        .eq("owner_id", user.id)
+        .single();
 
       if (error) {
-        console.error("Erreur récupération entreprises:", error.message);
-        setLoading(false);
+        console.error(error);
         return;
       }
 
-      setCompanies(data as Company[]);
-      setLoading(false);
+      setCompany(data);
     };
 
-    checkSession();
+    loadCompany();
   }, [router]);
 
-  if (loading) {
-    return (
-      <div style={{ padding: 50, textAlign: "center", fontSize: 20 }}>
-        Chargement...
-      </div>
-    );
-  }
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
+  if (!company) return <p style={{ padding: 30 }}>Chargement...</p>;
 
   return (
-    <div style={{ padding: 30, fontFamily: "sans-serif" }}>
-      <h1 style={{ textAlign: "center", marginBottom: 30 }}>Dashboard PME</h1>
+    <div
+      style={{
+        padding: 30,
+        minHeight: "100vh",
+        background: "url('/dashboard.jpg') no-repeat center/cover",
+        color: "white",
+        fontFamily: "sans-serif",
+      }}
+    >
+      {/* HEADER */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 40,
+        }}
+      >
+        <h1>Dashboard {company.name}</h1>
 
-      {companies.length === 0 && (
-        <p style={{ textAlign: "center" }}>Aucune entreprise trouvée.</p>
-      )}
-
-      {companies.map((company) => (
-        <div
-          key={company.id}
+        <button
+          onClick={handleLogout}
           style={{
-            marginBottom: 40,
-            padding: 20,
-            background: "rgba(0,0,0,0.75)",
-            backdropFilter: "blur(8px)",
-            borderRadius: 12,
+            background: "#111",
             color: "white",
+            padding: "10px 20px",
+            borderRadius: 6,
+            border: "none",
+            cursor: "pointer",
+            fontWeight: "bold",
           }}
         >
-          <h2 style={{ marginBottom: 10 }}>{company.name}</h2>
-          <p>
-            Voici votre lien de partage :
-            <br />
-            <a
-              href={`/avis/${company.slug}`}
-              target="_blank"
-              style={{ color: "#4ade80", wordBreak: "break-all" }}
-            >
-              {`${window.location.origin}/avis/${company.slug}`}
-            </a>
-          </p>
+          Déconnecter
+        </button>
+      </div>
 
-          <FeedbackList companyId={company.id} />
-        </div>
-      ))}
+      {/* LIEN DE PARTAGE */}
+      <div
+        style={{
+          background: "rgba(0,0,0,0.75)",
+          backdropFilter: "blur(8px)",
+          padding: 20,
+          borderRadius: 10,
+          marginBottom: 40,
+        }}
+      >
+        <h2>Voici votre lien de partage :</h2>
+        <a
+          href={`/avis/${company.slug}`}
+          target="_blank"
+          style={{ color: "#4da6ff", fontSize: 18 }}
+        >
+          https://avis-saas-xi.vercel.app/avis/{company.slug}
+        </a>
+      </div>
+
+      {/* FEEDBACKS */}
+      <div
+        style={{
+          background: "rgba(0,0,0,0.75)",
+          backdropFilter: "blur(8px)",
+          padding: 20,
+          borderRadius: 10,
+        }}
+      >
+        <h2>Commentaires reçus</h2>
+        <FeedbackList companyId={company.id} />
+      </div>
     </div>
   );
 }
