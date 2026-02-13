@@ -17,7 +17,6 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const loadCompany = async () => {
-      // 1️⃣ On récupère l'utilisateur connecté
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -27,7 +26,6 @@ export default function DashboardPage() {
         return;
       }
 
-      // 2️⃣ On récupère sa compagnie
       const { data, error } = await supabase
         .from("companies")
         .select("id, name, slug")
@@ -55,11 +53,11 @@ export default function DashboardPage() {
   return (
     <div
       style={{
-        padding: 30,
         minHeight: "100vh",
-        background: "url('/dashboard.jpg') no-repeat center/cover",
-        color: "white",
+        padding: 40,
         fontFamily: "sans-serif",
+        background: "#111",
+        color: "white",
       }}
     >
       {/* HEADER */}
@@ -71,16 +69,18 @@ export default function DashboardPage() {
           marginBottom: 40,
         }}
       >
-        <h1>Dashboard {company.name}</h1>
+        <h1 style={{ fontSize: "28px" }}>
+          Dashboard {company.name}
+        </h1>
 
         <button
           onClick={handleLogout}
           style={{
-            background: "#111",
+            background: "#000",
             color: "white",
             padding: "10px 20px",
             borderRadius: 6,
-            border: "none",
+            border: "1px solid #444",
             cursor: "pointer",
             fontWeight: "bold",
           }}
@@ -92,18 +92,23 @@ export default function DashboardPage() {
       {/* LIEN DE PARTAGE */}
       <div
         style={{
-          background: "rgba(0,0,0,0.75)",
+          background: "rgba(0,0,0,0.7)",
           backdropFilter: "blur(8px)",
-          padding: 20,
-          borderRadius: 10,
-          marginBottom: 40,
+          padding: 25,
+          borderRadius: 12,
+          marginBottom: 30,
+          border: "1px solid #333",
         }}
       >
         <h2>Voici votre lien de partage :</h2>
         <a
           href={`/avis/${company.slug}`}
           target="_blank"
-          style={{ color: "#4da6ff", fontSize: 18 }}
+          style={{
+            color: "#4da6ff",
+            fontSize: 18,
+            wordBreak: "break-all",
+          }}
         >
           https://avis-saas-xi.vercel.app/avis/{company.slug}
         </a>
@@ -112,10 +117,11 @@ export default function DashboardPage() {
       {/* FEEDBACKS */}
       <div
         style={{
-          background: "rgba(0,0,0,0.75)",
+          background: "rgba(0,0,0,0.7)",
           backdropFilter: "blur(8px)",
-          padding: 20,
-          borderRadius: 10,
+          padding: 25,
+          borderRadius: 12,
+          border: "1px solid #333",
         }}
       >
         <h2>Commentaires reçus</h2>
