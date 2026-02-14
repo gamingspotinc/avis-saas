@@ -43,25 +43,44 @@ export default function AvisPage() {
   }, [slug]);
 
   const handleSubmit = async () => {
-    if (!company) return;
+  if (!company) return;
 
-    const { error } = await supabase.from("feedback").insert({
-      company_id: company.id,
-      comment:
-        comment ||
-        (satisfaction === "yes" ? "Satisfait" : "Non satisfait"),
-      customer_name: clientName || null,
-      customer_email: clientEmail || null,
-      customer_phone: clientPhone || null,
-    });
+  // Récupérer IP via service externe simple
+  const ipRes = await fetch("https://api.ipify.org?format=json");
+  const ipData = await ipRes.json();
+  const clientIp = ipData.ip;
 
-    if (error) {
-      alert("Erreur : " + error.message);
-      return;
-    }
+  // Vérifier si IP a déjà commenté
+  const { data: existing } = await supabase
+    .from("feedback")
+    .select("id")
+    .eq("company_id", company.id)
+    .eq("client_ip", clientIp)
+    .maybeSingle();
 
-    setSubmitted(true);
-  };
+  if (existing) {
+    alert("Vous avez déjà laissé un avis.");
+    return;
+  }
+
+  const { error } = await supabase.from("feedback").insert({
+    company_id: company.id,
+    comment:
+      comment ||
+      (satisfaction === "yes" ? "Satisfait" : "Non satisfait"),
+    customer_name: clientName || null,
+    customer_email: clientEmail || null,
+    customer_phone: clientPhone || null,
+    client_ip: clientIp,
+  });
+
+  if (error) {
+    alert("Erreur : " + error.message);
+    return;
+  }
+
+  setSubmitted(true);
+};
 
   if (loading) return <p style={{ color: "white" }}>Chargement...</p>;
   if (!company) return <p style={{ color: "white" }}>Entreprise introuvable.</p>;
