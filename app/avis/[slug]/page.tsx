@@ -25,11 +25,15 @@ export default function AvisPage() {
 
   useEffect(() => {
     const fetchCompany = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("companies")
         .select("*")
         .eq("slug", slug)
         .single();
+
+      if (error) {
+        console.error(error);
+      }
 
       setCompany(data);
       setLoading(false);
@@ -41,13 +45,20 @@ export default function AvisPage() {
   const handleSubmit = async () => {
     if (!company) return;
 
-    await supabase.from("feedback").insert({
+    const { error } = await supabase.from("feedback").insert({
       company_id: company.id,
-      comment: comment || (satisfaction === "yes" ? "Satisfait" : "Non satisfait"),
-      client_name: clientName || null,
-      client_email: clientEmail || null,
-      client_phone: clientPhone || null,
+      comment:
+        comment ||
+        (satisfaction === "yes" ? "Satisfait" : "Non satisfait"),
+      customer_name: clientName || null,
+      customer_email: clientEmail || null,
+      customer_phone: clientPhone || null,
     });
+
+    if (error) {
+      alert("Erreur : " + error.message);
+      return;
+    }
 
     setSubmitted(true);
   };
@@ -70,7 +81,16 @@ export default function AvisPage() {
           textShadow: "1px 1px 2px black",
         }}
       >
-        <h2>Merci pour votre avis !</h2>
+        <div
+          style={{
+            backgroundColor: "rgba(0,0,0,0.7)",
+            padding: 30,
+            borderRadius: 12,
+            border: "1px solid #444",
+          }}
+        >
+          <h2>Merci pour votre avis !</h2>
+        </div>
       </div>
     );
 
@@ -103,7 +123,14 @@ export default function AvisPage() {
         </h1>
 
         {!satisfaction && (
-          <div style={{ display: "flex", justifyContent: "center", gap: 30, marginTop: 20 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: 30,
+              marginTop: 20,
+            }}
+          >
             <button
               style={{ fontSize: 32, cursor: "pointer" }}
               onClick={() => {
@@ -128,35 +155,67 @@ export default function AvisPage() {
               placeholder="Laissez un commentaire..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              style={{ width: "100%", height: 100, marginBottom: 10, borderRadius: 6 }}
+              style={{
+                width: "100%",
+                height: 100,
+                marginBottom: 10,
+                borderRadius: 6,
+                padding: 10,
+              }}
             />
 
-            <h4>Vos informations pour un éventuel retour d'appel (optionnel)</h4>
+            <h4>
+              Vos informations pour un éventuel retour d'appel (optionnel)
+            </h4>
+
             <input
               type="text"
               placeholder="Nom"
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
-              style={{ width: "100%", marginBottom: 10, borderRadius: 6 }}
+              style={{
+                width: "100%",
+                marginBottom: 10,
+                borderRadius: 6,
+                padding: 8,
+              }}
             />
+
             <input
               type="email"
               placeholder="Email"
               value={clientEmail}
               onChange={(e) => setClientEmail(e.target.value)}
-              style={{ width: "100%", marginBottom: 10, borderRadius: 6 }}
+              style={{
+                width: "100%",
+                marginBottom: 10,
+                borderRadius: 6,
+                padding: 8,
+              }}
             />
+
             <input
               type="tel"
               placeholder="Téléphone"
               value={clientPhone}
               onChange={(e) => setClientPhone(e.target.value)}
-              style={{ width: "100%", marginBottom: 10, borderRadius: 6 }}
+              style={{
+                width: "100%",
+                marginBottom: 10,
+                borderRadius: 6,
+                padding: 8,
+              }}
             />
 
             <button
               onClick={handleSubmit}
-              style={{ padding: "10px 20px", cursor: "pointer", marginTop: 10 }}
+              style={{
+                padding: "10px 20px",
+                cursor: "pointer",
+                marginTop: 10,
+                borderRadius: 6,
+                fontWeight: "bold",
+              }}
             >
               Envoyer
             </button>
@@ -167,7 +226,12 @@ export default function AvisPage() {
           <div style={{ marginTop: 20 }}>
             <button
               onClick={handleSubmit}
-              style={{ padding: "10px 20px", cursor: "pointer" }}
+              style={{
+                padding: "10px 20px",
+                cursor: "pointer",
+                borderRadius: 6,
+                fontWeight: "bold",
+              }}
             >
               Confirmer
             </button>
