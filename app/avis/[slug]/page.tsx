@@ -13,7 +13,9 @@ type Company = {
 
 export default function AvisPage() {
   const params = useParams();
-  const slug = params.slug as string;
+  const slug = Array.isArray(params.slug)
+  ? params.slug[0]
+  : params.slug;
 
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
@@ -99,7 +101,7 @@ export default function AvisPage() {
           backgroundImage: `url(/5stars.jpg)`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          height: "100vh",
+          minHeight: "100vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
