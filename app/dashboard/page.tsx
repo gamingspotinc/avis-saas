@@ -14,6 +14,14 @@ type Company = {
 
 export default function DashboardPage() {
   const [company, setCompany] = useState<Company | null>(null);
+
+  // ✅ NOUVEAU STATE POUR LES STATS
+  const [stats, setStats] = useState({
+    total: 0,
+    positive: 0,
+    negative: 0,
+  });
+
   const router = useRouter();
   const qrRef = useRef<HTMLDivElement>(null);
 
@@ -34,12 +42,28 @@ export default function DashboardPage() {
         .eq("owner_id", user.id)
         .single();
 
-      if (error) {
+      if (error || !data) {
         console.error(error);
         return;
       }
 
       setCompany(data);
+
+      // ✅ NOUVELLE REQUÊTE POUR LES STATS
+      const { data: feedbacks } = await supabase
+        .from("feedback")
+        .select("satisfaction")
+        .eq("company_id", data.id);
+
+      if (feedbacks) {
+        const total = feedbacks.length;
+        const positive = feedbacks.filter(
+          (f) => f.satisfaction === "yes"
+        ).length;
+        const negative = total - positive;
+
+        setStats({ total, positive, negative });
+      }
     };
 
     loadCompany();
@@ -64,6 +88,11 @@ export default function DashboardPage() {
   if (!company) return <p style={{ padding: 30 }}>Chargement...</p>;
 
   const shareUrl = `https://avis-saas-xi.vercel.app/avis/${company.slug}`;
+
+  const satisfactionRate =
+    stats.total > 0
+      ? Math.round((stats.positive / stats.total) * 100)
+      : 0;
 
   return (
     <div
@@ -144,11 +173,7 @@ export default function DashboardPage() {
               justifyContent: "center",
             }}
           >
-            <QRCodeCanvas
-          value={shareUrl}
-          size={220}
-         level="H"
-          />
+            <QRCodeCanvas value={shareUrl} size={220} level="H" />
           </div>
 
           <button
@@ -166,6 +191,38 @@ export default function DashboardPage() {
           >
             Télécharger le QR Code
           </button>
+        </div>
+      </div>
+
+      {/* ✅ NOUVEAU BLOC STATISTIQUES */}
+      <div
+        style={{
+          background: "rgba(0,0,0,0.7)",
+          padding: 25,
+          borderRadius: 12,
+          border: "1px solid #333",
+          marginBottom: 30,
+        }}
+      >
+        <h2>Statistiques</h2>
+
+        <div style={{ fontSize: 22, marginTop: 15 }}>
+          Avis totaux : <b>{stats.total}</b>
+        </div>
+
+        <div
+          style={{
+            fontSize: 28,
+            color: satisfactionRate >= 70 ? "#4CAF50" : "#ff4d4d",
+            marginTop: 15,
+            fontWeight: "bold",
+          }}
+        >
+          Taux de satisfaction : {satisfactionRate}%
+        </div>
+
+        <div style={{ marginTop: 10, color: "#aaa" }}>
+          👍 {stats.positive} positifs | 👎 {stats.negative} négatifs
         </div>
       </div>
 
