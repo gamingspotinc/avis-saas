@@ -12,18 +12,17 @@ export default function HomePage() {
 
   return (
     <main style={{ fontFamily: "sans-serif" }}>
-      {/* SECTION HERO */}
+      {/* HERO SECTION */}
       <section
         style={{
           position: "relative",
           width: "100%",
-          height: "500px",
+          height: "520px",
           display: "flex",
-          flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          color: "white",
           textAlign: "center",
+          color: "white",
           backgroundImage:
             'url("https://images.unsplash.com/photo-1590608897129-79f12774d1d4?auto=format&fit=crop&w=1950&q=80")',
           backgroundSize: "cover",
@@ -33,26 +32,36 @@ export default function HomePage() {
         <div
           style={{
             backgroundColor: "rgba(0,0,0,0.85)",
-            padding: "30px 40px",
-            borderRadius: "12px",
-            maxWidth: "800px",
+            padding: "40px 60px",
+            borderRadius: "16px",
+            maxWidth: "900px",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
           }}
         >
-          <h1 style={{ fontSize: "3rem", marginBottom: "20px" }}>AvisPME</h1>
-          <p style={{ fontSize: "1.5rem", maxWidth: "700px", margin: "0 auto 30px auto" }}>
-            Permet aux petites et moyennes entreprises de recevoir plus d'avis clients sans effort.
+          <h1 style={{ fontSize: "3.2rem", marginBottom: "20px" }}>
+            AvisPME
+          </h1>
+          <p
+            style={{
+              fontSize: "1.6rem",
+              marginBottom: "30px",
+              lineHeight: 1.4,
+            }}
+          >
+            Transformez chaque client satisfait en levier de croissance.
           </p>
           <button
             onClick={handleStart}
             style={{
-              padding: "15px 40px",
+              padding: "16px 50px",
               fontSize: "1.3rem",
-              borderRadius: "8px",
+              borderRadius: "10px",
               border: "none",
               cursor: "pointer",
               backgroundColor: "#111",
               color: "white",
               fontWeight: "bold",
+              transition: "0.3s",
             }}
           >
             Commencer maintenant
@@ -60,129 +69,146 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* SECTION FONCTIONNALITES CLES */}
-      <section style={{ padding: "60px 20px", textAlign: "center", backgroundColor: "#f7f7f7" }}>
-        <h2 style={{ marginBottom: "40px" }}>Fonctionnalités clés</h2>
+      {/* FONCTIONNALITÉS CLÉS */}
+      <section
+        style={{
+          padding: "80px 20px",
+          textAlign: "center",
+          backgroundColor: "#f8f9fb",
+        }}
+      >
+        <h2 style={{ marginBottom: "50px", fontSize: "2rem" }}>
+          Fonctionnalités clés
+        </h2>
 
         <div
           style={{
             display: "flex",
             justifyContent: "center",
-            gap: "30px",
+            gap: "40px",
             flexWrap: "wrap",
           }}
         >
-          <div
-            style={{
-              maxWidth: "250px",
-              textAlign: "center",
-              backgroundColor: "#ffffff",
-              padding: "15px",
-              borderRadius: "12px",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
-            }}
-          >
-            <Image src="/avis.jpg" alt="Avis clients" width={250} height={150} style={{ borderRadius: "10px" }} />
-            <h3>Collecte facile</h3>
-            <p>Les clients laissent un avis directement sur votre page.</p>
-          </div>
-
-          <div
-            style={{
-              maxWidth: "250px",
-              textAlign: "center",
-              backgroundColor: "#ffffff",
-              padding: "15px",
-              borderRadius: "12px",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
-            }}
-          >
-            <Image src="/dashboard.jpg" alt="Dashboard" width={250} height={150} style={{ borderRadius: "10px" }} />
-            <h3>Dashboard simple</h3>
-            <p>Visualisez tous vos commentaires et avis en un seul endroit.</p>
-          </div>
-
-          <div
-            style={{
-              maxWidth: "250px",
-              textAlign: "center",
-              backgroundColor: "#ffffff",
-              padding: "15px",
-              borderRadius: "12px",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
-            }}
-          >
-            <Image src="/reputation.jpg" alt="Réputation" width={250} height={150} style={{ borderRadius: "10px" }} />
-            <h3>Améliorez votre réputation</h3>
-            <p>Transformez les retours clients en arguments de confiance pour votre entreprise.</p>
-          </div>
+          {[
+            {
+              img: "/avis.jpg",
+              title: "Collecte intelligente",
+              text: "Capturez les avis positifs et gérez les retours négatifs avant qu'ils n'affectent Google.",
+            },
+            {
+              img: "/dashboard.jpg",
+              title: "Dashboard stratégique",
+              text: "Analysez vos statistiques et améliorez votre service en temps réel.",
+            },
+            {
+              img: "/reputation.jpg",
+              title: "Réputation optimisée",
+              text: "Augmentez votre crédibilité et inspirez confiance à vos futurs clients.",
+            },
+          ].map((card, index) => (
+            <div
+              key={index}
+              style={{
+                maxWidth: "280px",
+                backgroundColor: "white",
+                padding: "20px",
+                borderRadius: "16px",
+                boxShadow: "0 8px 20px rgba(0,0,0,0.12)",
+                transition: "all 0.3s ease",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-8px)";
+                e.currentTarget.style.boxShadow =
+                  "0 15px 30px rgba(0,0,0,0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0px)";
+                e.currentTarget.style.boxShadow =
+                  "0 8px 20px rgba(0,0,0,0.12)";
+              }}
+            >
+              <Image
+                src={card.img}
+                alt={card.title}
+                width={260}
+                height={150}
+                style={{ borderRadius: "12px" }}
+              />
+              <h3 style={{ marginTop: "15px" }}>{card.title}</h3>
+              <p style={{ marginTop: "10px", fontSize: "0.95rem" }}>
+                {card.text}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* SECTION STATISTIQUES ET POURQUOI AVISPME */}
+      {/* SAVIEZ-VOUS + POURQUOI */}
       <section
         style={{
-          padding: "60px 20px",
+          padding: "70px 20px",
           display: "flex",
           justifyContent: "center",
-          gap: "30px",
+          gap: "40px",
           flexWrap: "wrap",
+          backgroundColor: "#ffffff",
         }}
       >
-        {/* STATISTIQUES */}
         <div
           style={{
-            flex: "1 1 300px",
-            backgroundColor: "rgba(0,0,0,0.1)",
-            borderRadius: "12px",
-            padding: "25px",
-            minWidth: 280,
+            flex: "1 1 320px",
+            backgroundColor: "#f0f2f5",
+            padding: "30px",
+            borderRadius: "16px",
+            boxShadow: "0 6px 15px rgba(0,0,0,0.08)",
           }}
         >
           <h2>Saviez-vous ?</h2>
-          <ul style={{ lineHeight: 1.8, paddingLeft: "20px" }}>
-            <li>
-              <strong>Impact majeur :</strong> Un seul avis négatif peut dissuader <strong>94 %</strong> des clients potentiels.
-            </li>
-            <li>
-              <strong>Risque de faux avis :</strong> Environ <strong>50%</strong> des clients pensent avoir déjà vu de faux avis sur Google.
-            </li>
-            <li>
-              <strong>Réponse aux négatifs :</strong> Seulement <strong>44,6%</strong> des clients continuent d'interagir avec une entreprise si elle répond aux avis négatifs.
-            </li>
-            <li>
-              <strong>Conséquences des faux avis :</strong> Plus de <strong>62% à 83%</strong> des utilisateurs éviteraient une entreprise soupçonnée de publier de faux avis.
-            </li>
+          <ul style={{ lineHeight: 1.9 }}>
+            <li>Un seul avis négatif peut dissuader <strong>94%</strong> des clients.</li>
+            <li><strong>50%</strong> des clients pensent avoir vu de faux avis.</li>
+            <li><strong>44,6%</strong> restent fidèles si l'entreprise répond.</li>
+            <li>Entre <strong>62% et 83%</strong> évitent une entreprise suspecte.</li>
           </ul>
         </div>
 
-        {/* POURQUOI AVISPME */}
         <div
           style={{
-            flex: "1 1 300px",
-            backgroundColor: "rgba(0,0,0,0.1)",
-            borderRadius: "12px",
-            padding: "25px",
-            minWidth: 280,
+            flex: "1 1 320px",
+            backgroundColor: "#f0f2f5",
+            padding: "30px",
+            borderRadius: "16px",
+            boxShadow: "0 6px 15px rgba(0,0,0,0.08)",
           }}
         >
           <h2>Pourquoi AvisPME ?</h2>
           <p style={{ lineHeight: 1.6 }}>
-            Peu ou pas de chance d'avis négatif grâce à une collecte rapide et facile. Améliorez votre réputation, transformez les retours clients en arguments de confiance et prenez de l'avance sur vos concurrents.
+            AvisPME agit comme un filtre intelligent : maximisez vos avis
+            positifs, améliorez votre service grâce aux retours privés et
+            protégez votre réputation en ligne.
           </p>
         </div>
       </section>
 
-      {/* SECTION CONTACT / À PROPOS */}
-      <section style={{ backgroundColor: "#f5f5f5", padding: "60px 20px", textAlign: "center" }}>
-        <h2>À propos</h2>
-        <p style={{ maxWidth: "800px", margin: "20px auto", fontSize: "1.2rem" }}>
-          Pour plus d'informations ou pour mettre en place votre espace AvisPME, contactez-moi :
+      {/* À PROPOS - GRAND RECTANGLE BAS DE PAGE */}
+      <section
+        style={{
+          backgroundColor: "#111",
+          color: "white",
+          padding: "60px 20px",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ marginBottom: "20px" }}>À propos</h2>
+        <p style={{ maxWidth: "800px", margin: "0 auto 20px auto" }}>
+          Pour plus d'informations ou pour mettre en place votre espace AvisPME,
+          contactez-moi :
         </p>
-        <p style={{ fontSize: "1.1rem", margin: "10px 0" }}>
+        <p>
           Téléphone : <strong>1 (450) 204-8334</strong>
         </p>
-        <p style={{ fontSize: "1.1rem", margin: "10px 0" }}>
+        <p>
           Email : <strong>Michael.venne@outlook.com</strong>
         </p>
       </section>
