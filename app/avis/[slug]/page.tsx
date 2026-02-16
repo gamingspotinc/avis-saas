@@ -81,6 +81,7 @@ if (existing) {
       comment:
         comment ||
         (satisfaction === "yes" ? "Satisfait" : "Non satisfait"),
+        satisfaction,
       customer_name: clientName || null,
       customer_email: clientEmail || null,
       customer_phone: clientPhone || null,
