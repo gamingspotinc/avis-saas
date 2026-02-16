@@ -15,7 +15,6 @@ type Company = {
 export default function DashboardPage() {
   const [company, setCompany] = useState<Company | null>(null);
 
-  // ✅ NOUVEAU STATE POUR LES STATS
   const [stats, setStats] = useState({
     total: 0,
     positive: 0,
@@ -49,7 +48,6 @@ export default function DashboardPage() {
 
       setCompany(data);
 
-      // ✅ NOUVELLE REQUÊTE POUR LES STATS
       const { data: feedbacks } = await supabase
         .from("feedback")
         .select("satisfaction")
@@ -133,47 +131,43 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      {/* LIEN + QR */}
+      {/* ✅ SECTION HAUT : QR À GAUCHE / STATS À DROITE */}
       <div
         style={{
-          background: "rgba(0,0,0,0.7)",
-          backdropFilter: "blur(8px)",
-          padding: 25,
-          borderRadius: 12,
+          display: "flex",
+          gap: 30,
           marginBottom: 30,
-          border: "1px solid #333",
-          textAlign: "center",
+          flexWrap: "wrap",
         }}
       >
-        <h2>Voici votre lien de partage :</h2>
-
-        <a
-          href={shareUrl}
-          target="_blank"
+        {/* LIEN + QR */}
+        <div
           style={{
-            color: "#4da6ff",
-            fontSize: 18,
-            wordBreak: "break-all",
+            flex: 1,
+            minWidth: 300,
+            background: "rgba(0,0,0,0.7)",
+            backdropFilter: "blur(8px)",
+            padding: 25,
+            borderRadius: 12,
+            border: "1px solid #333",
           }}
         >
-          {shareUrl}
-        </a>
+          <h2>Votre lien de partage</h2>
 
-        <div style={{ marginTop: 25 }}>
-          <h3>Affichez ce QR dans votre entreprise</h3>
-          <p style={{ color: "#aaa", fontSize: 14 }}>
-            Vos clients peuvent scanner pour laisser un avis rapidement.
-          </p>
-
-          <div
-            ref={qrRef}
+          <a
+            href={shareUrl}
+            target="_blank"
             style={{
-              marginTop: 20,
-              display: "flex",
-              justifyContent: "center",
+              color: "#4da6ff",
+              fontSize: 16,
+              wordBreak: "break-all",
             }}
           >
-            <QRCodeCanvas value={shareUrl} size={220} level="H" />
+            {shareUrl}
+          </a>
+
+          <div style={{ marginTop: 25, textAlign: "center" }}>
+            <QRCodeCanvas value={shareUrl} size={200} level="H" />
           </div>
 
           <button
@@ -192,41 +186,46 @@ export default function DashboardPage() {
             Télécharger le QR Code
           </button>
         </div>
-      </div>
 
-      {/* ✅ NOUVEAU BLOC STATISTIQUES */}
-      <div
-        style={{
-          background: "rgba(0,0,0,0.7)",
-          padding: 25,
-          borderRadius: 12,
-          border: "1px solid #333",
-          marginBottom: 30,
-        }}
-      >
-        <h2>Statistiques</h2>
-
-        <div style={{ fontSize: 22, marginTop: 15 }}>
-          Avis totaux : <b>{stats.total}</b>
-        </div>
-
+        {/* STATISTIQUES */}
         <div
           style={{
-            fontSize: 28,
-            color: satisfactionRate >= 70 ? "#4CAF50" : "#ff4d4d",
-            marginTop: 15,
-            fontWeight: "bold",
+            flex: 1,
+            minWidth: 300,
+            background: "rgba(0,0,0,0.7)",
+            padding: 25,
+            borderRadius: 12,
+            border: "1px solid #333",
           }}
         >
-          Taux de satisfaction : {satisfactionRate}%
-        </div>
+          <h2>Statistiques</h2>
 
-        <div style={{ marginTop: 10, color: "#aaa" }}>
-          👍 {stats.positive} positifs | 👎 {stats.negative} négatifs
+          <div style={{ fontSize: 22, marginTop: 15 }}>
+            Avis totaux : <b>{stats.total}</b>
+          </div>
+
+          <div
+            style={{
+              fontSize: 32,
+              color: satisfactionRate >= 70 ? "#4CAF50" : "#ff4d4d",
+              marginTop: 20,
+              fontWeight: "bold",
+            }}
+          >
+            {satisfactionRate}%
+          </div>
+
+          <div style={{ marginTop: 10, color: "#aaa" }}>
+            👍 {stats.positive} positifs
+          </div>
+
+          <div style={{ marginTop: 5, color: "#aaa" }}>
+            👎 {stats.negative} négatifs
+          </div>
         </div>
       </div>
 
-      {/* FEEDBACKS */}
+      {/* COMMENTAIRES */}
       <div
         style={{
           background: "rgba(0,0,0,0.7)",
