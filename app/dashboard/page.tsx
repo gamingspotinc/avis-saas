@@ -54,14 +54,16 @@ export default function DashboardPage() {
         .eq("company_id", data.id);
 
       if (feedbacks) {
-        const total = feedbacks.length;
+       const total = feedbacks.length;
         const positive = feedbacks.filter(
-          (f) => f.satisfaction === "yes"
-        ).length;
-        const negative = total - positive;
+       (f) => f.satisfaction?.toLowerCase() === "yes"
+     ).length;
+       const negative = feedbacks.filter(
+      (f) => f.satisfaction?.toLowerCase() === "no"
+     ).length;
 
-        setStats({ total, positive, negative });
-      }
+  setStats({ total, positive, negative });
+}
     };
 
     loadCompany();
