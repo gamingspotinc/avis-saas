@@ -55,16 +55,26 @@ export default function AvisPage() {
 
     // Vérifier si IP a déjà commenté
     const { data: existing } = await supabase
-      .from("feedback")
-      .select("id")
-      .eq("company_id", company.id)
-      .eq("client_ip", clientIp)
-      .maybeSingle();
+  .from("feedback")
+  .select("created_at")
+  .eq("company_id", company.id)
+  .eq("client_ip", clientIp)
+  .order("created_at", { ascending: false })
+  .limit(1)
+  .maybeSingle();
 
-    if (existing) {
-      alert("Vous avez déjà laissé un avis.");
-      return;
-    }
+if (existing) {
+  const lastDate = new Date(existing.created_at);
+  const now = new Date();
+
+  const diffInMs = now.getTime() - lastDate.getTime();
+  const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
+
+  if (diffInDays < 7) {
+    alert("Vous avez déjà laissé un avis récemment. Merci de revenir dans quelques jours 😊");
+    return;
+  }
+}
 
     const { error } = await supabase.from("feedback").insert({
       company_id: company.id,
