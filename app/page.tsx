@@ -12,6 +12,7 @@ export default function HomePage() {
 
   return (
     <main style={{ fontFamily: "sans-serif" }}>
+      {/* SECTION HERO */}
       <section
         style={{
           position: "relative",
@@ -59,11 +60,55 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* SECTION STATISTIQUES + POURQUOI AVISPME */}
+      <section style={{ display: "flex", justifyContent: "center", gap: "50px", padding: "60px 20px", flexWrap: "wrap" }}>
+        {/* STATISTIQUES */}
+        <div
+          style={{
+            flex: "1 1 300px",
+            backgroundColor: "rgba(0,0,0,0.05)",
+            borderRadius: "12px",
+            padding: "20px",
+            minWidth: 280,
+          }}
+        >
+          <h2>Saviez-vous ?</h2>
+          <ul style={{ lineHeight: 1.8, paddingLeft: "20px" }}>
+            <li>
+              <strong>Impact majeur :</strong> Un seul avis négatif peut dissuader <strong>94 %</strong> des clients potentiels.
+            </li>
+            <li>
+              <strong>Risque de faux avis :</strong> Environ <strong>50 %</strong> des clients pensent avoir déjà vu de faux avis sur Google.
+            </li>
+            <li>
+              <strong>Réponse aux négatifs :</strong> <strong>44,6 %</strong> des clients continuent d'interagir avec une entreprise si elle répond aux avis négatifs.
+            </li>
+            <li>
+              <strong>Conséquences des faux avis :</strong> <strong>62 % à 83 %</strong> des utilisateurs éviteraient une entreprise soupçonnée de publier de faux avis.
+            </li>
+          </ul>
+        </div>
+
+        {/* POURQUOI AVISPME */}
+        <div
+          style={{
+            flex: "1 1 300px",
+            backgroundColor: "rgba(0,0,0,0.05)",
+            borderRadius: "12px",
+            padding: "20px",
+            minWidth: 280,
+          }}
+        >
+          <h2>Pourquoi AvisPME ?</h2>
+          <p style={{ lineHeight: 1.6 }}>
+            Peu ou pas de chance d'avis négatif grâce à une collecte rapide et facile. Améliorez votre réputation, transformez les retours clients en arguments de confiance et prenez de l'avance sur vos concurrents.
+          </p>
+        </div>
+      </section>
+
+      {/* SECTION AVANTAGES */}
       <section style={{ padding: "60px 20px", textAlign: "center" }}>
-        <h2>Pourquoi utiliser AvisPME ?</h2>
-        <p style={{ maxWidth: "800px", margin: "20px auto", fontSize: "1.2rem" }}>
-          Augmentez la visibilité de votre entreprise, collectez facilement les retours clients et améliorez votre réputation en ligne.
-        </p>
+        <h2>Fonctionnalités clés</h2>
 
         <div
           style={{
@@ -94,6 +139,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* SECTION CONTACT */}
       <section style={{ backgroundColor: "#f5f5f5", padding: "60px 20px", textAlign: "center" }}>
         <h2>À propos</h2>
         <p style={{ maxWidth: "800px", margin: "20px auto", fontSize: "1.2rem" }}>
