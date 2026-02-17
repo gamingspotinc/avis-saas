@@ -70,7 +70,7 @@ export default function HomePage() {
 
           <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={() => router.push("/start")}
               style={{
                 padding: "18px 60px",
                 fontSize: "1.2rem",
