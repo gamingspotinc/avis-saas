@@ -2,202 +2,170 @@
 
 import { useRouter } from "next/navigation";
 
-export default function HomePage() {
+export default function PricingPage() {
   const router = useRouter();
 
   return (
-    <main style={{ fontFamily: "sans-serif", color: "#111" }}>
-      {/* HERO SECTION */}
+    <main style={{ fontFamily: "sans-serif", padding: "80px 20px" }}>
+      
+      {/* HEADER */}
+      <section style={{ textAlign: "center", marginBottom: "60px" }}>
+        <h1 style={{ fontSize: "3rem", marginBottom: "20px" }}>
+          Tarification simple et stratégique
+        </h1>
+        <p style={{ fontSize: "1.3rem", maxWidth: "700px", margin: "0 auto" }}>
+          Investissez dans votre réputation. Choisissez le plan adapté à la
+          croissance de votre entreprise.
+        </p>
+      </section>
+
+      {/* PLANS */}
       <section
         style={{
-          position: "relative",
-          height: "600px",
           display: "flex",
           justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-          color: "white",
-          background:
-            "linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1556745757-8d76bdb6984b?auto=format&fit=crop&w=1950&q=80')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          padding: "20px",
+          gap: "40px",
+          flexWrap: "wrap",
         }}
       >
-        <div style={{ maxWidth: "900px" }}>
-          <h1 style={{ fontSize: "3.5rem", marginBottom: "20px" }}>
-            Protégez votre réputation. Augmentez vos revenus.
-          </h1>
+        {/* ESSENTIEL */}
+        <div
+          style={{
+            backgroundColor: "#f8f9fb",
+            padding: "40px",
+            borderRadius: "16px",
+            width: "300px",
+            textAlign: "center",
+            boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+          }}
+        >
+          <h2>Essentiel</h2>
+          <h3 style={{ fontSize: "2rem", margin: "20px 0" }}>49$/mois</h3>
+          <p>Idéal pour démarrer.</p>
 
-          <p style={{ fontSize: "1.6rem", marginBottom: "35px" }}>
-            AvisPME transforme chaque client satisfait en levier de croissance,
-            tout en gardant les retours négatifs privés.
-          </p>
+          <ul style={{ textAlign: "left", marginTop: "20px", lineHeight: 1.8 }}>
+            <li>QR personnalisé</li>
+            <li>Collecte d’avis illimitée</li>
+            <li>Redirection Google</li>
+            <li>Dashboard de base</li>
+          </ul>
 
           <button
             onClick={() => router.push("/dashboard")}
             style={{
-              padding: "18px 60px",
-              fontSize: "1.2rem",
-              fontWeight: "bold",
-              borderRadius: "10px",
+              marginTop: "30px",
+              padding: "12px 30px",
+              borderRadius: "8px",
               border: "none",
               cursor: "pointer",
-              backgroundColor: "#ffffff",
+              backgroundColor: "#111",
+              color: "white",
+            }}
+          >
+            Commencer
+          </button>
+        </div>
+
+        {/* PRO (POPULAIRE) */}
+        <div
+          style={{
+            backgroundColor: "#111",
+            color: "white",
+            padding: "50px",
+            borderRadius: "16px",
+            width: "320px",
+            textAlign: "center",
+            boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
+            transform: "scale(1.05)",
+          }}
+        >
+          <h2>Pro</h2>
+          <p style={{ color: "#00ffcc", fontWeight: "bold" }}>
+            ⭐ Le plus populaire
+          </p>
+          <h3 style={{ fontSize: "2.5rem", margin: "20px 0" }}>99$/mois</h3>
+
+          <ul style={{ textAlign: "left", marginTop: "20px", lineHeight: 1.8 }}>
+            <li>Toutes les fonctionnalités Essentiel</li>
+            <li>Statistiques avancées</li>
+            <li>Historique complet des clients</li>
+            <li>Réévaluation après 7 jours</li>
+            <li>Support prioritaire</li>
+          </ul>
+
+          <button
+            onClick={() => router.push("/dashboard")}
+            style={{
+              marginTop: "30px",
+              padding: "14px 35px",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+              backgroundColor: "#00ffcc",
               color: "#111",
-              transition: "0.3s",
+              fontWeight: "bold",
             }}
           >
             Protéger mon entreprise
           </button>
         </div>
-      </section>
 
-      {/* IMPACT BUSINESS */}
-      <section
-        style={{
-          padding: "80px 20px",
-          textAlign: "center",
-          backgroundColor: "#f8f9fb",
-        }}
-      >
-        <h2 style={{ fontSize: "2.2rem", marginBottom: "50px" }}>
-          Votre réputation influence directement vos revenus
-        </h2>
-
+        {/* ELITE */}
         <div
           style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "40px",
-            flexWrap: "wrap",
+            backgroundColor: "#f8f9fb",
+            padding: "40px",
+            borderRadius: "16px",
+            width: "300px",
+            textAlign: "center",
+            boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
           }}
         >
-          {[
-            "93% des consommateurs lisent les avis avant d'acheter.",
-            "1 seul avis négatif peut réduire vos conversions jusqu'à 30%.",
-            "44% des clients restent fidèles si vous répondez aux critiques.",
-            "Une meilleure note Google augmente votre visibilité locale.",
-          ].map((text, index) => (
-            <div
-              key={index}
-              style={{
-                maxWidth: "280px",
-                backgroundColor: "white",
-                padding: "25px",
-                borderRadius: "14px",
-                boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
-              }}
-            >
-              <p style={{ fontSize: "1rem", lineHeight: 1.5 }}>{text}</p>
-            </div>
-          ))}
+          <h2>Elite</h2>
+          <h3 style={{ fontSize: "2rem", margin: "20px 0" }}>149$/mois</h3>
+          <p>Pour entreprises ambitieuses.</p>
+
+          <ul style={{ textAlign: "left", marginTop: "20px", lineHeight: 1.8 }}>
+            <li>Toutes les fonctionnalités Pro</li>
+            <li>Analyse stratégique avancée</li>
+            <li>Rapports mensuels PDF</li>
+            <li>Consultation stratégique</li>
+          </ul>
+
+          <button
+            onClick={() => router.push("/dashboard")}
+            style={{
+              marginTop: "30px",
+              padding: "12px 30px",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+              backgroundColor: "#111",
+              color: "white",
+            }}
+          >
+            Commencer
+          </button>
         </div>
       </section>
 
-      {/* COMMENT CA FONCTIONNE */}
+      {/* GARANTIE */}
       <section
         style={{
-          padding: "90px 20px",
+          marginTop: "80px",
           textAlign: "center",
+          maxWidth: "700px",
+          marginLeft: "auto",
+          marginRight: "auto",
         }}
       >
-        <h2 style={{ fontSize: "2.2rem", marginBottom: "60px" }}>
-          Comment AvisPME protège votre entreprise
-        </h2>
-
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "50px",
-            flexWrap: "wrap",
-          }}
-        >
-          {[
-            "1. Le client scanne votre QR personnalisé.",
-            "2. Client satisfait → Redirection vers Google.",
-            "3. Client insatisfait → Feedback privé.",
-            "4. Vous améliorez votre service avant que cela nuise à votre image.",
-          ].map((step, index) => (
-            <div
-              key={index}
-              style={{
-                maxWidth: "260px",
-              }}
-            >
-              <h3 style={{ fontSize: "1.2rem", marginBottom: "10px" }}>
-                Étape {index + 1}
-              </h3>
-              <p>{step}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* VALEUR PREMIUM */}
-      <section
-        style={{
-          padding: "80px 20px",
-          backgroundColor: "#f8f9fb",
-          textAlign: "center",
-        }}
-      >
-        <h2 style={{ fontSize: "2.2rem", marginBottom: "40px" }}>
-          Une solution complète de gestion de réputation
-        </h2>
-
-        <p
-          style={{
-            maxWidth: "800px",
-            margin: "0 auto",
-            fontSize: "1.2rem",
-            lineHeight: 1.6,
-          }}
-        >
-          Dashboard stratégique, statistiques en temps réel, QR personnalisé,
-          historique client et système intelligent de gestion des retours.
-          AvisPME n'est pas un simple outil d'avis — c'est un système de
-          protection et d’optimisation de réputation.
+        <h2>Investissement sans risque</h2>
+        <p style={{ fontSize: "1.1rem", marginTop: "20px" }}>
+          Annulez à tout moment. Aucun engagement à long terme.
+          Votre réputation mérite un système stratégique.
         </p>
       </section>
 
-      {/* ROI SECTION */}
-      <section
-        style={{
-          padding: "90px 20px",
-          textAlign: "center",
-        }}
-      >
-        <h2 style={{ fontSize: "2.2rem", marginBottom: "30px" }}>
-          Combien vaut une meilleure réputation ?
-        </h2>
-
-        <p style={{ maxWidth: "700px", margin: "0 auto", fontSize: "1.2rem" }}>
-          Si une meilleure note Google vous apporte seulement 3 nouveaux clients
-          par mois, AvisPME est déjà rentabilisé. Votre réputation est un actif.
-          Protégez-la.
-        </p>
-      </section>
-
-      {/* FOOTER PREMIUM */}
-      <section
-        style={{
-          backgroundColor: "#111",
-          color: "white",
-          padding: "70px 20px",
-          textAlign: "center",
-        }}
-      >
-        <h2 style={{ marginBottom: "20px" }}>AvisPME</h2>
-
-        <p style={{ marginBottom: "20px" }}>
-          Système stratégique de protection et d’optimisation de réputation
-          pour PME ambitieuses.
-        </p>
-
-        <p>Contact : Michael.venne@outlook.com</p>
-      </section>
     </main>
   );
 }
