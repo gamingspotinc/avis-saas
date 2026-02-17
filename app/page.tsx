@@ -1,12 +1,46 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function HomePage() {
   const router = useRouter();
 
   return (
-    <main style={{ fontFamily: "sans-serif", color: "#111" }}>
+    <main style={{ fontFamily: "sans-serif", color: "#111", paddingTop: "80px" }}>
+
+      {/* NAVBAR FIXE */}
+      <nav
+        style={{
+          position: "fixed",
+          top: 0,
+          width: "100%",
+          padding: "15px 40px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          backgroundColor: "rgba(0,0,0,0.9)",
+          color: "white",
+          zIndex: 1000,
+        }}
+      >
+        <h3 style={{ margin: 0 }}>AvisPME</h3>
+
+        <div style={{ display: "flex", gap: "30px" }}>
+          <Link href="/" style={{ color: "white", textDecoration: "none" }}>
+            Accueil
+          </Link>
+
+          <Link href="/pricing" style={{ color: "white", textDecoration: "none" }}>
+            Tarifs
+          </Link>
+
+          <Link href="/dashboard" style={{ color: "white", textDecoration: "none" }}>
+            Connexion
+          </Link>
+        </div>
+      </nav>
+
       {/* HERO SECTION */}
       <section
         style={{
@@ -34,22 +68,39 @@ export default function HomePage() {
             tout en gardant les retours négatifs privés.
           </p>
 
-          <button
-            onClick={() => router.push("/dashboard")}
-            style={{
-              padding: "18px 60px",
-              fontSize: "1.2rem",
-              fontWeight: "bold",
-              borderRadius: "10px",
-              border: "none",
-              cursor: "pointer",
-              backgroundColor: "#ffffff",
-              color: "#111",
-              transition: "0.3s",
-            }}
-          >
-            Protéger mon entreprise
-          </button>
+          <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
+            <button
+              onClick={() => router.push("/dashboard")}
+              style={{
+                padding: "18px 60px",
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                borderRadius: "10px",
+                border: "none",
+                cursor: "pointer",
+                backgroundColor: "#ffffff",
+                color: "#111",
+              }}
+            >
+              Protéger mon entreprise
+            </button>
+
+            <button
+              onClick={() => router.push("/pricing")}
+              style={{
+                padding: "18px 60px",
+                fontSize: "1.1rem",
+                fontWeight: "bold",
+                borderRadius: "10px",
+                border: "2px solid white",
+                cursor: "pointer",
+                backgroundColor: "transparent",
+                color: "white",
+              }}
+            >
+              Voir les tarifs
+            </button>
+          </div>
         </div>
       </section>
 
@@ -120,12 +171,7 @@ export default function HomePage() {
             "3. Client insatisfait → Feedback privé.",
             "4. Vous améliorez votre service avant que cela nuise à votre image.",
           ].map((step, index) => (
-            <div
-              key={index}
-              style={{
-                maxWidth: "260px",
-              }}
-            >
+            <div key={index} style={{ maxWidth: "260px" }}>
               <h3 style={{ fontSize: "1.2rem", marginBottom: "10px" }}>
                 Étape {index + 1}
               </h3>
