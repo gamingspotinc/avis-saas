@@ -1,241 +1,124 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import FeedbackList from "@/components/FeedbackList";
-import { useRouter } from "next/navigation";
-import { QRCodeCanvas } from "qrcode.react";
-
-type Company = {
-  id: string;
-  name: string;
-  slug: string;
-};
-
 export default function DashboardPage() {
-  const [company, setCompany] = useState<Company | null>(null);
-
-  const [stats, setStats] = useState({
-    total: 0,
-    positive: 0,
-    negative: 0,
-  });
-
-  const router = useRouter();
-  const qrRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const loadCompany = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        router.push("/login");
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("companies")
-        .select("id, name, slug")
-        .eq("owner_id", user.id)
-        .single();
-
-      if (error || !data) {
-        console.error(error);
-        return;
-      }
-
-      setCompany(data);
-
-      const { data: feedbacks } = await supabase
-        .from("feedback")
-        .select("satisfaction")
-        .eq("company_id", data.id);
-
-      if (feedbacks) {
-        const total = feedbacks.length;
-        const positive = feedbacks.filter(f => f.satisfaction?.toLowerCase() === "yes").length;
-        const negative = feedbacks.filter(f => f.satisfaction?.toLowerCase() === "no").length;
-
-  setStats({ total, positive, negative });
-}
-    };
-
-    loadCompany();
-  }, [router]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
-  };
-
-  const downloadQR = () => {
-    const canvas = qrRef.current?.querySelector("canvas");
-    if (!canvas) return;
-
-    const url = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "qr-code-avis.png";
-    link.click();
-  };
-
-  if (!company) return <p style={{ padding: 30 }}>Chargement...</p>;
-
-  const shareUrl = `https://avis-saas-xi.vercel.app/avis/${company.slug}`;
-
-  const satisfactionRate =
-    stats.total > 0
-      ? Math.round((stats.positive / stats.total) * 100)
-      : 0;
-
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        padding: 40,
-        fontFamily: "sans-serif",
-        background: "#111",
-        color: "white",
-      }}
-    >
-      {/* HEADER */}
+    <div>
+      <h1 style={{ fontSize: "2.5rem", marginBottom: "40px" }}>
+        Tableau de bord
+      </h1>
+
+      {/* KPI CARDS */}
       <div
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 40,
+          display: "grid",
+          gap: "30px",
+          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          marginBottom: "60px",
         }}
       >
-        <h1 style={{ fontSize: "28px" }}>
-          Dashboard {company.name}
-        </h1>
-
-        <button
-          onClick={handleLogout}
-          style={{
-            background: "#000",
-            color: "white",
-            padding: "10px 20px",
-            borderRadius: 6,
-            border: "1px solid #444",
-            cursor: "pointer",
-            fontWeight: "bold",
-          }}
-        >
-          Déconnecter
-        </button>
+        <Card title="Avis reçus" value="124" />
+        <Card title="Taux positif" value="92%" />
+        <Card title="Avis redirigés Google" value="87" />
+        <Card title="Alertes négatives" value="6" />
       </div>
 
-      {/* ✅ SECTION HAUT : QR À GAUCHE / STATS À DROITE */}
-      <div
-        style={{
-          display: "flex",
-          gap: 30,
-          marginBottom: 30,
-          flexWrap: "wrap",
-        }}
-      >
-        {/* LIEN + QR */}
+      {/* QR SECTION */}
+      <div style={boxStyle}>
+        <h2 style={{ marginBottom: "20px" }}>Votre QR Code</h2>
+
         <div
           style={{
-            flex: 1,
-            minWidth: 300,
-            background: "rgba(0,0,0,0.7)",
-            backdropFilter: "blur(8px)",
-            padding: 25,
-            borderRadius: 12,
-            border: "1px solid #333",
+            width: "150px",
+            height: "150px",
+            backgroundColor: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginBottom: "20px",
+            border: "1px solid #ddd",
           }}
         >
-          <h2>Votre lien de partage</h2>
-
-          <a
-            href={shareUrl}
-            target="_blank"
-            style={{
-              color: "#4da6ff",
-              fontSize: 16,
-              wordBreak: "break-all",
-            }}
-          >
-            {shareUrl}
-          </a>
-
-          <div style={{ marginTop: 25, textAlign: "center" }}>
-            <QRCodeCanvas value={shareUrl} size={200} level="H" />
-          </div>
-
-          <button
-            onClick={downloadQR}
-            style={{
-              marginTop: 20,
-              padding: "10px 20px",
-              borderRadius: 6,
-              border: "1px solid #444",
-              background: "#000",
-              color: "white",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
-            Télécharger le QR Code
-          </button>
+          QR
         </div>
 
-        {/* STATISTIQUES */}
-        <div
-          style={{
-            flex: 1,
-            minWidth: 300,
-            background: "rgba(0,0,0,0.7)",
-            padding: 25,
-            borderRadius: 12,
-            border: "1px solid #333",
-          }}
-        >
-          <h2>Statistiques</h2>
-
-          <div style={{ fontSize: 22, marginTop: 15 }}>
-            Avis totaux : <b>{stats.total}</b>
-          </div>
-
-          <div
-            style={{
-              fontSize: 32,
-              color: satisfactionRate >= 70 ? "#4CAF50" : "#ff4d4d",
-              marginTop: 20,
-              fontWeight: "bold",
-            }}
-          >
-            {satisfactionRate}%
-          </div>
-
-          <div style={{ marginTop: 10, color: "#aaa" }}>
-            👍 {stats.positive} positifs
-          </div>
-
-          <div style={{ marginTop: 5, color: "#aaa" }}>
-            👎 {stats.negative} négatifs
-          </div>
-        </div>
+        <p>
+          Lien public :{" "}
+          <strong>avispm e.com/entreprise/demo</strong>
+        </p>
       </div>
 
-      {/* COMMENTAIRES */}
-      <div
-        style={{
-          background: "rgba(0,0,0,0.7)",
-          backdropFilter: "blur(8px)",
-          padding: 25,
-          borderRadius: 12,
-          border: "1px solid #333",
-        }}
-      >
-        <h2>Commentaires reçus</h2>
-        <FeedbackList companyId={company.id} />
+      {/* AVIS RÉCENTS */}
+      <div style={{ ...boxStyle, marginTop: "40px" }}>
+        <h2 style={{ marginBottom: "20px" }}>Avis récents</h2>
+
+        <Avis
+          name="Jean Dupont"
+          comment="Service excellent, très rapide."
+          rating="⭐⭐⭐⭐⭐"
+        />
+
+        <Avis
+          name="Marie Tremblay"
+          comment="Bonne expérience générale."
+          rating="⭐⭐⭐⭐"
+        />
+
+        <Avis
+          name="Client anonyme"
+          comment="Déçu du service client."
+          rating="⭐⭐"
+        />
       </div>
     </div>
   );
 }
+
+/* COMPONENTS */
+
+function Card({ title, value }: { title: string; value: string }) {
+  return (
+    <div
+      style={{
+        backgroundColor: "white",
+        padding: "30px",
+        borderRadius: "16px",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
+      }}
+    >
+      <p style={{ color: "#555" }}>{title}</p>
+      <h2 style={{ fontSize: "2rem", marginTop: "10px" }}>{value}</h2>
+    </div>
+  );
+}
+
+function Avis({
+  name,
+  comment,
+  rating,
+}: {
+  name: string;
+  comment: string;
+  rating: string;
+}) {
+  return (
+    <div
+      style={{
+        padding: "20px 0",
+        borderBottom: "1px solid #eee",
+      }}
+    >
+      <strong>{name}</strong>
+      <p style={{ margin: "10px 0", color: "#555" }}>{comment}</p>
+      <div>{rating}</div>
+    </div>
+  );
+}
+
+/* STYLE */
+
+const boxStyle = {
+  backgroundColor: "white",
+  padding: "40px",
+  borderRadius: "16px",
+  boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
+};
