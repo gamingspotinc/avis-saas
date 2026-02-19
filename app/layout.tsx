@@ -42,9 +42,7 @@ export default function RootLayout({
               Solution
             </Link>
 
-            <Link href="/industries" style={linkStyle}>
-              Industries
-            </Link>
+            <Link href="/#industries">Industries</Link>
 
             <Link href="/fonctionnalites" style={linkStyle}>
               Fonctionnalités

@@ -84,7 +84,8 @@ export default function HomePage() {
 
       {/* INDUSTRIES */}
       <section
-        style={{
+      id="industries"
+      style={{
           padding: "120px 20px",
           backgroundColor: "#f8f9fb",
           textAlign: "center",
