@@ -1,249 +1,256 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function HomePage() {
-  const router = useRouter();
-
   return (
-    <main style={{ fontFamily: "sans-serif", color: "#111", paddingTop: "80px" }}>
+    <main style={{ fontFamily: "sans-serif" }}>
 
-      {/* NAVBAR FIXE */}
-      <nav
-        style={{
-          position: "fixed",
-          top: 0,
-          width: "100%",
-          padding: "15px 40px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: "rgba(0,0,0,0.9)",
-          color: "white",
-          zIndex: 1000,
-        }}
-      >
-        <h3 style={{ margin: 0 }}>AvisPME</h3>
-
-        <div style={{ display: "flex", gap: "30px" }}>
-          <Link href="/" style={{ color: "white", textDecoration: "none" }}>
-            Accueil
-          </Link>
-
-          <Link href="/pricing" style={{ color: "white", textDecoration: "none" }}>
-            Tarifs
-          </Link>
-
-          <Link href="/dashboard" style={{ color: "white", textDecoration: "none" }}>
-            Connexion
-          </Link>
-        </div>
-      </nav>
-
-      {/* HERO SECTION */}
+      {/* HERO */}
       <section
         style={{
-          position: "relative",
-          height: "600px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          padding: "160px 20px 140px 20px",
           textAlign: "center",
-          color: "white",
-          background:
-            "linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1556745757-8d76bdb6984b?auto=format&fit=crop&w=1950&q=80')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          padding: "20px",
+          maxWidth: "1000px",
+          margin: "0 auto",
         }}
       >
-        <div style={{ maxWidth: "900px" }}>
-          <h1 style={{ fontSize: "3.5rem", marginBottom: "20px" }}>
-            Protégez votre réputation. Augmentez vos revenus.
-          </h1>
-
-          <p style={{ fontSize: "1.6rem", marginBottom: "35px" }}>
-            AvisPME transforme chaque client satisfait en levier de croissance,
-            tout en gardant les retours négatifs privés.
-          </p>
-
-          <div style={{ display: "flex", gap: "20px", justifyContent: "center", flexWrap: "wrap" }}>
-            <button
-              onClick={() => router.push("/start")}
-              style={{
-                padding: "18px 60px",
-                fontSize: "1.2rem",
-                fontWeight: "bold",
-                borderRadius: "10px",
-                border: "none",
-                cursor: "pointer",
-                backgroundColor: "#ffffff",
-                color: "#111",
-              }}
-            >
-              Protéger mon entreprise
-            </button>
-
-            <button
-              onClick={() => router.push("/pricing")}
-              style={{
-                padding: "18px 60px",
-                fontSize: "1.1rem",
-                fontWeight: "bold",
-                borderRadius: "10px",
-                border: "2px solid white",
-                cursor: "pointer",
-                backgroundColor: "transparent",
-                color: "white",
-              }}
-            >
-              Voir les tarifs
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* IMPACT BUSINESS */}
-      <section
-        style={{
-          padding: "80px 20px",
-          textAlign: "center",
-          backgroundColor: "#f8f9fb",
-        }}
-      >
-        <h2 style={{ fontSize: "2.2rem", marginBottom: "50px" }}>
-          Votre réputation influence directement vos revenus
-        </h2>
-
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "40px",
-            flexWrap: "wrap",
-          }}
-        >
-          {[
-            "93% des consommateurs lisent les avis avant d'acheter.",
-            "1 seul avis négatif peut réduire vos conversions jusqu'à 30%.",
-            "44% des clients restent fidèles si vous répondez aux critiques.",
-            "Une meilleure note Google augmente votre visibilité locale.",
-          ].map((text, index) => (
-            <div
-              key={index}
-              style={{
-                maxWidth: "280px",
-                backgroundColor: "white",
-                padding: "25px",
-                borderRadius: "14px",
-                boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
-              }}
-            >
-              <p style={{ fontSize: "1rem", lineHeight: 1.5 }}>{text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* COMMENT CA FONCTIONNE */}
-      <section
-        style={{
-          padding: "90px 20px",
-          textAlign: "center",
-        }}
-      >
-        <h2 style={{ fontSize: "2.2rem", marginBottom: "60px" }}>
-          Comment AvisPME protège votre entreprise
-        </h2>
-
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "50px",
-            flexWrap: "wrap",
-          }}
-        >
-          {[
-            "1. Le client scanne votre QR personnalisé.",
-            "2. Client satisfait → Redirection vers Google.",
-            "3. Client insatisfait → Feedback privé.",
-            "4. Vous améliorez votre service avant que cela nuise à votre image.",
-          ].map((step, index) => (
-            <div key={index} style={{ maxWidth: "260px" }}>
-              <h3 style={{ fontSize: "1.2rem", marginBottom: "10px" }}>
-                Étape {index + 1}
-              </h3>
-              <p>{step}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* VALEUR PREMIUM */}
-      <section
-        style={{
-          padding: "80px 20px",
-          backgroundColor: "#f8f9fb",
-          textAlign: "center",
-        }}
-      >
-        <h2 style={{ fontSize: "2.2rem", marginBottom: "40px" }}>
-          Une solution complète de gestion de réputation
-        </h2>
+        <h1 style={{ fontSize: "3.8rem", marginBottom: "30px", lineHeight: 1.2 }}>
+          Transformez votre réputation
+          <br /> en avantage concurrentiel.
+        </h1>
 
         <p
           style={{
-            maxWidth: "800px",
-            margin: "0 auto",
-            fontSize: "1.2rem",
-            lineHeight: 1.6,
+            fontSize: "1.3rem",
+            color: "#555",
+            maxWidth: "750px",
+            margin: "0 auto 50px auto",
           }}
         >
-          Dashboard stratégique, statistiques en temps réel, QR personnalisé,
-          historique client et système intelligent de gestion des retours.
-          AvisPME n'est pas un simple outil d'avis — c'est un système de
-          protection et d’optimisation de réputation.
+          AvisPME protège les entreprises locales contre les avis publics
+          dommageables et maximise les avis positifs sur Google.
         </p>
+
+        <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+          <Link
+            href="/start"
+            style={primaryButton}
+          >
+            Demande d’accès stratégique
+          </Link>
+
+          <Link
+            href="/solution"
+            style={secondaryButton}
+          >
+            Découvrir la solution
+          </Link>
+        </div>
       </section>
 
-      {/* ROI SECTION */}
+      {/* CREDIBILITY BAR */}
       <section
         style={{
-          padding: "90px 20px",
+          padding: "40px 20px",
+          backgroundColor: "#f8f9fb",
+          textAlign: "center",
+          fontWeight: 500,
+          color: "#444",
+        }}
+      >
+        Conçu pour les entreprises locales ambitieuses.
+        Protection proactive • Croissance durable • Image maîtrisée
+      </section>
+
+      {/* PROBLÈME → SOLUTION */}
+      <section
+        style={{
+          padding: "120px 20px",
+          maxWidth: "1000px",
+          margin: "0 auto",
           textAlign: "center",
         }}
       >
-        <h2 style={{ fontSize: "2.2rem", marginBottom: "30px" }}>
-          Combien vaut une meilleure réputation ?
+        <h2 style={{ fontSize: "2.5rem", marginBottom: "60px" }}>
+          Un seul avis négatif peut vous coûter des dizaines de clients.
         </h2>
 
-        <p style={{ maxWidth: "700px", margin: "0 auto", fontSize: "1.2rem" }}>
-          Si une meilleure note Google vous apporte seulement 3 nouveaux clients
-          par mois, AvisPME est déjà rentabilisé. Votre réputation est un actif.
-          Protégez-la.
+        <p style={{ fontSize: "1.2rem", color: "#555", maxWidth: "750px", margin: "0 auto" }}>
+          AvisPME intercepte les insatisfactions avant qu’elles ne deviennent publiques
+          et transforme les expériences positives en visibilité stratégique.
         </p>
       </section>
 
-      {/* FOOTER PREMIUM */}
+      {/* INDUSTRIES */}
       <section
         style={{
-          backgroundColor: "#111",
-          color: "white",
-          padding: "70px 20px",
+          padding: "120px 20px",
+          backgroundColor: "#f8f9fb",
           textAlign: "center",
         }}
       >
-        <h2 style={{ marginBottom: "20px" }}>AvisPME</h2>
+        <h2 style={{ fontSize: "2.5rem", marginBottom: "70px" }}>
+          Industries desservies
+        </h2>
 
-        <p style={{ marginBottom: "20px" }}>
-          Système stratégique de protection et d’optimisation de réputation
-          pour PME ambitieuses.
-        </p>
-
-        <p>Contact : Michael.venne@outlook.com</p>
+        <div
+          style={{
+            display: "grid",
+            gap: "30px",
+            maxWidth: "1000px",
+            margin: "0 auto",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          }}
+        >
+          {[
+            "Restaurants",
+            "Cliniques dentaires",
+            "Garages automobiles",
+            "Agences immobilières",
+            "Salons de coiffure",
+            "Centres de fitness",
+          ].map((industry) => (
+            <div key={industry} style={industryCard}>
+              {industry}
+            </div>
+          ))}
+        </div>
       </section>
+
+      {/* COMMENT ÇA FONCTIONNE */}
+      <section
+        style={{
+          padding: "140px 20px",
+          maxWidth: "1000px",
+          margin: "0 auto",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ fontSize: "2.5rem", marginBottom: "90px" }}>
+          Comment ça fonctionne
+        </h2>
+
+        <div
+          style={{
+            display: "grid",
+            gap: "50px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          }}
+        >
+          <Step
+            number="1"
+            title="Scan du QR"
+            text="Le client partage son expérience en quelques secondes."
+          />
+          <Step
+            number="2"
+            title="Analyse intelligente"
+            text="Les avis négatifs sont gérés en interne."
+          />
+          <Step
+            number="3"
+            title="Visibilité optimisée"
+            text="Les avis positifs renforcent votre présence Google."
+          />
+        </div>
+      </section>
+
+      {/* STATISTICS BLOCK */}
+      <section
+        style={{
+          padding: "120px 20px",
+          backgroundColor: "#111",
+          color: "white",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ fontSize: "2.5rem", marginBottom: "60px" }}>
+          Les chiffres parlent d’eux-mêmes
+        </h2>
+
+        <div
+          style={{
+            display: "grid",
+            gap: "40px",
+            maxWidth: "900px",
+            margin: "0 auto",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+          }}
+        >
+          <Stat number="94%" text="des clients évitent une entreprise après un avis négatif." />
+          <Stat number="44%" text="continuent d’interagir si l’entreprise répond." />
+          <Stat number="83%" text="évitent une entreprise soupçonnée de faux avis." />
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section
+        style={{
+          padding: "140px 20px",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ fontSize: "2.5rem", marginBottom: "40px" }}>
+          Votre réputation mérite un système stratégique.
+        </h2>
+
+        <Link href="/start" style={primaryButton}>
+          Demander un accès
+        </Link>
+      </section>
+
     </main>
   );
 }
+
+/* COMPONENTS */
+
+function Step({ number, title, text }: { number: string; title: string; text: string }) {
+  return (
+    <div>
+      <div style={{ fontSize: "2.5rem", fontWeight: "bold", marginBottom: "20px" }}>
+        {number}
+      </div>
+      <h3>{title}</h3>
+      <p style={{ marginTop: "15px", color: "#555" }}>{text}</p>
+    </div>
+  );
+}
+
+function Stat({ number, text }: { number: string; text: string }) {
+  return (
+    <div>
+      <div style={{ fontSize: "3rem", fontWeight: "bold", marginBottom: "20px" }}>
+        {number}
+      </div>
+      <p style={{ opacity: 0.8 }}>{text}</p>
+    </div>
+  );
+}
+
+/* STYLES */
+
+const primaryButton = {
+  padding: "14px 35px",
+  borderRadius: "8px",
+  backgroundColor: "#111",
+  color: "white",
+  textDecoration: "none",
+  fontWeight: "bold",
+};
+
+const secondaryButton = {
+  padding: "14px 35px",
+  borderRadius: "8px",
+  border: "1px solid #ddd",
+  textDecoration: "none",
+  color: "#111",
+};
+
+const industryCard = {
+  padding: "35px",
+  borderRadius: "16px",
+  backgroundColor: "white",
+  boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
+};
