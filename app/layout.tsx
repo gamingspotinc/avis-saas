@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import "./globals.css";
 
 export const metadata = {
@@ -11,11 +14,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [showIndustries, setShowIndustries] = useState(false);
+
   return (
     <html lang="fr">
       <body style={{ margin: 0, fontFamily: "sans-serif" }}>
-        
-        {/* NAVBAR GLOBALE */}
+        {/* NAVBAR */}
         <nav
           style={{
             position: "fixed",
@@ -32,7 +36,15 @@ export default function RootLayout({
           }}
         >
           {/* Logo */}
-          <Link href="/" style={{ textDecoration: "none", color: "#111", fontWeight: "bold", fontSize: "1.2rem" }}>
+          <Link
+            href="/"
+            style={{
+              textDecoration: "none",
+              color: "#111",
+              fontWeight: "bold",
+              fontSize: "1.2rem",
+            }}
+          >
             AvisPME
           </Link>
 
@@ -42,7 +54,49 @@ export default function RootLayout({
               Solution
             </Link>
 
-            <Link href="/#industries">Industries</Link>
+            {/* INDUSTRIES DROPDOWN */}
+            <div
+              style={{ position: "relative" }}
+              onMouseEnter={() => setShowIndustries(true)}
+              onMouseLeave={() => setShowIndustries(false)}
+            >
+              <span style={{ ...linkStyle, cursor: "pointer" }}>
+                Industries ▾
+              </span>
+
+              {showIndustries && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "40px",
+                    left: 0,
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+                    padding: "15px 0",
+                    minWidth: "220px",
+                    border: "1px solid #eee",
+                  }}
+                >
+                  <DropdownItem
+                    href="/industries/restaurants"
+                    label="Restaurants"
+                  />
+                  <DropdownItem
+                    href="/industries/dentistes"
+                    label="Cliniques dentaires"
+                  />
+                  <DropdownItem
+                    href="/industries/garages"
+                    label="Garages automobiles"
+                  />
+                  <DropdownItem
+                    href="/industries/immobilier"
+                    label="Agences immobilières"
+                  />
+                </div>
+              )}
+            </div>
 
             <Link href="/fonctionnalites" style={linkStyle}>
               Fonctionnalités
@@ -69,12 +123,32 @@ export default function RootLayout({
         </nav>
 
         {/* CONTENU */}
-        <div style={{ paddingTop: "110px" }}>
-          {children}
-        </div>
-
+        <div style={{ paddingTop: "110px" }}>{children}</div>
       </body>
     </html>
+  );
+}
+
+function DropdownItem({
+  href,
+  label,
+}: {
+  href: string;
+  label: string;
+}) {
+  return (
+    <Link
+      href={href}
+      style={{
+        display: "block",
+        padding: "10px 20px",
+        textDecoration: "none",
+        color: "#111",
+        fontSize: "0.95rem",
+      }}
+    >
+      {label}
+    </Link>
   );
 }
 
