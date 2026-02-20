@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
 export default function Navbar() {
-  const [showIndustries, setShowIndustries] = useState(false);
-
   return (
     <nav
       style={{
@@ -42,47 +39,29 @@ export default function Navbar() {
         </Link>
 
         {/* INDUSTRIES DROPDOWN */}
-        <div
-          style={{ position: "relative" }}
-          onMouseEnter={() => setShowIndustries(true)}
-          onMouseLeave={() => setShowIndustries(false)}
-        >
+        <div className="dropdown">
           <span style={{ ...linkStyle, cursor: "pointer" }}>
             Industries ▾
           </span>
 
-          {showIndustries && (
-            <div
-              style={{
-                position: "absolute",
-                top: "40px",
-                left: 0,
-                backgroundColor: "white",
-                borderRadius: "12px",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-                padding: "15px 0",
-                minWidth: "220px",
-                border: "1px solid #eee",
-              }}
-            >
-              <DropdownItem
-                href="/industries/restaurants"
-                label="Restaurants"
-              />
-              <DropdownItem
-                href="/industries/dentistes"
-                label="Cliniques dentaires"
-              />
-              <DropdownItem
-                href="/industries/garages"
-                label="Garages automobiles"
-              />
-              <DropdownItem
-                href="/industries/immobilier"
-                label="Agences immobilières"
-              />
-            </div>
-          )}
+          <div className="dropdown-menu">
+            <DropdownItem
+              href="/industries/restaurants"
+              label="Restaurants"
+            />
+            <DropdownItem
+              href="/industries/dentistes"
+              label="Cliniques dentaires"
+            />
+            <DropdownItem
+              href="/industries/garages"
+              label="Garages automobiles"
+            />
+            <DropdownItem
+              href="/industries/immobilier"
+              label="Agences immobilières"
+            />
+          </div>
         </div>
 
         <Link href="/fonctionnalites" style={linkStyle}>
@@ -107,6 +86,39 @@ export default function Navbar() {
           Demande d’accès
         </Link>
       </div>
+
+      {/* STYLE DROPDOWN */}
+      <style jsx>{`
+        .dropdown {
+          position: relative;
+        }
+
+        .dropdown-menu {
+          position: absolute;
+          top: 45px;
+          left: 0;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+          padding: 15px 0;
+          min-width: 220px;
+          border: 1px solid #eee;
+          opacity: 0;
+          transform: translateY(10px);
+          pointer-events: none;
+          transition: all 0.2s ease;
+        }
+
+        .dropdown:hover .dropdown-menu {
+          opacity: 1;
+          transform: translateY(0);
+          pointer-events: auto;
+        }
+
+        .dropdown-menu a:hover {
+          background: #f5f5f5;
+        }
+      `}</style>
     </nav>
   );
 }
