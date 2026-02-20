@@ -7,22 +7,22 @@ export default function HomePage() {
   const cardData = [
     {
       title: "Analyse automatique des retours",
-      image: "/images/analyse automatique.jpg",
+      image: "/analyse automatique.jpg",
       description: "Obtenez des rapports instantanés et automatiques de la satisfaction client.",
     },
     {
       title: "Questionnaires personnalisés",
-      image: "/images/questionnaires personnalises.jpg",
+      image: "/questionnaires personnalisés.jpg",
       description: "Créez et envoyez des questionnaires adaptés à vos clients.",
     },
     {
       title: "Réponses en temps réel",
-      image: "/images/reponses en temps reel.jpg",
+      image: "/reponses en temps reel.jpg",
       description: "Recevez les avis et retours dès qu'ils sont soumis.",
     },
     {
       title: "Indicateurs de performance",
-      image: "/images/indicateurs de performance.jpg",
+      image: "/indicateurs de performance.jpg",
       description: "Suivez vos KPIs et adaptez votre stratégie rapidement.",
     },
   ];
@@ -47,7 +47,7 @@ export default function HomePage() {
         style={{
           position: "relative",
           height: "90vh",
-          backgroundImage: "url('/images/principale.jpg')",
+          backgroundImage: "url('/principale.jpg')",
           backgroundPosition: "center",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
