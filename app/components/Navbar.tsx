@@ -44,10 +44,21 @@ export default function Navbar() {
           </span>
 
           <div className="dropdown-menu">
-            <DropdownItem href="/industries/restaurants" label="Restaurants" />
-            <DropdownItem href="/industries/dentistes" label="Cliniques dentaires" />
-            <DropdownItem href="/industries/garages" label="Garages automobiles" />
-            <DropdownItem href="/industries/immobilier" label="Agences immobilières" />
+            <Link href="/industries/restaurants" className="dropdown-item">
+              Restaurants
+            </Link>
+
+            <Link href="/industries/dentistes" className="dropdown-item">
+              Cliniques dentaires
+            </Link>
+
+            <Link href="/industries/garages" className="dropdown-item">
+              Garages automobiles
+            </Link>
+
+            <Link href="/industries/immobilier" className="dropdown-item">
+              Agences immobilières
+            </Link>
           </div>
         </div>
 
@@ -77,17 +88,19 @@ export default function Navbar() {
       <style jsx>{`
         .dropdown {
           position: relative;
-          padding-bottom: 15px; /* zone tampon invisible */
+          display: flex;
+          align-items: center;
         }
 
         .dropdown-trigger {
           cursor: pointer;
           font-weight: 500;
+          display: inline-block;
         }
 
         .dropdown-menu {
           position: absolute;
-          top: 100%; /* collé parfaitement sous Industries */
+          top: 100%;
           left: 0;
           background: white;
           border-radius: 12px;
@@ -107,30 +120,21 @@ export default function Navbar() {
           pointer-events: auto;
         }
 
-        .dropdown-menu a {
+        .dropdown-item {
           display: block;
           padding: 10px 20px;
           text-decoration: none;
           color: #111;
           font-size: 0.95rem;
+          white-space: nowrap;
         }
 
-        .dropdown-menu a:hover {
+        .dropdown-item:hover {
           background: #f5f5f5;
         }
       `}</style>
     </nav>
   );
-}
-
-function DropdownItem({
-  href,
-  label,
-}: {
-  href: string;
-  label: string;
-}) {
-  return <Link href={href}>{label}</Link>;
 }
 
 const linkStyle = {
