@@ -3,7 +3,7 @@
 export default function RestaurantsPage() {
   return (
     <main style={{ fontFamily: "sans-serif", color: "#111" }}>
-      
+
       {/* ================= HERO ================= */}
       <section
         style={{
@@ -31,12 +31,12 @@ export default function RestaurantsPage() {
 
         <div style={{ position: "relative", maxWidth: 900, padding: 20 }}>
           <h1 style={{ fontSize: "3.2rem", marginBottom: 20 }}>
-            Transformez vos avis clients en moteur de croissance
+            Logiciel de gestion d’avis pour restaurants
           </h1>
           <p style={{ fontSize: "1.3rem", lineHeight: 1.6 }}>
-            Chaque commentaire influence vos réservations.  
-            Chaque étoile impacte votre chiffre d’affaires.  
-            Prenez le contrôle de votre réputation.
+            Chaque étoile influence vos réservations.  
+            Chaque avis impacte votre chiffre d’affaires.  
+            Transformez votre réputation en moteur de croissance.
           </p>
         </div>
       </section>
@@ -45,7 +45,7 @@ export default function RestaurantsPage() {
       <section style={{ padding: "100px 20px", backgroundColor: "#f8f9fb" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", textAlign: "center" }}>
           <h2 style={{ fontSize: "2.2rem", marginBottom: 60 }}>
-            Les chiffres parlent d’eux-mêmes
+            Les chiffres clés en restauration
           </h2>
 
           <div
@@ -59,13 +59,15 @@ export default function RestaurantsPage() {
               { stat: "79%", text: "des clients choisissent un restaurant qui comprend réellement leurs besoins." },
               { stat: "93%", text: "lisent les avis en ligne avant de réserver." },
               { stat: "+9%", text: "de revenus pour chaque étoile supplémentaire." },
-              { stat: "84%", text: "font autant confiance aux avis qu’à une recommandation personnelle." },
+              { stat: "68%", text: "ne reviennent jamais après une mauvaise expérience non traitée." },
             ].map((item, index) => (
               <div key={index}>
                 <h3 style={{ fontSize: "3rem", marginBottom: 15 }}>
                   {item.stat}
                 </h3>
-                <p style={{ lineHeight: 1.6, color: "#555" }}>{item.text}</p>
+                <p style={{ color: "#555", lineHeight: 1.6 }}>
+                  {item.text}
+                </p>
               </div>
             ))}
           </div>
@@ -76,15 +78,15 @@ export default function RestaurantsPage() {
       <section style={{ padding: "100px 20px" }}>
         <div style={{ maxWidth: 1000, margin: "0 auto" }}>
           <h2 style={{ fontSize: "2.2rem", marginBottom: 40 }}>
-            Votre réputation peut vous faire gagner… ou perdre des milliers de dollars
+            Sans stratégie d’avis, vous laissez de l’argent sur la table
           </h2>
 
           <ul style={{ lineHeight: 2, fontSize: "1.1rem" }}>
-            <li>• Avis négatifs publics non contrôlés</li>
-            <li>• Clients insatisfaits qui partent sans rien dire</li>
-            <li>• Manque de rétroactions exploitables</li>
-            <li>• Difficulté à fidéliser</li>
-            <li>• Concurrence agressive sur Google</li>
+            <li>• Vos clients satisfaits restent silencieux</li>
+            <li>• Vos clients insatisfaits publient publiquement</li>
+            <li>• Votre note stagne ou diminue</li>
+            <li>• Votre visibilité locale baisse</li>
+            <li>• Vos concurrents prennent votre place</li>
           </ul>
         </div>
       </section>
@@ -93,7 +95,7 @@ export default function RestaurantsPage() {
       <section style={{ padding: "100px 20px", backgroundColor: "#111", color: "white" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <h2 style={{ fontSize: "2.2rem", marginBottom: 60 }}>
-            Un système intelligent conçu pour la restauration
+            Une solution pensée pour les restaurateurs
           </h2>
 
           <div
@@ -105,32 +107,32 @@ export default function RestaurantsPage() {
           >
             <div>
               <h3>📱 QR Code sur table</h3>
-              <p>Permettez à vos clients de donner leur avis en 10 secondes.</p>
+              <p>Collecte d’avis rapide en moins de 10 secondes.</p>
             </div>
 
             <div>
               <h3>🧠 Filtrage intelligent</h3>
-              <p>Les clients satisfaits sont redirigés vers Google, les insatisfaits vers vous en privé.</p>
+              <p>Les avis positifs vers Google, les insatisfactions en privé.</p>
             </div>
 
             <div>
-              <h3>📈 Suivi en temps réel</h3>
-              <p>Recevez des alertes instantanées en cas de problème.</p>
+              <h3>📈 Alertes instantanées</h3>
+              <p>Intervenez avant qu’un problème devienne public.</p>
             </div>
 
             <div>
-              <h3>🤖 Réponses automatiques IA</h3>
-              <p>Répondez professionnellement en quelques secondes.</p>
+              <h3>🤖 Réponses IA</h3>
+              <p>Répondez professionnellement en quelques clics.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ================= IMPACT FINANCIER ================= */}
+      {/* ================= ROI ================= */}
       <section style={{ padding: "100px 20px" }}>
         <div style={{ maxWidth: 1000, margin: "0 auto", textAlign: "center" }}>
           <h2 style={{ fontSize: "2.2rem", marginBottom: 30 }}>
-            Chaque étoile vaut de l’argent
+            Chaque étoile supplémentaire augmente vos revenus
           </h2>
 
           <p style={{ fontSize: "1.2rem", lineHeight: 1.8 }}>
@@ -139,16 +141,41 @@ export default function RestaurantsPage() {
           </p>
 
           <p style={{ marginTop: 30, fontWeight: "bold" }}>
-            Plus d’avis positifs → Plus de visibilité → Plus de réservations → Plus de revenus
+            Plus d’avis → Plus de visibilité → Plus de réservations → Plus de revenus
           </p>
         </div>
       </section>
 
-      {/* ================= CTA ================= */}
+      {/* ================= BLOC SIGNATURE AVISPME ================= */}
+      <section style={{ padding: "100px 20px", backgroundColor: "#f8f9fb" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <h2 style={{ fontSize: "2.2rem", marginBottom: 40 }}>
+            Pourquoi les restaurants choisissent AvisPME
+          </h2>
+
+          <ul style={{ lineHeight: 2, fontSize: "1.1rem" }}>
+            <li>✔ Automatisation intelligente des demandes d’avis</li>
+            <li>✔ Protection proactive de votre réputation</li>
+            <li>✔ Augmentation naturelle de votre note moyenne</li>
+            <li>✔ Analyse des tendances (service, cuisine, ambiance)</li>
+            <li>✔ Gain de temps pour votre équipe</li>
+            <li>✔ Tableau de bord clair et mesurable</li>
+          </ul>
+
+          <p style={{ marginTop: 30, lineHeight: 1.8 }}>
+            AvisPME est une plateforme spécialisée en gestion d’avis pour restaurants au Québec et au Canada.
+            Notre solution permet aux établissements d’améliorer leur réputation en ligne, d’augmenter leur visibilité
+            locale et de générer davantage de réservations grâce à une stratégie automatisée et intelligente.
+          </p>
+        </div>
+      </section>
+
+      {/* ================= CTA FINAL ================= */}
       <section
         style={{
           padding: "100px 20px",
-          backgroundColor: "#f8f9fb",
+          backgroundColor: "#111",
+          color: "white",
           textAlign: "center",
         }}
       >
@@ -159,8 +186,8 @@ export default function RestaurantsPage() {
         <button
           style={{
             padding: "16px 40px",
-            backgroundColor: "#111",
-            color: "white",
+            backgroundColor: "white",
+            color: "#111",
             border: "none",
             borderRadius: "12px",
             fontSize: "1.1rem",
@@ -171,10 +198,11 @@ export default function RestaurantsPage() {
           Planifier une démonstration gratuite
         </button>
 
-        <p style={{ marginTop: 20, color: "#555" }}>
+        <p style={{ marginTop: 20, opacity: 0.8 }}>
           15 minutes qui peuvent transformer votre croissance.
         </p>
       </section>
+
     </main>
   );
 }
