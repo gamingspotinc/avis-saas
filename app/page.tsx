@@ -7,22 +7,22 @@ export default function HomePage() {
   const cardData = [
     {
       title: "Analyse automatique des retours",
-      image: "/images/analytics.png",
+      image: "/images/analyse automatique.png",
       description: "Obtenez des rapports instantanés et automatiques de la satisfaction client.",
     },
     {
       title: "Questionnaires personnalisés",
-      image: "/images/questionnaire.png",
+      image: "/images/questionnaires personnalisés.png",
       description: "Créez et envoyez des questionnaires adaptés à vos clients.",
     },
     {
       title: "Réponses en temps réel",
-      image: "/images/realtime.png",
+      image: "/images/reponses en temps reel.png",
       description: "Recevez les avis et retours dès qu'ils sont soumis.",
     },
     {
       title: "Indicateurs de performance",
-      image: "/images/kpi.png",
+      image: "/images/indicateurs de performance.png",
       description: "Suivez vos KPIs et adaptez votre stratégie rapidement.",
     },
   ];
@@ -47,7 +47,7 @@ export default function HomePage() {
         style={{
           position: "relative",
           height: "90vh",
-          background: "url('/images/service_client.png') center/cover no-repeat",
+          background: "url('/images/principale.png') center/cover no-repeat",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -66,7 +66,15 @@ export default function HomePage() {
       </section>
 
       {/* 4 CARDS */}
-      <section style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "40px", marginTop: 80 }}>
+      <section
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "40px",
+          marginTop: 80,
+        }}
+      >
         {cardData.map((card) => (
           <motion.div
             key={card.title}
@@ -80,7 +88,13 @@ export default function HomePage() {
               boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
             }}
           >
-            <Image src={card.image} alt={card.title} width={80} height={80} style={{ marginBottom: 15 }} />
+            <Image
+              src={card.image}
+              alt={card.title}
+              width={80}
+              height={80}
+              style={{ marginBottom: 15 }}
+            />
             <h3 style={{ fontSize: "1.2rem", marginBottom: 10 }}>{card.title}</h3>
             <p style={{ fontSize: "0.95rem", color: "#555" }}>{card.description}</p>
           </motion.div>
@@ -89,12 +103,14 @@ export default function HomePage() {
 
       {/* SUIVI & SATISFACTION */}
       <section style={{ maxWidth: 1000, margin: "80px auto", padding: "0 20px" }}>
-        <h2 style={{ fontSize: "2rem", marginBottom: 40 }}>Suivi et amélioration de la satisfaction client</h2>
+        <h2 style={{ fontSize: "2rem", marginBottom: 40 }}>
+          Suivi et amélioration de la satisfaction client
+        </h2>
 
         <div style={{ display: "grid", gap: 50 }}>
           <p>
-            Effectuez un suivi personnalisé de vos clients et adaptez vos services en fonction de leurs retours pour maximiser
-            la satisfaction et fidélisation.
+            Effectuez un suivi personnalisé de vos clients et adaptez vos services en fonction de leurs retours pour
+            maximiser la satisfaction et fidélisation.
           </p>
 
           <p>
