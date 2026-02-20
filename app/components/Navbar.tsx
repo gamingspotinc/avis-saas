@@ -1,24 +1,38 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
+  const iconMap: Record<string, string> = {
+    "Restaurants": "/icone/icone-restaurant.jpg",
+    "Salons de coiffure": "/icone/icone-salon de coiffure.jpg",
+    "Clinique esthétique": "/icone/icone-cliniques esthetique.jpg",
+    "Services aux entreprises": "/icone/icone-services aux entreprises.jpg",
+    "Hôtellerie": "/icone/icone-Hotellerie.jpg",
+    "Travailleur autonome": "/icone/icone-travailleurs autonomes.jpg",
+    "Cliniques dentaires": "/icone/icone-cliniques dentaires.jpg",
+    "Garages automobiles": "/icone/icone-garage automobiles.jpg",
+    "Agences immobilières": "/icone/icone-agence immobiliere.jpg",
+    "Autres secteurs": "/icone/icone-autres secteurs.jpg",
+  };
+
   return (
     <nav
-  style={{
-    position: "fixed",
-    top: 0,
-    width: "100%",
-    padding: "20px 80px", // 👈 plus d'espace sur les côtés
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.95)",
-    backdropFilter: "blur(8px)",
-    borderBottom: "1px solid #eee",
-    zIndex: 1000,
-  }}
->
+      style={{
+        position: "fixed",
+        top: 0,
+        width: "100%",
+        padding: "20px 80px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: "rgba(255,255,255,0.95)",
+        backdropFilter: "blur(8px)",
+        borderBottom: "1px solid #eee",
+        zIndex: 1000,
+      }}
+    >
       <Link
         href="/"
         style={{
@@ -32,63 +46,54 @@ export default function Navbar() {
       </Link>
 
       <div
-  style={{
-    display: "flex",
-    gap: "35px",
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center", // 👈 centre le menu
-  }}
->
+        style={{
+          display: "flex",
+          gap: "35px",
+          alignItems: "center",
+          flex: 1,
+          justifyContent: "center",
+        }}
+      >
         <Link href="/solution" style={linkStyle}>
           Solution
         </Link>
 
         <div className="dropdown">
-          <span className="dropdown-trigger">
-            Industries ▾
-          </span>
+          <span className="dropdown-trigger">Industries ▾</span>
 
           <div className="dropdown-menu">
-            <Link href="/industries/restaurants" className="dropdown-item">
-              Restaurants
-            </Link>
-
-            <Link href="/industries/salon-coiffure" className="dropdown-item">
-              Salon de coiffure
-            </Link>
-
-            <Link href="/industries/clinique-esthetique" className="dropdown-item">
-               Clinique esthétique
-            </Link>
-
-            <Link href="/industries/services-entreprises" className="dropdown-item">
-              Services aux entreprises
-            </Link>
-
-            <Link href="/industries/hotellerie" className="dropdown-item">
-              Hôtellerie
-            </Link>
-
-            <Link href="/industries/travailleur-autonome" className="dropdown-item">
-              Travailleur autonome
-            </Link>
-
-            <Link href="/industries/dentistes" className="dropdown-item">
-              Cliniques dentaires
-            </Link>
-
-            <Link href="/industries/garages" className="dropdown-item">
-              Garages automobiles
-            </Link>
-
-            <Link href="/industries/immobilier" className="dropdown-item">
-              Agences immobilières
-            </Link>
-
-            <Link href="/industries/autres-secteurs" className="dropdown-item">
-              Autres secteurs
-            </Link>
+            {[
+              { name: "Restaurants", href: "/industries/restaurants" },
+              { name: "Salons de coiffure", href: "/industries/salon-coiffure" },
+              { name: "Clinique esthétique", href: "/industries/clinique-esthetique" },
+              { name: "Services aux entreprises", href: "/industries/services-entreprises" },
+              { name: "Hôtellerie", href: "/industries/hotellerie" },
+              { name: "Travailleur autonome", href: "/industries/travailleur-autonome" },
+              { name: "Cliniques dentaires", href: "/industries/dentistes" },
+              { name: "Garages automobiles", href: "/industries/garages" },
+              { name: "Agences immobilières", href: "/industries/immobilier" },
+              { name: "Autres secteurs", href: "/industries/autres-secteurs" },
+            ].map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="dropdown-item"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "6px 10px",
+                }}
+              >
+                <Image
+                  src={iconMap[item.name]}
+                  alt={`Icône ${item.name}`}
+                  width={20}
+                  height={20}
+                />
+                {item.name}
+              </Link>
+            ))}
           </div>
         </div>
 
