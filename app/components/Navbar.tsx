@@ -54,6 +54,26 @@ export default function Navbar() {
               Restaurants
             </Link>
 
+            <Link href="/industries/salon-coiffure" className="dropdown-item">
+              Salon de coiffure
+            </Link>
+
+            <Link href="/industries/clinique-esthetique" className="dropdown-item">
+               Clinique esthétique
+            </Link>
+
+            <Link href="/industries/services-entreprises" className="dropdown-item">
+              Services aux entreprises
+            </Link>
+
+            <Link href="/industries/hotellerie" className="dropdown-item">
+              Hôtellerie
+            </Link>
+
+            <Link href="/industries/travailleur-autonome" className="dropdown-item">
+              Travailleur autonome
+            </Link>
+
             <Link href="/industries/dentistes" className="dropdown-item">
               Cliniques dentaires
             </Link>
