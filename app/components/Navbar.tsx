@@ -86,53 +86,53 @@ export default function Navbar() {
       </div>
 
       <style jsx>{`
-        .dropdown {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
+  .dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
 
-        .dropdown-trigger {
-          cursor: pointer;
-          font-weight: 500;
-          display: inline-block;
-        }
+  .dropdown-trigger {
+    cursor: pointer;
+    font-weight: 500;
+    display: inline-block;
+  }
 
-        .dropdown-menu {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
-          padding: 10px 0;
-          min-width: 220px;
-          border: 1px solid #eee;
-          opacity: 0;
-          transform: translateY(8px);
-          pointer-events: none;
-          transition: all 0.2s ease;
-        }
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    padding: 12px 0;
+    min-width: 260px; /* plus large */
+    border: 1px solid #eee;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
 
-        .dropdown:hover .dropdown-menu {
-          opacity: 1;
-          transform: translateY(0);
-          pointer-events: auto;
-        }
+  .dropdown:hover .dropdown-menu {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
 
-        .dropdown-item {
-          display: block;
-          padding: 10px 20px;
-          text-decoration: none;
-          color: #111;
-          font-size: 0.95rem;
-          white-space: nowrap;
-        }
+  .dropdown-item {
+    display: block;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #111;
+    font-size: 0.95rem;
+    white-space: nowrap; /* empêche les retours étranges */
+  }
 
-        .dropdown-item:hover {
-          background: #f5f5f5;
-        }
-      `}</style>
+  .dropdown-item:hover {
+    background: #f5f5f5;
+  }
+`}</style>
     </nav>
   );
 }
