@@ -40,7 +40,7 @@ export default function HomePage() {
     "Autres secteurs",
   ];
 
-  // Dictionnaire des icônes
+  // dictionnaire pour les icônes
   const iconMap: Record<string, string> = {
     "Restaurants": "/icone/icone-restaurant.jpg",
     "Cliniques dentaires": "/icone/icone-cliniques dentaires.jpg",
@@ -53,13 +53,6 @@ export default function HomePage() {
     "Travailleurs autonomes": "/icone/icone-travailleurs autonomes.jpg",
     "Autres secteurs": "/icone/icone-autres secteurs.jpg",
   };
-
-  // Liste pour Solution, Fonctionnalités et À propos
-  const sectionsList = [
-    { title: "Solution", items: ["Optimisez vos processus", "Automatisez vos retours", "Analyse rapide"] },
-    { title: "Fonctionnalités", items: ["Questionnaires personnalisés", "Rapports automatiques", "Notifications instantanées"] },
-    { title: "À propos", items: ["Notre mission", "Notre équipe", "Notre vision"] },
-  ];
 
   return (
     <main style={{ fontFamily: "sans-serif" }}>
@@ -134,45 +127,65 @@ export default function HomePage() {
 
       {/* SUIVI & SATISFACTION */}
       <section style={{ maxWidth: 1000, margin: "80px auto", padding: "0 20px" }}>
-        <h2 style={{ fontSize: "2rem", marginBottom: 30 }}>
+        <h2 style={{ fontSize: "2rem", marginBottom: 40 }}>
           Suivi et amélioration de la satisfaction client
         </h2>
 
-        <ul style={{ marginLeft: 20, lineHeight: 1.5 }}>
-          <li>Effectuez un suivi personnalisé de vos clients et adaptez vos services en fonction de leurs retours pour maximiser la satisfaction et fidélisation.</li>
-          <li>Envoyez des questionnaires automatisés au moment optimal pour obtenir des rétroactions riches et précises.</li>
-          <li>Programmez vos envois par courriel ou par SMS et recevez des notifications instantanées pour agir rapidement sur les retours insatisfaits.</li>
-          <li>Suivez vos indicateurs clés comme NPS, CSAT, CES et prenez des décisions éclairées pour vos équipes et votre entreprise.</li>
-          <li>Augmentez votre chiffre d’affaires en récoltant régulièrement des avis positifs et en optimisant votre réputation en ligne.</li>
-          <li>Grâce à nos outils d’intelligence artificielle, automatisez vos réponses aux avis et gagnez du temps précieux.</li>
-        </ul>
+        <div style={{ display: "grid", gap: 50 }}>
+          <p>
+            Effectuez un suivi personnalisé de vos clients et adaptez vos services en fonction de leurs retours pour maximiser
+            la satisfaction et fidélisation.
+          </p>
+
+          <p>
+            Envoyez des questionnaires automatisés au moment optimal pour obtenir des rétroactions riches et précises.
+          </p>
+
+          <p>
+            Programmez vos envois par courriel ou par SMS et recevez des notifications instantanées pour agir rapidement
+            sur les retours insatisfaits.
+          </p>
+
+          <p>
+            Suivez vos indicateurs clés comme NPS, CSAT, CES et prenez des décisions éclairées pour vos équipes et votre
+            entreprise.
+          </p>
+
+          <p>
+            Augmentez votre chiffre d’affaires en récoltant régulièrement des avis positifs et en optimisant votre réputation
+            en ligne.
+          </p>
+
+          <p>
+            Grâce à nos outils d’intelligence artificielle, automatisez vos réponses aux avis et gagnez du temps précieux.
+          </p>
+        </div>
       </section>
 
-      {/* SECTIONS LIST (Solution, Fonctionnalités, À propos) */}
-      {sectionsList.map((section) => (
-        <section key={section.title} style={{ maxWidth: 1000, margin: "60px auto", padding: "0 20px" }}>
-          <h2 style={{ fontSize: "2rem", marginBottom: 20 }}>{section.title}</h2>
-          <ul style={{ marginLeft: 20, lineHeight: 1.5 }}>
-            {section.items.map((item, idx) => (
-              <li key={idx}>{item}</li>
-            ))}
-          </ul>
-        </section>
-      ))}
-
-      {/* AUTRES SECTIONS RESTENT INCHANGÉES */}
       {/* AUGMENTEZ VOS REVENUS */}
       <section style={{ backgroundColor: "#f0f4f8", padding: "80px 20px" }}>
         <h2 style={{ fontSize: "2rem", marginBottom: 30 }}>
           Obtenez davantage d’avis positifs et augmentez votre chiffre d’affaires
         </h2>
         <ul style={{ lineHeight: 1.8, marginLeft: 20 }}>
-          <li>Les entreprises avec plus d’avis en ligne génèrent en moyenne 54% plus de revenus.</li>
-          <li>Améliorez votre positionnement sur Google et soyez le premier choix pour vos clients.</li>
-          <li>Répondez automatiquement aux avis grâce à notre IA pour économiser du temps et augmenter votre efficacité.</li>
-          <li>Suivez l’évolution de votre réputation en ligne et mettez en place des stratégies de croissance.</li>
-          <li>Automatisez l’envoi des demandes d’avis à vos clients satisfaits.</li>
-          <li>Gérez vos avis de manière proactive pour ne jamais manquer une opportunité d’amélioration.</li>
+          <li>
+            Les entreprises avec plus d’avis en ligne génèrent en moyenne 54% plus de revenus.
+          </li>
+          <li>
+            Améliorez votre positionnement sur Google et soyez le premier choix pour vos clients.
+          </li>
+          <li>
+            Répondez automatiquement aux avis grâce à notre IA pour économiser du temps et augmenter votre efficacité.
+          </li>
+          <li>
+            Suivez l’évolution de votre réputation en ligne et mettez en place des stratégies de croissance.
+          </li>
+          <li>
+            Automatisez l’envoi des demandes d’avis à vos clients satisfaits.
+          </li>
+          <li>
+            Gérez vos avis de manière proactive pour ne jamais manquer une opportunité d’amélioration.
+          </li>
         </ul>
       </section>
 
@@ -182,11 +195,21 @@ export default function HomePage() {
           Des rétroactions pertinentes pour mieux évaluer vos équipes
         </h2>
         <ul style={{ lineHeight: 1.8, marginLeft: 20 }}>
-          <li>Assurez le bien-être de vos équipes grâce à des questionnaires personnalisés.</li>
-          <li>Prenez des décisions éclairées basées sur les réponses de votre personnel.</li>
-          <li>Suivez la performance de chaque employé et ajustez vos stratégies en conséquence.</li>
-          <li>Partagez les commentaires clients avec votre personnel pour motiver et responsabiliser.</li>
-          <li>Reconnaissez vos employés pour leur bon travail et augmentez leur fidélité.</li>
+          <li>
+            Assurez le bien-être de vos équipes grâce à des questionnaires personnalisés.
+          </li>
+          <li>
+            Prenez des décisions éclairées basées sur les réponses de votre personnel.
+          </li>
+          <li>
+            Suivez la performance de chaque employé et ajustez vos stratégies en conséquence.
+          </li>
+          <li>
+            Partagez les commentaires clients avec votre personnel pour motiver et responsabiliser.
+          </li>
+          <li>
+            Reconnaissez vos employés pour leur bon travail et augmentez leur fidélité.
+          </li>
         </ul>
       </section>
 
@@ -196,7 +219,8 @@ export default function HomePage() {
           Offrez dès aujourd’hui une expérience client et employé à la hauteur de vos ambitions
         </h2>
         <p style={{ maxWidth: 600, margin: "0 auto 30px" }}>
-          Découvrez tout ce qu’AvisPME peut apporter à votre entreprise lors d’une brève démonstration de 15 minutes, au moment de votre choix!
+          Découvrez tout ce qu’AvisPME peut apporter à votre entreprise lors d’une brève démonstration de 15 minutes,
+          au moment de votre choix!
         </p>
         <button
           style={{
@@ -216,6 +240,8 @@ export default function HomePage() {
       {/* FOOTER INDUSTRIES AVEC ICONES */}
       <section style={{ backgroundColor: "#f8f9fb", padding: "60px 20px" }}>
         <h3 style={{ fontSize: "1.8rem", marginBottom: 30 }}>Découvrez tous nos secteurs</h3>
+
+        {/* Liste déroulante des industries avec icônes */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
           {industries.map((i) => (
             <a
