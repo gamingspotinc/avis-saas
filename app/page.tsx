@@ -240,6 +240,8 @@ export default function HomePage() {
       {/* FOOTER INDUSTRIES AVEC ICONES */}
       <section style={{ backgroundColor: "#f8f9fb", padding: "60px 20px" }}>
         <h3 style={{ fontSize: "1.8rem", marginBottom: 30 }}>Découvrez tous nos secteurs</h3>
+
+        {/* Liste déroulante des industries avec icônes */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
           {industries.map((i) => (
             <a
