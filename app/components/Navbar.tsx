@@ -31,7 +31,15 @@ export default function Navbar() {
         AvisPME
       </Link>
 
-      <div style={{ display: "flex", gap: "35px", alignItems: "center" }}>
+      <div
+  style={{
+    display: "flex",
+    gap: "35px",
+    alignItems: "center",
+    flex: 1,
+    justifyContent: "center", // 👈 centre le menu
+  }}
+>
         <Link href="/solution" style={linkStyle}>
           Solution
         </Link>
