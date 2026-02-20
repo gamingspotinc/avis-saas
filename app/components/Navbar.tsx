@@ -59,7 +59,7 @@ export default function Navbar() {
         </Link>
 
         <div className="dropdown">
-          <span className="dropdown-trigger">Industries ▾</span>
+          <span className="dropdown-trigger" style={{ fontSize: "1.1rem" }}>Industries ▾</span>
 
           <div className="dropdown-menu">
             {[
@@ -81,15 +81,16 @@ export default function Navbar() {
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "8px",
-                  padding: "6px 10px",
+                  gap: "10px",      // un peu plus d'espace
+                  padding: "8px 12px", // padding un peu plus grand
+                  fontSize: "1.05rem", // texte +10-15%
                 }}
               >
                 <Image
                   src={iconMap[item.name]}
                   alt={`Icône ${item.name}`}
-                  width={20}
-                  height={20}
+                  width={24}   // icône légèrement plus grande
+                  height={24}
                 />
                 {item.name}
               </Link>
