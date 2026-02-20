@@ -12,7 +12,7 @@ export default function HomePage() {
     },
     {
       title: "Questionnaires personnalisés",
-      image: "/questionnaires personnalises.jpg",
+      image: "/questionnaires personnalisés.jpg",
       description: "Créez et envoyez des questionnaires adaptés à vos clients.",
     },
     {
@@ -39,6 +39,20 @@ export default function HomePage() {
     "Travailleurs autonomes",
     "Autres secteurs",
   ];
+
+  // dictionnaire pour les icônes
+  const iconMap: Record<string, string> = {
+    "Restaurants": "/icone/icone-restaurant.jpg",
+    "Cliniques dentaires": "/icone/icone-cliniques dentaires.jpg",
+    "Cliniques esthétiques": "/icone/icone-cliniques esthetique.jpg",
+    "Garages automobiles": "/icone/icone-garage automobiles.jpg",
+    "Agences immobilières": "/icone/icone-agence immobiliere.jpg",
+    "Salons de coiffure": "/icone/icone-salon de coiffure.jpg",
+    "Services aux entreprises": "/icone/icone-services aux entreprises.jpg",
+    "Hotellerie": "/icone/icone-Hotellerie.jpg",
+    "Travailleurs autonomes": "/icone/icone-travailleurs autonomes.jpg",
+    "Autres secteurs": "/icone/icone-autres secteurs.jpg",
+  };
 
   return (
     <main style={{ fontFamily: "sans-serif" }}>
@@ -223,7 +237,7 @@ export default function HomePage() {
         </button>
       </section>
 
-      {/* FOOTER INDUSTRIES */}
+      {/* FOOTER INDUSTRIES AVEC ICONES */}
       <section style={{ backgroundColor: "#f8f9fb", padding: "60px 20px" }}>
         <h3 style={{ fontSize: "1.8rem", marginBottom: 30 }}>Découvrez tous nos secteurs</h3>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
@@ -232,6 +246,9 @@ export default function HomePage() {
               key={i}
               href={`/industries/${i.toLowerCase().replace(/ /g, "")}`}
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
                 padding: "12px 20px",
                 backgroundColor: "white",
                 borderRadius: 8,
@@ -240,6 +257,13 @@ export default function HomePage() {
                 boxShadow: "0 6px 20px rgba(0,0,0,0.05)",
               }}
             >
+              <Image
+                src={iconMap[i]}
+                alt={`Icône ${i}`}
+                width={24}
+                height={24}
+                style={{ borderRadius: 4 }}
+              />
               {i}
             </a>
           ))}
