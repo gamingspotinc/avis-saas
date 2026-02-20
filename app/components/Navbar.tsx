@@ -85,6 +85,10 @@ export default function Navbar() {
             <Link href="/industries/immobilier" className="dropdown-item">
               Agences immobilières
             </Link>
+
+            <Link href="/industries/autres-secteurs" className="dropdown-item">
+              Autres secteurs
+            </Link>
           </div>
         </div>
 
