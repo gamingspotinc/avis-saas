@@ -12,7 +12,7 @@ export default function HomePage() {
     },
     {
       title: "Questionnaires personnalisés",
-      image: "/questionnaires personnalisés.jpg",
+      image: "/questionnaires personnalises.jpg",
       description: "Créez et envoyez des questionnaires adaptés à vos clients.",
     },
     {
