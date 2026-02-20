@@ -7,22 +7,22 @@ export default function HomePage() {
   const cardData = [
     {
       title: "Analyse automatique des retours",
-      image: "/images/analyse automatique.png",
+      image: "/images/analyse automatique.jpg",
       description: "Obtenez des rapports instantanés et automatiques de la satisfaction client.",
     },
     {
       title: "Questionnaires personnalisés",
-      image: "/images/questionnaires personnalisés.png",
+      image: "/images/questionnaires personnalises.jpg",
       description: "Créez et envoyez des questionnaires adaptés à vos clients.",
     },
     {
       title: "Réponses en temps réel",
-      image: "/images/reponses en temps reel.png",
+      image: "/images/reponses en temps reel.jpg",
       description: "Recevez les avis et retours dès qu'ils sont soumis.",
     },
     {
       title: "Indicateurs de performance",
-      image: "/images/indicateurs de performance.png",
+      image: "/images/indicateurs de performance.jpg",
       description: "Suivez vos KPIs et adaptez votre stratégie rapidement.",
     },
   ];
@@ -47,7 +47,10 @@ export default function HomePage() {
         style={{
           position: "relative",
           height: "90vh",
-          background: "url('/images/principale.png') center/cover no-repeat",
+          backgroundImage: "url('/images/principale.jpg')",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -55,11 +58,18 @@ export default function HomePage() {
           textAlign: "center",
         }}
       >
-        <div style={{ backgroundColor: "rgba(0,0,0,0.6)", padding: "50px", borderRadius: "16px" }}>
+        <div
+          style={{
+            backgroundColor: "rgba(0,0,0,0.6)",
+            padding: "50px",
+            borderRadius: "16px",
+            maxWidth: "700px",
+          }}
+        >
           <h1 style={{ fontSize: "3rem", marginBottom: "20px" }}>
             Protégez et développez votre réputation
           </h1>
-          <p style={{ fontSize: "1.3rem", maxWidth: "700px", margin: "0 auto" }}>
+          <p style={{ fontSize: "1.3rem" }}>
             Optimisez vos avis clients et transformez-les en croissance durable pour votre entreprise.
           </p>
         </div>
@@ -109,8 +119,8 @@ export default function HomePage() {
 
         <div style={{ display: "grid", gap: 50 }}>
           <p>
-            Effectuez un suivi personnalisé de vos clients et adaptez vos services en fonction de leurs retours pour
-            maximiser la satisfaction et fidélisation.
+            Effectuez un suivi personnalisé de vos clients et adaptez vos services en fonction de leurs retours pour maximiser
+            la satisfaction et fidélisation.
           </p>
 
           <p>
@@ -140,7 +150,9 @@ export default function HomePage() {
 
       {/* AUGMENTEZ VOS REVENUS */}
       <section style={{ backgroundColor: "#f0f4f8", padding: "80px 20px" }}>
-        <h2 style={{ fontSize: "2rem", marginBottom: 30 }}>Obtenez davantage d’avis positifs et augmentez votre chiffre d’affaires</h2>
+        <h2 style={{ fontSize: "2rem", marginBottom: 30 }}>
+          Obtenez davantage d’avis positifs et augmentez votre chiffre d’affaires
+        </h2>
         <ul style={{ lineHeight: 1.8, marginLeft: 20 }}>
           <li>
             Les entreprises avec plus d’avis en ligne génèrent en moyenne 54% plus de revenus.
@@ -165,7 +177,9 @@ export default function HomePage() {
 
       {/* EXPÉRIENCE EMPLOYÉ */}
       <section style={{ maxWidth: 1000, margin: "80px auto", padding: "0 20px" }}>
-        <h2 style={{ fontSize: "2rem", marginBottom: 30 }}>Des rétroactions pertinentes pour mieux évaluer vos équipes</h2>
+        <h2 style={{ fontSize: "2rem", marginBottom: 30 }}>
+          Des rétroactions pertinentes pour mieux évaluer vos équipes
+        </h2>
         <ul style={{ lineHeight: 1.8, marginLeft: 20 }}>
           <li>
             Assurez le bien-être de vos équipes grâce à des questionnaires personnalisés.
