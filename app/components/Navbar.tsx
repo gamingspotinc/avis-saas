@@ -17,6 +17,13 @@ export default function Navbar() {
     "Autres secteurs": "/icone/icone-autres secteurs.jpg",
   };
 
+  const menuItems = [
+    { name: "Solution", href: "/solution" },
+    { name: "Industries", href: "/industries" },
+    { name: "Fonctionnalités", href: "/fonctionnalites" },
+    { name: "À propos", href: "/a-propos" },
+  ];
+
   return (
     <nav
       style={{
@@ -54,57 +61,69 @@ export default function Navbar() {
           justifyContent: "center",
         }}
       >
-        <Link href="/solution" style={linkStyle}>
-          Solution
-        </Link>
+        {/* MENU PRINCIPAL UNIFORME */}
+        {menuItems.map((item) => {
+          if (item.name === "Industries") {
+            // On garde le dropdown pour Industries
+            return (
+              <div key={item.name} className="dropdown" style={{ fontSize: "1rem", fontWeight: 500 }}>
+                <span className="dropdown-trigger" style={{ fontSize: "1rem", fontWeight: 500 }}>
+                  {item.name} ▾
+                </span>
+                <div className="dropdown-menu">
+                  {[
+                    { name: "Restaurants", href: "/industries/restaurants" },
+                    { name: "Salons de coiffure", href: "/industries/salon-coiffure" },
+                    { name: "Clinique esthétique", href: "/industries/clinique-esthetique" },
+                    { name: "Services aux entreprises", href: "/industries/services-entreprises" },
+                    { name: "Hôtellerie", href: "/industries/hotellerie" },
+                    { name: "Travailleur autonome", href: "/industries/travailleur-autonome" },
+                    { name: "Cliniques dentaires", href: "/industries/dentistes" },
+                    { name: "Garages automobiles", href: "/industries/garages" },
+                    { name: "Agences immobilières", href: "/industries/immobilier" },
+                    { name: "Autres secteurs", href: "/industries/autres-secteurs" },
+                  ].map((subItem) => (
+                    <Link
+                      key={subItem.name}
+                      href={subItem.href}
+                      className="dropdown-item"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "8px 12px",
+                        fontSize: "1.05rem",
+                      }}
+                    >
+                      <Image
+                        src={iconMap[subItem.name]}
+                        alt={`Icône ${subItem.name}`}
+                        width={24}
+                        height={24}
+                      />
+                      {subItem.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            );
+          }
 
-        <div className="dropdown">
-          <span className="dropdown-trigger" style={{ fontSize: "1.1rem" }}>Industries ▾</span>
-
-          <div className="dropdown-menu">
-            {[
-              { name: "Restaurants", href: "/industries/restaurants" },
-              { name: "Salons de coiffure", href: "/industries/salon-coiffure" },
-              { name: "Clinique esthétique", href: "/industries/clinique-esthetique" },
-              { name: "Services aux entreprises", href: "/industries/services-entreprises" },
-              { name: "Hôtellerie", href: "/industries/hotellerie" },
-              { name: "Travailleur autonome", href: "/industries/travailleur-autonome" },
-              { name: "Cliniques dentaires", href: "/industries/dentistes" },
-              { name: "Garages automobiles", href: "/industries/garages" },
-              { name: "Agences immobilières", href: "/industries/immobilier" },
-              { name: "Autres secteurs", href: "/industries/autres-secteurs" },
-            ].map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="dropdown-item"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",      // un peu plus d'espace
-                  padding: "8px 12px", // padding un peu plus grand
-                  fontSize: "1.05rem", // texte +10-15%
-                }}
-              >
-                <Image
-                  src={iconMap[item.name]}
-                  alt={`Icône ${item.name}`}
-                  width={24}   // icône légèrement plus grande
-                  height={24}
-                />
-                {item.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        <Link href="/fonctionnalites" style={linkStyle}>
-          Fonctionnalités
-        </Link>
-
-        <Link href="/a-propos" style={linkStyle}>
-          À propos
-        </Link>
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              style={{
+                textDecoration: "none",
+                color: "#111",
+                fontWeight: 500,
+                fontSize: "1rem", // uniforme pour tous
+              }}
+            >
+              {item.name}
+            </Link>
+          );
+        })}
 
         <Link
           href="/start"
@@ -123,9 +142,3 @@ export default function Navbar() {
     </nav>
   );
 }
-
-const linkStyle = {
-  textDecoration: "none",
-  color: "#111",
-  fontWeight: 500,
-};
