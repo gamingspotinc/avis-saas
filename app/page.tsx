@@ -1,6 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useAnimation, Variants } from "framer-motion";
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -17,7 +19,7 @@ export default function HomePage() {
           textAlign: "center",
           color: "white",
           background:
-            "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1581091012184-4a376b521c3b?auto=format&fit=crop&w=1950&q=80')",
+            "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=1950&q=80')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -60,28 +62,40 @@ export default function HomePage() {
           Suivi et amélioration de la satisfaction client
         </h2>
 
-        <div style={{ display: "grid", gap: "50px" }}>
-          <Feature
-            title="Analyse automatique des retours"
-            text="Notre solution suit la satisfaction de vos clients et vous aide à adapter vos services rapidement."
-            image="https://images.unsplash.com/photo-1605902711622-cfb43c4431d8?auto=format&fit=crop&w=800&q=80"
-          />
-          <Feature
-            title="Questionnaires personnalisés"
-            text="Envoyez des questionnaires par SMS ou email au moment idéal pour obtenir des retours précis et exploitables."
-            image="https://images.unsplash.com/photo-1603570413476-1e5c8f1547f6?auto=format&fit=crop&w=800&q=80"
-          />
-          <Feature
-            title="Réponses en temps réel"
-            text="Recevez des notifications immédiates lorsque des clients laissent des avis négatifs et intervenez rapidement."
-            image="https://images.unsplash.com/photo-1611599532643-f756d7b612f0?auto=format&fit=crop&w=800&q=80"
-          />
-          <Feature
-            title="Indicateurs de performance"
-            text="Suivez vos KPIs essentiels comme NPS, CSAT et CES pour prendre des décisions éclairées et améliorer l’expérience client."
-            image="https://images.unsplash.com/photo-1604079621317-08c0b1cf5c1d?auto=format&fit=crop&w=800&q=80"
-          />
-        </div>
+        <FeatureGrid />
+      </section>
+
+      {/* CTA DEMO */}
+      <section
+        style={{
+          backgroundColor: "#111",
+          color: "white",
+          padding: "80px 20px",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ fontSize: "2rem", marginBottom: "20px" }}>
+          Offrez dès aujourd’hui une expérience client et employé à la hauteur de vos ambitions
+        </h2>
+        <p style={{ maxWidth: "600px", margin: "0 auto 30px", fontSize: "1.1rem" }}>
+          Découvrez tout ce qu’AvisPME peut apporter à votre entreprise lors d’une brève
+          démonstration de 15 minutes, au moment de votre choix!
+        </p>
+        <Link
+          href="/start"
+          style={{
+            display: "inline-block",
+            padding: "14px 30px",
+            borderRadius: "8px",
+            backgroundColor: "#00ffcc",
+            color: "#111",
+            fontWeight: "bold",
+            textDecoration: "none",
+            fontSize: "1rem",
+          }}
+        >
+          Planifier ma démo gratuite
+        </Link>
       </section>
 
       {/* INDUSTRIES EN BAS */}
@@ -143,17 +157,70 @@ export default function HomePage() {
   );
 }
 
-function Feature({ title, text, image }: { title: string; text: string; image: string }) {
+/* FEATURE GRID AVEC ANIMATION AU SCROLL */
+function FeatureGrid() {
+  const features = [
+    {
+      title: "Analyse automatique des retours",
+      text: "Notre solution suit la satisfaction de vos clients et vous aide à adapter vos services rapidement.",
+      image: "https://images.unsplash.com/photo-1605902711622-cfb43c4431d8?auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      title: "Questionnaires personnalisés",
+      text: "Envoyez des questionnaires par SMS ou email au moment idéal pour obtenir des retours précis et exploitables.",
+      image: "https://images.unsplash.com/photo-1603570413476-1e5c8f1547f6?auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      title: "Réponses en temps réel",
+      text: "Recevez des notifications immédiates lorsque des clients laissent des avis négatifs et intervenez rapidement.",
+      image: "https://images.unsplash.com/photo-1611599532643-f756d7b612f0?auto=format&fit=crop&w=800&q=80",
+    },
+    {
+      title: "Indicateurs de performance",
+      text: "Suivez vos KPIs essentiels comme NPS, CSAT et CES pour prendre des décisions éclairées et améliorer l’expérience client.",
+      image: "https://images.unsplash.com/photo-1604079621317-08c0b1cf5c1d?auto=format&fit=crop&w=800&q=80",
+    },
+  ];
+
+  return (
+    <div style={{ display: "grid", gap: "40px" }}>
+      {features.map((feature, idx) => (
+        <AnimatedFeature
+          key={idx}
+          title={feature.title}
+          text={feature.text}
+          image={feature.image}
+        />
+      ))}
+    </div>
+  );
+}
+
+function AnimatedFeature({ title, text, image }: { title: string; text: string; image: string }) {
+  const controls = useAnimation();
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.2 });
+
+  useEffect(() => {
+    if (inView) controls.start("visible");
+  }, [controls, inView]);
+
+  const variants: Variants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
+  };
+
   return (
     <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={controls}
+      variants={variants}
       style={{
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         gap: "30px",
       }}
-      whileHover={{ scale: 1.03 }}
-      transition={{ type: "spring", stiffness: 100 }}
     >
       <img
         src={image}
