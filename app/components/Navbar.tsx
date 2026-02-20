@@ -5,20 +5,20 @@ import Link from "next/link";
 export default function Navbar() {
   return (
     <nav
-      style={{
-        position: "fixed",
-        top: 0,
-        width: "100%",
-        padding: "20px 50px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: "rgba(255,255,255,0.95)",
-        backdropFilter: "blur(8px)",
-        borderBottom: "1px solid #eee",
-        zIndex: 1000,
-      }}
-    >
+  style={{
+    position: "fixed",
+    top: 0,
+    width: "100%",
+    padding: "20px 80px", // 👈 plus d'espace sur les côtés
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.95)",
+    backdropFilter: "blur(8px)",
+    borderBottom: "1px solid #eee",
+    zIndex: 1000,
+  }}
+>
       <Link
         href="/"
         style={{
