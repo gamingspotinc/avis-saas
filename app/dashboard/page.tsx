@@ -1,19 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function DashboardPage() {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/");
+  };
+
   return (
     <div style={{ fontFamily: "sans-serif" }}>
       
       {/* HEADER */}
-      <div style={{ marginBottom: 50 }}>
-        <h1 style={{ fontSize: "2.8rem", fontWeight: 700 }}>
-          Tableau de bord
-        </h1>
-        <p style={{ color: "#666", marginTop: 10 }}>
-          Analysez vos performances et gérez votre réputation en un seul endroit.
-        </p>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 50,
+        }}
+      >
+        <div>
+          <h1 style={{ fontSize: "2.8rem", fontWeight: 700 }}>
+            Tableau de bord
+          </h1>
+          <p style={{ color: "#666", marginTop: 10 }}>
+            Analysez vos performances et gérez votre réputation.
+          </p>
+        </div>
+
+        {/* BOUTON DECONNEXION */}
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: "10px 18px",
+            borderRadius: 8,
+            border: "1px solid #ddd",
+            backgroundColor: "white",
+            cursor: "pointer",
+            fontWeight: 600,
+          }}
+        >
+          Déconnexion
+        </button>
       </div>
 
       {/* KPI CARDS */}
@@ -31,14 +63,12 @@ export default function DashboardPage() {
         <Card title="Alertes négatives" value="6" />
       </div>
 
-      {/* QR + LIEN */}
-      <div style={sectionStyle}>
-        <h2 style={sectionTitle}>Votre QR Code</h2>
-
+      {/* QR SECTION */}
+      <Section title="Votre QR Code">
         <div
           style={{
-            width: "160px",
-            height: "160px",
+            width: 160,
+            height: 160,
             backgroundColor: "#f3f4f6",
             display: "flex",
             alignItems: "center",
@@ -52,40 +82,28 @@ export default function DashboardPage() {
         </div>
 
         <p style={{ color: "#555" }}>
-          Lien public :{" "}
-          <strong>avispm e.com/entreprise/demo</strong>
+          Lien public : <strong>avispm e.com/entreprise/demo</strong>
         </p>
-      </div>
+      </Section>
 
-      {/* AVIS RÉCENTS */}
-      <div style={{ ...sectionStyle, marginTop: 40 }}>
-        <h2 style={sectionTitle}>Avis récents</h2>
-
+      {/* AVIS */}
+      <Section title="Avis récents">
         <Avis
           name="Jean Dupont"
-          comment="Service excellent, très rapide."
+          comment="Service excellent."
           rating="⭐⭐⭐⭐⭐"
         />
-
         <Avis
           name="Marie Tremblay"
-          comment="Bonne expérience générale."
+          comment="Bonne expérience."
           rating="⭐⭐⭐⭐"
         />
-
-        <Avis
-          name="Client anonyme"
-          comment="Déçu du service client."
-          rating="⭐⭐"
-        />
-      </div>
+      </Section>
     </div>
   );
 }
 
-/* ===================== */
-/* COMPONENTS */
-/* ===================== */
+/* ================= COMPONENTS ================= */
 
 function Card({ title, value }: { title: string; value: string }) {
   return (
@@ -95,11 +113,37 @@ function Card({ title, value }: { title: string; value: string }) {
         padding: "25px",
         borderRadius: "16px",
         boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-        border: "1px solid #f0f0f0",
+        border: "1px solid #f1f1f1",
       }}
     >
       <p style={{ color: "#666", fontSize: "0.95rem" }}>{title}</p>
       <h2 style={{ fontSize: "2rem", marginTop: 10 }}>{value}</h2>
+    </div>
+  );
+}
+
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        backgroundColor: "white",
+        padding: "35px",
+        borderRadius: "18px",
+        boxShadow: "0 10px 30px rgba(0,0,0,0.04)",
+        border: "1px solid #f1f1f1",
+        marginBottom: 40,
+      }}
+    >
+      <h2 style={{ fontSize: "1.5rem", marginBottom: 20 }}>
+        {title}
+      </h2>
+      {children}
     </div>
   );
 }
@@ -126,20 +170,3 @@ function Avis({
     </div>
   );
 }
-
-/* ===================== */
-/* STYLES */
-/* ===================== */
-
-const sectionStyle = {
-  backgroundColor: "white",
-  padding: "35px",
-  borderRadius: "18px",
-  boxShadow: "0 10px 30px rgba(0,0,0,0.04)",
-  border: "1px solid #f1f1f1",
-};
-
-const sectionTitle = {
-  fontSize: "1.5rem",
-  marginBottom: "20px",
-};
