@@ -1,172 +1,145 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function DashboardPage() {
-  const router = useRouter();
+type Feedback = {
+  id: string;
+  comment: string;
+  satisfaction: string | null;
+  created_at: string;
+};
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
-  };
+export default function DashboardPage() {
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const { data: sessionData } = await supabase.auth.getUser();
+
+      const user = sessionData?.user;
+      if (!user) return;
+
+      // 1️⃣ Récupérer company_id du user
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("company_id")
+        .eq("id", user.id)
+        .single();
+
+      if (!profile) return;
+
+      // 2️⃣ Charger feedback uniquement de cette company
+      const { data: feedbackData } = await supabase
+        .from("feedback")
+        .select("*")
+        .eq("company_id", profile.company_id)
+        .order("created_at", { ascending: false });
+
+      if (feedbackData) {
+        setFeedbacks(feedbackData);
+      }
+
+      setLoading(false);
+    };
+
+    loadData();
+  }, []);
+
+  if (loading) return <p>Chargement...</p>;
+
+  /* ================= KPI CALCULS ================= */
+
+  const totalAvis = feedbacks.length;
+
+  const avisPositifs = feedbacks.filter(
+    (f) => f.satisfaction === "yes"
+  ).length;
+
+  const tauxPositif =
+    totalAvis > 0
+      ? Math.round((avisPositifs / totalAvis) * 100)
+      : 0;
+
+  const avisRediriges = avisPositifs; // logique actuelle
+  const alertesNegatives = feedbacks.filter(
+    (f) => f.satisfaction === "no"
+  ).length;
+
+  /* ================= UI ================= */
 
   return (
     <div style={{ fontFamily: "sans-serif" }}>
-      
-      {/* HEADER */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 50,
-        }}
-      >
-        <div>
-          <h1 style={{ fontSize: "2.8rem", fontWeight: 700 }}>
-            Tableau de bord
-          </h1>
-          <p style={{ color: "#666", marginTop: 10 }}>
-            Analysez vos performances et gérez votre réputation.
-          </p>
-        </div>
+      <h1 style={{ fontSize: "2.5rem", marginBottom: 40 }}>
+        Tableau de bord
+      </h1>
 
-        {/* BOUTON DECONNEXION */}
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: "10px 18px",
-            borderRadius: 8,
-            border: "1px solid #ddd",
-            backgroundColor: "white",
-            cursor: "pointer",
-            fontWeight: 600,
-          }}
-        >
-          Déconnexion
-        </button>
-      </div>
-
-      {/* KPI CARDS */}
+      {/* KPI */}
       <div
         style={{
           display: "grid",
-          gap: "25px",
+          gap: 25,
           gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          marginBottom: "60px",
+          marginBottom: 50,
         }}
       >
-        <Card title="Avis reçus" value="124" />
-        <Card title="Taux positif" value="92%" />
-        <Card title="Avis redirigés Google" value="87" />
-        <Card title="Alertes négatives" value="6" />
+        <Card title="Avis reçus" value={totalAvis.toString()} />
+        <Card title="Taux positif" value={`${tauxPositif}%`} />
+        <Card title="Avis redirigés Google" value={avisRediriges.toString()} />
+        <Card title="Alertes négatives" value={alertesNegatives.toString()} />
       </div>
 
-      {/* QR SECTION */}
-      <Section title="Votre QR Code">
-        <div
-          style={{
-            width: 160,
-            height: 160,
-            backgroundColor: "#f3f4f6",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 12,
-            border: "1px solid #e5e7eb",
-            marginBottom: 20,
-          }}
-        >
-          QR Code
-        </div>
+      {/* LISTE AVIS */}
+      <div style={sectionStyle}>
+        <h2 style={{ marginBottom: 20 }}>Avis récents</h2>
 
-        <p style={{ color: "#555" }}>
-          Lien public : <strong>avispm e.com/entreprise/demo</strong>
-        </p>
-      </Section>
-
-      {/* AVIS */}
-      <Section title="Avis récents">
-        <Avis
-          name="Jean Dupont"
-          comment="Service excellent."
-          rating="⭐⭐⭐⭐⭐"
-        />
-        <Avis
-          name="Marie Tremblay"
-          comment="Bonne expérience."
-          rating="⭐⭐⭐⭐"
-        />
-      </Section>
+        {feedbacks.length === 0 ? (
+          <p>Aucun avis pour le moment.</p>
+        ) : (
+          feedbacks.map((f) => (
+            <div
+              key={f.id}
+              style={{
+                padding: "15px 0",
+                borderBottom: "1px solid #eee",
+              }}
+            >
+              <p>{f.comment}</p>
+              <small style={{ color: "#666" }}>
+                {new Date(f.created_at).toLocaleString()}
+              </small>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
 
-/* ================= COMPONENTS ================= */
+/* ================= COMPONENT ================= */
 
 function Card({ title, value }: { title: string; value: string }) {
   return (
     <div
       style={{
         backgroundColor: "white",
-        padding: "25px",
-        borderRadius: "16px",
+        padding: 25,
+        borderRadius: 16,
         boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
         border: "1px solid #f1f1f1",
       }}
     >
-      <p style={{ color: "#666", fontSize: "0.95rem" }}>{title}</p>
+      <p style={{ color: "#666" }}>{title}</p>
       <h2 style={{ fontSize: "2rem", marginTop: 10 }}>{value}</h2>
     </div>
   );
 }
 
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      style={{
-        backgroundColor: "white",
-        padding: "35px",
-        borderRadius: "18px",
-        boxShadow: "0 10px 30px rgba(0,0,0,0.04)",
-        border: "1px solid #f1f1f1",
-        marginBottom: 40,
-      }}
-    >
-      <h2 style={{ fontSize: "1.5rem", marginBottom: 20 }}>
-        {title}
-      </h2>
-      {children}
-    </div>
-  );
-}
-
-function Avis({
-  name,
-  comment,
-  rating,
-}: {
-  name: string;
-  comment: string;
-  rating: string;
-}) {
-  return (
-    <div
-      style={{
-        padding: "18px 0",
-        borderBottom: "1px solid #eee",
-      }}
-    >
-      <strong>{name}</strong>
-      <p style={{ margin: "8px 0", color: "#555" }}>{comment}</p>
-      <div>{rating}</div>
-    </div>
-  );
-}
+const sectionStyle = {
+  backgroundColor: "white",
+  padding: 35,
+  borderRadius: 18,
+  boxShadow: "0 10px 30px rgba(0,0,0,0.04)",
+  border: "1px solid #f1f1f1",
+};
