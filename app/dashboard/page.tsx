@@ -79,7 +79,8 @@ export default function DashboardPage() {
 
   if (loading) return <p>Chargement...</p>;
 
-  // KPI
+  // ===== KPI =====
+
   const total = feedbacks.length;
   const positives = feedbacks.filter(
     (f) => f.satisfaction === "positive"
@@ -98,7 +99,8 @@ export default function DashboardPage() {
     ? `https://avis-saas-xi.vercel.app/avis/${companySlug}`
     : "";
 
-  // Graph data
+  // ===== GRAPH DATA =====
+
   const grouped: { [key: string]: number } = {};
   feedbacks.forEach((f) => {
     const date = new Date(f.created_at).toLocaleDateString();
@@ -116,26 +118,28 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div style={{ paddingBottom: 60 }}>
-      {/* HEADER PREMIUM */}
+    <div style={{ paddingBottom: 80 }}>
+
+      {/* HERO PREMIUM */}
       <div
         style={{
-          background: "linear-gradient(135deg, #111, #333)",
+          background: "linear-gradient(135deg, #0f172a, #1e293b)",
+          padding: 50,
+          borderRadius: 25,
           color: "white",
-          padding: "40px",
-          borderRadius: "20px",
-          marginBottom: "40px",
+          marginBottom: 40,
+          boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
         }}
       >
         <div>
-          <h1 style={{ fontSize: "2.5rem", marginBottom: 10 }}>
+          <h1 style={{ fontSize: "2.7rem", marginBottom: 15 }}>
             Tableau de bord
           </h1>
           <p style={{ opacity: 0.8 }}>
-            Analysez et développez votre réputation en ligne.
+            Suivez vos performances et développez votre réputation.
           </p>
         </div>
 
@@ -143,53 +147,77 @@ export default function DashboardPage() {
           onClick={handleLogout}
           style={{
             background: "white",
-            color: "#111",
-            padding: "10px 20px",
-            borderRadius: "10px",
-            cursor: "pointer",
+            color: "#0f172a",
+            padding: "12px 25px",
+            borderRadius: 12,
             fontWeight: "bold",
+            cursor: "pointer",
+            border: "none",
           }}
         >
           Déconnecter
         </button>
       </div>
 
-      {/* QR + LINK EN HAUT */}
+      {/* QR SECTION */}
       {companySlug && (
         <div
           style={{
             background: "white",
-            padding: 30,
-            borderRadius: 20,
-            boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
+            padding: 35,
+            borderRadius: 25,
             marginBottom: 40,
             display: "flex",
             alignItems: "center",
             gap: 40,
+            boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
           }}
         >
-          <QRCodeCanvas value={publicUrl} size={130} />
+          <QRCodeCanvas value={publicUrl} size={140} />
           <div>
-            <h2 style={{ marginBottom: 10 }}>Lien public</h2>
-            <p style={{ wordBreak: "break-all" }}>{publicUrl}</p>
+            <h2 style={{ marginBottom: 10 }}>Lien public à partager</h2>
+            <p style={{ color: "#555", wordBreak: "break-all" }}>
+              {publicUrl}
+            </p>
           </div>
         </div>
       )}
 
       {/* FILTERS */}
       <div style={{ marginBottom: 30 }}>
-        <FilterButton label="7 jours" onClick={() => setRange(7)} />
-        <FilterButton label="30 jours" onClick={() => setRange(30)} />
-        <FilterButton label="90 jours" onClick={() => setRange(90)} />
-        <FilterButton label="Tout" onClick={() => setRange("all")} />
+        {["7", "30", "90", "all"].map((r) => (
+          <button
+            key={r}
+            onClick={() =>
+              setRange(r === "all" ? "all" : parseInt(r))
+            }
+            style={{
+              marginRight: 10,
+              padding: "8px 18px",
+              borderRadius: 20,
+              border: "none",
+              cursor: "pointer",
+              background:
+                range === (r === "all" ? "all" : parseInt(r))
+                  ? "#0f172a"
+                  : "#e2e8f0",
+              color:
+                range === (r === "all" ? "all" : parseInt(r))
+                  ? "white"
+                  : "#111",
+            }}
+          >
+            {r === "all" ? "Tout" : `${r} jours`}
+          </button>
+        ))}
       </div>
 
       {/* KPI */}
       <div
         style={{
           display: "grid",
-          gap: 20,
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 25,
           marginBottom: 40,
         }}
       >
@@ -199,16 +227,16 @@ export default function DashboardPage() {
         <Card title="Avis négatifs" value={negatives.toString()} />
       </div>
 
-      {/* GRAPHS COMPACT */}
+      {/* GRAPHS */}
       <div
         style={{
           display: "grid",
-          gap: 30,
           gridTemplateColumns: "1fr 1fr",
+          gap: 30,
           marginBottom: 50,
         }}
       >
-        <div style={{ height: 250 }}>
+        <div style={{ height: 240 }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
               <XAxis dataKey="date" hide />
@@ -219,7 +247,7 @@ export default function DashboardPage() {
           </ResponsiveContainer>
         </div>
 
-        <div style={{ height: 250 }}>
+        <div style={{ height: 240 }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={satisfactionData}>
               <XAxis dataKey="name" />
@@ -231,12 +259,12 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* AVIS EN BAS */}
+      {/* AVIS RÉCENTS */}
       <div
         style={{
           background: "white",
-          padding: 30,
-          borderRadius: 20,
+          padding: 35,
+          borderRadius: 25,
           boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
         }}
       >
@@ -271,44 +299,18 @@ export default function DashboardPage() {
   );
 }
 
-/* COMPONENTS */
-
 function Card({ title, value }: { title: string; value: string }) {
   return (
     <div
       style={{
         background: "white",
-        padding: 20,
-        borderRadius: 15,
+        padding: 25,
+        borderRadius: 20,
         boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
       }}
     >
-      <p style={{ color: "#777" }}>{title}</p>
-      <h2 style={{ fontSize: "1.8rem" }}>{value}</h2>
+      <p style={{ color: "#64748b" }}>{title}</p>
+      <h2 style={{ fontSize: "2rem" }}>{value}</h2>
     </div>
-  );
-}
-
-function FilterButton({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        marginRight: 10,
-        padding: "8px 15px",
-        borderRadius: 8,
-        background: "#111",
-        color: "white",
-        cursor: "pointer",
-      }}
-    >
-      {label}
-    </button>
   );
 }
