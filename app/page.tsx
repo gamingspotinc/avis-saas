@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function HomePage() {
   const cardData = [
@@ -140,7 +141,6 @@ export default function HomePage() {
         </ul>
       </section>
 
-      {/* AUTRES SECTIONS RESTENT INCHANGÉES */}
       {/* AUGMENTEZ VOS REVENUS */}
       <section style={{ backgroundColor: "#f0f4f8", padding: "80px 20px" }}>
         <h2 style={{ fontSize: "2rem", marginBottom: 30 }}>
@@ -178,22 +178,24 @@ export default function HomePage() {
         <p style={{ maxWidth: 600, margin: "0 auto 30px" }}>
           Découvrez tout ce qu’AvisPME peut apporter à votre entreprise lors d’une brève démonstration de 15 minutes, au moment de votre choix!
         </p>
-        <button
+
+        <Link
+          href="/start"
           style={{
+            display: "inline-block",
             backgroundColor: "#00ffcc",
             color: "#111",
             fontWeight: "bold",
             padding: "14px 30px",
             borderRadius: 10,
-            border: "none",
-            cursor: "pointer",
+            textDecoration: "none",
           }}
         >
           Planifier ma démo gratuite
-        </button>
+        </Link>
       </section>
 
-      {/* FOOTER INDUSTRIES AVEC ICONES */}
+      {/* FOOTER INDUSTRIES */}
       <section style={{ backgroundColor: "#f8f9fb", padding: "60px 20px" }}>
         <h3 style={{ fontSize: "1.8rem", marginBottom: 30 }}>Découvrez tous nos secteurs</h3>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
