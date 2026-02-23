@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { QRCodeCanvas } from "qrcode.react";
 
 type Feedback = {
   id: string;
@@ -13,6 +14,7 @@ type Feedback = {
 
 export default function DashboardPage() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [companySlug, setCompanySlug] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,6 +37,14 @@ export default function DashboardPage() {
         return;
       }
 
+      const { data: company } = await supabase
+        .from("companies")
+        .select("slug")
+        .eq("id", profile.company_id)
+        .single();
+
+      setCompanySlug(company?.slug || null);
+
       const { data: feedbackData } = await supabase
         .from("feedback")
         .select("*")
@@ -48,34 +58,60 @@ export default function DashboardPage() {
     loadData();
   }, []);
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  };
+
   if (loading) return <p>Chargement...</p>;
 
-  // ===== CALCULS KPI =====
-
+  // KPI
   const total = feedbacks.length;
-
   const positives = feedbacks.filter(
     (f) => f.satisfaction === "positive"
+  ).length;
+  const negatives = feedbacks.filter(
+    (f) => f.satisfaction === "negative"
+  ).length;
+  const redirected = feedbacks.filter(
+    (f) => f.google_redirect === true
   ).length;
 
   const positiveRate =
     total > 0 ? Math.round((positives / total) * 100) : 0;
 
-  const redirected = feedbacks.filter(
-    (f) => f.google_redirect === true
-  ).length;
-
-  const negatives = feedbacks.filter(
-    (f) => f.satisfaction === "negative"
-  ).length;
+  const publicUrl = companySlug
+    ? `https://avis-saas-xi.vercel.app/avis/${companySlug}`
+    : "";
 
   return (
     <div>
-      <h1 style={{ fontSize: "2.5rem", marginBottom: "40px" }}>
-        Tableau de bord
-      </h1>
+      {/* HEADER */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "40px",
+        }}
+      >
+        <h1 style={{ fontSize: "2.5rem" }}>Tableau de bord</h1>
 
-      {/* KPI CARDS */}
+        <button
+          onClick={handleLogout}
+          style={{
+            background: "#111",
+            color: "white",
+            padding: "10px 20px",
+            borderRadius: "8px",
+            cursor: "pointer",
+          }}
+        >
+          Déconnecter
+        </button>
+      </div>
+
+      {/* KPI */}
       <div
         style={{
           display: "grid",
@@ -90,25 +126,49 @@ export default function DashboardPage() {
         <Card title="Alertes négatives" value={negatives.toString()} />
       </div>
 
+      {/* QR SECTION */}
+      {companySlug && (
+        <div style={boxStyle}>
+          <h2 style={{ marginBottom: "20px" }}>Votre QR Code</h2>
+
+          <QRCodeCanvas value={publicUrl} size={150} />
+
+          <p style={{ marginTop: "20px" }}>
+            Lien public : <strong>{publicUrl}</strong>
+          </p>
+        </div>
+      )}
+
       {/* AVIS RÉCENTS */}
-      <div style={boxStyle}>
+      <div style={{ ...boxStyle, marginTop: "40px" }}>
         <h2 style={{ marginBottom: "20px" }}>Avis récents</h2>
 
         {feedbacks.length === 0 && <p>Aucun avis pour le moment.</p>}
 
         {feedbacks.slice(0, 5).map((avis) => (
-          <Avis
+          <div
             key={avis.id}
-            comment={avis.comment}
-            satisfaction={avis.satisfaction}
-          />
+            style={{
+              padding: "20px 0",
+              borderBottom: "1px solid #eee",
+            }}
+          >
+            <p>{avis.comment}</p>
+            <strong>
+              {avis.satisfaction === "positive"
+                ? "😊 Positif"
+                : avis.satisfaction === "negative"
+                ? "⚠️ Négatif"
+                : "Neutre"}
+            </strong>
+          </div>
         ))}
       </div>
     </div>
   );
 }
 
-/* COMPONENTS */
+/* COMPONENT */
 
 function Card({ title, value }: { title: string; value: string }) {
   return (
@@ -122,32 +182,6 @@ function Card({ title, value }: { title: string; value: string }) {
     >
       <p style={{ color: "#555" }}>{title}</p>
       <h2 style={{ fontSize: "2rem", marginTop: "10px" }}>{value}</h2>
-    </div>
-  );
-}
-
-function Avis({
-  comment,
-  satisfaction,
-}: {
-  comment: string;
-  satisfaction: string | null;
-}) {
-  return (
-    <div
-      style={{
-        padding: "20px 0",
-        borderBottom: "1px solid #eee",
-      }}
-    >
-      <p style={{ marginBottom: "10px" }}>{comment}</p>
-      <strong>
-        {satisfaction === "positive"
-          ? "😊 Positif"
-          : satisfaction === "negative"
-          ? "⚠️ Négatif"
-          : "Neutre"}
-      </strong>
     </div>
   );
 }
