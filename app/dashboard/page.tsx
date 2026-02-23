@@ -3,6 +3,16 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { QRCodeCanvas } from "qrcode.react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from "recharts";
 
 type Feedback = {
   id: string;
@@ -15,12 +25,14 @@ type Feedback = {
 export default function DashboardPage() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [companySlug, setCompanySlug] = useState<string | null>(null);
+  const [range, setRange] = useState(30);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
-      const { data: userData } = await supabase.auth.getUser();
+      setLoading(true);
 
+      const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) {
         setLoading(false);
         return;
@@ -45,18 +57,23 @@ export default function DashboardPage() {
 
       setCompanySlug(company?.slug || null);
 
+      const now = new Date();
+      const pastDate = new Date();
+      pastDate.setDate(now.getDate() - range);
+
       const { data: feedbackData } = await supabase
         .from("feedback")
         .select("*")
         .eq("company_id", profile.company_id)
-        .order("created_at", { ascending: false });
+        .gte("created_at", pastDate.toISOString())
+        .order("created_at", { ascending: true });
 
       setFeedbacks(feedbackData || []);
       setLoading(false);
     };
 
     loadData();
-  }, []);
+  }, [range]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -65,7 +82,8 @@ export default function DashboardPage() {
 
   if (loading) return <p>Chargement...</p>;
 
-  // KPI
+  // ===== KPI CALCULS =====
+
   const total = feedbacks.length;
   const positives = feedbacks.filter(
     (f) => f.satisfaction === "positive"
@@ -83,6 +101,27 @@ export default function DashboardPage() {
   const publicUrl = companySlug
     ? `https://avis-saas-xi.vercel.app/avis/${companySlug}`
     : "";
+
+  // ===== GRAPH DATA =====
+
+  const groupedByDate: { [key: string]: number } = {};
+
+  feedbacks.forEach((f) => {
+    const date = new Date(f.created_at).toLocaleDateString();
+    groupedByDate[date] = (groupedByDate[date] || 0) + 1;
+  });
+
+  const chartData = Object.entries(groupedByDate).map(
+    ([date, count]) => ({
+      date,
+      total: count,
+    })
+  );
+
+  const satisfactionData = [
+    { name: "Positif", value: positives },
+    { name: "Négatif", value: negatives },
+  ];
 
   return (
     <div>
@@ -111,6 +150,13 @@ export default function DashboardPage() {
         </button>
       </div>
 
+      {/* FILTERS */}
+      <div style={{ marginBottom: "30px" }}>
+        <button onClick={() => setRange(7)}>7 jours</button>{" "}
+        <button onClick={() => setRange(30)}>30 jours</button>{" "}
+        <button onClick={() => setRange(90)}>90 jours</button>
+      </div>
+
       {/* KPI */}
       <div
         style={{
@@ -126,44 +172,42 @@ export default function DashboardPage() {
         <Card title="Alertes négatives" value={negatives.toString()} />
       </div>
 
+      {/* GRAPH EVOLUTION */}
+      <div style={{ height: 300, marginBottom: 60 }}>
+        <h2>Évolution des avis</h2>
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={chartData}>
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="total" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* GRAPH SATISFACTION */}
+      <div style={{ height: 300, marginBottom: 60 }}>
+        <h2>Répartition satisfaction</h2>
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={satisfactionData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="value" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
       {/* QR SECTION */}
       {companySlug && (
         <div style={boxStyle}>
           <h2 style={{ marginBottom: "20px" }}>Votre QR Code</h2>
-
           <QRCodeCanvas value={publicUrl} size={150} />
-
           <p style={{ marginTop: "20px" }}>
             Lien public : <strong>{publicUrl}</strong>
           </p>
         </div>
       )}
-
-      {/* AVIS RÉCENTS */}
-      <div style={{ ...boxStyle, marginTop: "40px" }}>
-        <h2 style={{ marginBottom: "20px" }}>Avis récents</h2>
-
-        {feedbacks.length === 0 && <p>Aucun avis pour le moment.</p>}
-
-        {feedbacks.slice(0, 5).map((avis) => (
-          <div
-            key={avis.id}
-            style={{
-              padding: "20px 0",
-              borderBottom: "1px solid #eee",
-            }}
-          >
-            <p>{avis.comment}</p>
-            <strong>
-              {avis.satisfaction === "positive"
-                ? "😊 Positif"
-                : avis.satisfaction === "negative"
-                ? "⚠️ Négatif"
-                : "Neutre"}
-            </strong>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
