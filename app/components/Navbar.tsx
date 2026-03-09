@@ -48,6 +48,7 @@ export default function Navbar() {
         backdropFilter: "blur(8px)",
         borderBottom: "1px solid #eee",
         zIndex: 1000,
+        fontFamily: "sans-serif",
       }}
     >
       {/* LOGO */}
@@ -57,14 +58,14 @@ export default function Navbar() {
           textDecoration: "none",
           color: "#111",
           fontWeight: "bold",
-          fontSize: "1.2rem",
+          fontSize: "1.3rem",
         }}
       >
         AvisPME
       </Link>
 
       {/* MENU CENTRAL */}
-      <div style={{ display: "flex", gap: "35px", alignItems: "center" }}>
+      <div style={{ display: "flex", gap: "40px", alignItems: "center" }}>
         {menuItems.map((item) => {
           if (item.name === "Industries") {
             return (
@@ -98,7 +99,7 @@ export default function Navbar() {
                       display: "flex",
                       flexDirection: "column",
                       gap: "10px",
-                      minWidth: 280,
+                      minWidth: 300,
                       zIndex: 2000,
                     }}
                   >
@@ -121,10 +122,11 @@ export default function Navbar() {
                           display: "flex",
                           alignItems: "center",
                           gap: "10px",
-                          padding: "6px 12px",
+                          padding: "8px 12px",
                           textDecoration: "none",
                           color: "#111",
                           fontWeight: 500,
+                          whiteSpace: "nowrap",
                         }}
                       >
                         <Image
@@ -167,17 +169,13 @@ export default function Navbar() {
             href={item.href}
             style={{
               textDecoration: "none",
-              fontWeight:
-                item.name === "Demande d’accès" || item.name === "Connexion"
-                  ? "bold"
-                  : 500,
-              padding:
-                item.name === "Demande d’accès" ? "8px 15px" : "0px 5px",
-              backgroundColor:
-                item.name === "Demande d’accès" ? "#111" : "transparent",
-              color:
-                item.name === "Demande d’accès" ? "white" : "#111",
-              borderRadius: item.name === "Demande d’accès" ? "8px" : undefined,
+              fontWeight: item.name === "Demande d’accès" || item.name === "Connexion" ? "bold" : 500,
+              padding: item.name === "Demande d’accès" ? "8px 15px" : "5px 10px",
+              backgroundColor: item.name === "Demande d’accès" ? "#111" : "transparent",
+              color: item.name === "Demande d’accès" ? "white" : "#111",
+              borderRadius: item.name === "Demande d’accès" ? "8px" : 5,
+              fontSize: "1rem",
+              whiteSpace: "nowrap",
             }}
           >
             {item.name}
