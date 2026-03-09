@@ -40,7 +40,7 @@ export default function Navbar() {
         position: "fixed",
         top: 0,
         width: "100%",
-        padding: "20px 80px",
+        padding: "20px 60px",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -51,7 +51,7 @@ export default function Navbar() {
         fontFamily: "sans-serif",
       }}
     >
-      {/* LOGO */}
+      {/* Logo */}
       <Link
         href="/"
         style={{
@@ -64,7 +64,7 @@ export default function Navbar() {
         AvisPME
       </Link>
 
-      {/* MENU CENTRAL */}
+      {/* Menu central */}
       <div style={{ display: "flex", gap: "40px", alignItems: "center" }}>
         {menuItems.map((item) => {
           if (item.name === "Industries") {
@@ -90,16 +90,16 @@ export default function Navbar() {
                   <div
                     style={{
                       position: "absolute",
-                      top: "110%",
+                      top: "120%",
                       left: 0,
                       background: "white",
                       padding: "15px 20px",
                       borderRadius: 10,
-                      boxShadow: "0 5px 20px rgba(0,0,0,0.15)",
+                      boxShadow: "0 5px 25px rgba(0,0,0,0.2)",
                       display: "flex",
                       flexDirection: "column",
                       gap: "10px",
-                      minWidth: 300,
+                      minWidth: 350,
                       zIndex: 2000,
                     }}
                   >
@@ -161,17 +161,22 @@ export default function Navbar() {
         })}
       </div>
 
-      {/* MENU DROITE */}
-      <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+      {/* Menu droite */}
+      <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
         {rightItems.map((item) => (
           <Link
             key={item.name}
             href={item.href}
             style={{
               textDecoration: "none",
-              fontWeight: item.name === "Demande d’accès" || item.name === "Connexion" ? "bold" : 500,
-              padding: item.name === "Demande d’accès" ? "8px 15px" : "5px 10px",
-              backgroundColor: item.name === "Demande d’accès" ? "#111" : "transparent",
+              fontWeight:
+                item.name === "Demande d’accès" || item.name === "Connexion"
+                  ? "bold"
+                  : 500,
+              padding:
+                item.name === "Demande d’accès" ? "8px 15px" : "5px 10px",
+              backgroundColor:
+                item.name === "Demande d’accès" ? "#111" : "transparent",
               color: item.name === "Demande d’accès" ? "white" : "#111",
               borderRadius: item.name === "Demande d’accès" ? "8px" : 5,
               fontSize: "1rem",
