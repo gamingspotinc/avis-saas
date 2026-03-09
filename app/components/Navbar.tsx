@@ -17,7 +17,7 @@ export default function Navbar() {
     "Cliniques dentaires": "/icone/icone-cliniques dentaires.jpg",
     "Garages automobiles": "/icone/icone-garage automobiles.jpg",
     "Agences immobilières": "/icone/icone-agence immobiliere.jpg",
-    "Autres secteurs": "/icone/icone-autres secteurs.jpg",
+    "Autres secteurs": "/icone/icone-autres-secteurs.jpg",
   };
 
   const menuItems = [
@@ -89,15 +89,16 @@ export default function Navbar() {
                   <div
                     style={{
                       position: "absolute",
-                      top: "120%",
+                      top: "110%",
                       left: 0,
                       background: "white",
-                      padding: "15px",
+                      padding: "15px 20px",
                       borderRadius: 10,
-                      boxShadow: "0 5px 20px rgba(0,0,0,0.1)",
+                      boxShadow: "0 5px 20px rgba(0,0,0,0.15)",
                       display: "flex",
                       flexDirection: "column",
-                      gap: "8px",
+                      gap: "10px",
+                      minWidth: 280,
                       zIndex: 2000,
                     }}
                   >
@@ -120,9 +121,10 @@ export default function Navbar() {
                           display: "flex",
                           alignItems: "center",
                           gap: "10px",
-                          padding: "5px 10px",
+                          padding: "6px 12px",
                           textDecoration: "none",
                           color: "#111",
+                          fontWeight: 500,
                         }}
                       >
                         <Image
@@ -158,17 +160,23 @@ export default function Navbar() {
       </div>
 
       {/* MENU DROITE */}
-      <div style={{ display: "flex", gap: "25px" }}>
+      <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
         {rightItems.map((item) => (
           <Link
             key={item.name}
             href={item.href}
             style={{
               textDecoration: "none",
-              fontWeight: item.name === "Demande d’accès" || item.name === "Connexion" ? "bold" : 500,
-              padding: item.name === "Demande d’accès" ? "8px 15px" : undefined,
-              backgroundColor: item.name === "Demande d’accès" ? "#111" : undefined,
-              color: item.name === "Demande d’accès" ? "white" : "#111",
+              fontWeight:
+                item.name === "Demande d’accès" || item.name === "Connexion"
+                  ? "bold"
+                  : 500,
+              padding:
+                item.name === "Demande d’accès" ? "8px 15px" : "0px 5px",
+              backgroundColor:
+                item.name === "Demande d’accès" ? "#111" : "transparent",
+              color:
+                item.name === "Demande d’accès" ? "white" : "#111",
               borderRadius: item.name === "Demande d’accès" ? "8px" : undefined,
             }}
           >
