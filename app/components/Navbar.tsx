@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function Navbar() {
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const iconMap: Record<string, string> = {
     "Restaurants": "/icone/icone-restaurant.jpg",
@@ -22,7 +22,7 @@ export default function Navbar() {
 
   const menuItems = [
     { name: "Solution", href: "/solution" },
-    { name: "Industries", href: "/industries", hasDropdown: true },
+    { name: "Industries", href: "#" },
     { name: "Fonctionnalités", href: "/fonctionnalites" },
     { name: "À propos", href: "/a-propos" },
   ];
@@ -32,19 +32,6 @@ export default function Navbar() {
     { name: "Tarifs", href: "/pricing" },
     { name: "Demande d’accès", href: "/start" },
     { name: "Connexion", href: "/login" },
-  ];
-
-  const industriesSub = [
-    { name: "Restaurants", href: "/industries/restaurants" },
-    { name: "Salons de coiffure", href: "/industries/salon-coiffure" },
-    { name: "Clinique esthétique", href: "/industries/clinique-esthetique" },
-    { name: "Services aux entreprises", href: "/industries/services-entreprises" },
-    { name: "Hôtellerie", href: "/industries/hotellerie" },
-    { name: "Travailleur autonome", href: "/industries/travailleur-autonome" },
-    { name: "Cliniques dentaires", href: "/industries/dentistes" },
-    { name: "Garages automobiles", href: "/industries/garages" },
-    { name: "Agences immobilières", href: "/industries/immobilier" },
-    { name: "Autres secteurs", href: "/industries/autres-secteurs" },
   ];
 
   return (
@@ -63,7 +50,7 @@ export default function Navbar() {
         zIndex: 1000,
       }}
     >
-      {/* Logo */}
+      {/* LOGO */}
       <Link
         href="/"
         style={{
@@ -76,110 +63,119 @@ export default function Navbar() {
         AvisPME
       </Link>
 
-      {/* Menu central */}
-      <div style={{ display: "flex", gap: "35px", justifyContent: "center", flex: 1 }}>
-        {menuItems.map((item) => (
-          <div key={item.name} style={{ position: "relative" }}>
-            {item.hasDropdown ? (
-              <>
+      {/* MENU CENTRAL */}
+      <div style={{ display: "flex", gap: "35px", alignItems: "center" }}>
+        {menuItems.map((item) => {
+          if (item.name === "Industries") {
+            return (
+              <div
+                key={item.name}
+                style={{ position: "relative" }}
+                onMouseEnter={() => setDropdownOpen(true)}
+                onMouseLeave={() => setDropdownOpen(false)}
+              >
                 <span
-                  style={{ cursor: "pointer", fontWeight: 500 }}
-                  onMouseEnter={() => setShowDropdown(true)}
-                  onMouseLeave={() => setShowDropdown(false)}
-                  onClick={() => setShowDropdown(!showDropdown)}
+                  style={{
+                    fontSize: "1rem",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    userSelect: "none",
+                  }}
                 >
                   {item.name} ▾
                 </span>
 
-                {showDropdown && (
+                {dropdownOpen && (
                   <div
-                    onMouseEnter={() => setShowDropdown(true)}
-                    onMouseLeave={() => setShowDropdown(false)}
                     style={{
                       position: "absolute",
-                      top: "100%",
+                      top: "120%",
                       left: 0,
                       background: "white",
-                      boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-                      borderRadius: 8,
-                      marginTop: 10,
-                      zIndex: 1000,
-                      minWidth: 220,
-                      padding: 10,
+                      padding: "15px",
+                      borderRadius: 10,
+                      boxShadow: "0 5px 20px rgba(0,0,0,0.1)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "8px",
+                      zIndex: 2000,
                     }}
                   >
-                    {industriesSub.map((sub) => (
+                    {[
+                      { name: "Restaurants", href: "/industries/restaurants" },
+                      { name: "Salons de coiffure", href: "/industries/salon-coiffure" },
+                      { name: "Clinique esthétique", href: "/industries/clinique-esthetique" },
+                      { name: "Services aux entreprises", href: "/industries/services-entreprises" },
+                      { name: "Hôtellerie", href: "/industries/hotellerie" },
+                      { name: "Travailleur autonome", href: "/industries/travailleur-autonome" },
+                      { name: "Cliniques dentaires", href: "/industries/dentistes" },
+                      { name: "Garages automobiles", href: "/industries/garages" },
+                      { name: "Agences immobilières", href: "/industries/immobilier" },
+                      { name: "Autres secteurs", href: "/industries/autres-secteurs" },
+                    ].map((subItem) => (
                       <Link
-                        key={sub.name}
-                        href={sub.href}
+                        key={subItem.name}
+                        href={subItem.href}
                         style={{
                           display: "flex",
                           alignItems: "center",
-                          gap: 10,
-                          padding: "8px 10px",
+                          gap: "10px",
+                          padding: "5px 10px",
                           textDecoration: "none",
                           color: "#111",
-                          borderRadius: 6,
-                          transition: "background 0.2s",
                         }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.background = "#f2f2f2")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.background = "transparent")
-                        }
                       >
                         <Image
-                          src={iconMap[sub.name]}
-                          alt={sub.name}
+                          src={iconMap[subItem.name]}
+                          alt={`Icône ${subItem.name}`}
                           width={24}
                           height={24}
                         />
-                        {sub.name}
+                        {subItem.name}
                       </Link>
                     ))}
                   </div>
                 )}
-              </>
-            ) : (
-              <Link
-                href={item.href}
-                style={{
-                  textDecoration: "none",
-                  color: "#111",
-                  fontWeight: 500,
-                  fontSize: "1rem",
-                }}
-              >
-                {item.name}
-              </Link>
-            )}
-          </div>
-        ))}
+              </div>
+            );
+          }
+
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              style={{
+                textDecoration: "none",
+                color: "#111",
+                fontWeight: 500,
+                fontSize: "1rem",
+              }}
+            >
+              {item.name}
+            </Link>
+          );
+        })}
       </div>
 
-      {/* Menu droit */}
-      <div style={{ display: "flex", gap: "25px", justifyContent: "flex-end" }}>
-  {rightItems.map((item) => (
-    <Link
-      key={item.name}
-      href={item.href}
-      style={{
-        textDecoration: "none",
-        fontWeight:
-          item.name === "Demande d’accès" || item.name === "Connexion"
-            ? "bold"
-            : 500,
-        padding: item.name === "Demande d’accès" ? "8px 15px" : undefined,
-        backgroundColor: item.name === "Demande d’accès" ? "#111" : undefined,
-        color: item.name === "Demande d’accès" ? "white" : "#111", // <- seule propriété color
-        borderRadius: item.name === "Demande d’accès" ? "8px" : undefined,
-      }}
-    >
-      {item.name}
-    </Link>
-  ))}
-</div>
+      {/* MENU DROITE */}
+      <div style={{ display: "flex", gap: "25px" }}>
+        {rightItems.map((item) => (
+          <Link
+            key={item.name}
+            href={item.href}
+            style={{
+              textDecoration: "none",
+              fontWeight: item.name === "Demande d’accès" || item.name === "Connexion" ? "bold" : 500,
+              padding: item.name === "Demande d’accès" ? "8px 15px" : undefined,
+              backgroundColor: item.name === "Demande d’accès" ? "#111" : undefined,
+              color: item.name === "Demande d’accès" ? "white" : "#111",
+              borderRadius: item.name === "Demande d’accès" ? "8px" : undefined,
+            }}
+          >
+            {item.name}
+          </Link>
+        ))}
+      </div>
     </nav>
   );
 }
