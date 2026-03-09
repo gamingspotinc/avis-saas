@@ -17,11 +17,18 @@ export default function Navbar() {
     "Autres secteurs": "/icone/icone-autres secteurs.jpg",
   };
 
-  const menuItems = [
+  const mainMenu = [
     { name: "Solution", href: "/solution" },
     { name: "Industries", href: "/industries" },
     { name: "Fonctionnalités", href: "/fonctionnalites" },
     { name: "À propos", href: "/a-propos" },
+  ];
+
+  const rightMenu = [
+    { name: "Accueil", href: "/" },
+    { name: "Tarifs", href: "/pricing" },
+    { name: "Demande d’accès", href: "/start", isButton: true },
+    { name: "Connexion", href: "/login", isButton: true },
   ];
 
   return (
@@ -30,10 +37,10 @@ export default function Navbar() {
         position: "fixed",
         top: 0,
         width: "100%",
-        padding: "20px 60px",
+        padding: "15px 60px",
         display: "flex",
-        alignItems: "center",
         justifyContent: "space-between",
+        alignItems: "center",
         backgroundColor: "rgba(255,255,255,0.95)",
         backdropFilter: "blur(8px)",
         borderBottom: "1px solid #eee",
@@ -47,34 +54,43 @@ export default function Navbar() {
           textDecoration: "none",
           color: "#111",
           fontWeight: "bold",
-          fontSize: "1.3rem",
-          whiteSpace: "nowrap",
+          fontSize: "1.2rem",
         }}
       >
         AvisPME
       </Link>
 
-      {/* MENU CENTRE */}
+      {/* MENU PRINCIPAL AU CENTRE */}
       <div
         style={{
           display: "flex",
-          gap: "32px",
+          gap: "35px",
           alignItems: "center",
+          justifyContent: "center",
+          flex: 1,
         }}
       >
-        {menuItems.map((item) => {
+        {mainMenu.map((item) => {
           if (item.name === "Industries") {
             return (
-              <div
-                key={item.name}
-                className="dropdown"
-                style={{ fontSize: "1rem", fontWeight: 500 }}
-              >
-                <span className="dropdown-trigger">
+              <div key={item.name} className="dropdown" style={{ position: "relative" }}>
+                <span style={{ cursor: "pointer", fontWeight: 500 }}>
                   {item.name} ▾
                 </span>
-
-                <div className="dropdown-menu">
+                <div
+                  className="dropdown-menu"
+                  style={{
+                    position: "absolute",
+                    top: "120%",
+                    left: 0,
+                    backgroundColor: "white",
+                    borderRadius: 8,
+                    boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+                    padding: "10px 0",
+                    display: "none", // affiché via hover css
+                    minWidth: 200,
+                  }}
+                >
                   {[
                     { name: "Restaurants", href: "/industries/restaurants" },
                     { name: "Salons de coiffure", href: "/industries/salon-coiffure" },
@@ -90,22 +106,21 @@ export default function Navbar() {
                     <Link
                       key={subItem.name}
                       href={subItem.href}
-                      className="dropdown-item"
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "10px",
-                        padding: "8px 12px",
-                        fontSize: "1rem",
+                        gap: 10,
+                        padding: "8px 15px",
                         textDecoration: "none",
                         color: "#111",
+                        fontSize: "0.95rem",
                       }}
                     >
                       <Image
                         src={iconMap[subItem.name]}
-                        alt={`Icône ${subItem.name}`}
-                        width={22}
-                        height={22}
+                        alt={subItem.name}
+                        width={20}
+                        height={20}
                       />
                       {subItem.name}
                     </Link>
@@ -119,13 +134,7 @@ export default function Navbar() {
             <Link
               key={item.name}
               href={item.href}
-              style={{
-                textDecoration: "none",
-                color: "#111",
-                fontWeight: 500,
-                fontSize: "1rem",
-                whiteSpace: "nowrap",
-              }}
+              style={{ textDecoration: "none", color: "#111", fontWeight: 500 }}
             >
               {item.name}
             </Link>
@@ -133,40 +142,40 @@ export default function Navbar() {
         })}
       </div>
 
-      {/* ACTIONS DROITE */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "20px",
-        }}
-      >
-        <Link
-          href="/login"
-          style={{
-            textDecoration: "none",
-            color: "#111",
-            fontWeight: 500,
-            whiteSpace: "nowrap",
-          }}
-        >
-          Connexion
-        </Link>
-
-        <Link
-          href="/start"
-          style={{
-            padding: "10px 18px",
-            borderRadius: "8px",
-            backgroundColor: "#111",
-            color: "white",
-            textDecoration: "none",
-            fontWeight: "bold",
-            whiteSpace: "nowrap",
-          }}
-        >
-          Demande d’accès
-        </Link>
+      {/* MENU A DROITE */}
+      <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+        {rightMenu.map((item) =>
+          item.isButton ? (
+            <Link
+              key={item.name}
+              href={item.href}
+              style={{
+                padding: "8px 18px",
+                borderRadius: 8,
+                backgroundColor: "#111",
+                color: "white",
+                textDecoration: "none",
+                fontWeight: "bold",
+                fontSize: "0.95rem",
+              }}
+            >
+              {item.name}
+            </Link>
+          ) : (
+            <Link
+              key={item.name}
+              href={item.href}
+              style={{
+                textDecoration: "none",
+                color: "#111",
+                fontWeight: 500,
+                fontSize: "0.95rem",
+              }}
+            >
+              {item.name}
+            </Link>
+          )
+        )}
       </div>
     </nav>
   );

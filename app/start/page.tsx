@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 
 export default function StartPage() {
   const [formData, setFormData] = useState({
@@ -11,14 +10,14 @@ export default function StartPage() {
     phone: "",
   });
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     alert("Merci ! Nous vous contacterons sous peu.");
     setFormData({
@@ -31,66 +30,6 @@ export default function StartPage() {
 
   return (
     <main style={{ fontFamily: "sans-serif", paddingTop: "90px" }}>
-      {/* NAVBAR */}
-      <nav
-        style={{
-          position: "fixed",
-          top: 0,
-          width: "100%",
-          padding: "18px 40px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: "rgba(0,0,0,0.95)",
-          color: "white",
-          zIndex: 1000,
-        }}
-      >
-        <h3 style={{ margin: 0 }}>AvisPME</h3>
-
-        <div
-          style={{
-            display: "flex",
-            gap: "25px",
-            alignItems: "center",
-          }}
-        >
-          <Link
-            href="/"
-            style={{
-              color: "white",
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Accueil
-          </Link>
-
-          <Link
-            href="/pricing"
-            style={{
-              color: "white",
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Tarifs
-          </Link>
-
-          {/* ✅ lien corrigé */}
-          <Link
-            href="/login"
-            style={{
-              color: "white",
-              textDecoration: "none",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Connexion
-          </Link>
-        </div>
-      </nav>
-
       {/* HERO / FORM SECTION */}
       <section
         style={{
