@@ -40,7 +40,7 @@ export default function Navbar() {
         position: "fixed",
         top: 0,
         width: "100%",
-        padding: "20px 60px",
+        padding: "20px 80px 20px 60px",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -75,6 +75,7 @@ export default function Navbar() {
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
+                {/* Trigger + Menu wrapper pour éviter disparition */}
                 <span
                   style={{
                     fontSize: "1rem",
@@ -90,7 +91,7 @@ export default function Navbar() {
                   <div
                     style={{
                       position: "absolute",
-                      top: "120%",
+                      top: "100%", // collé juste sous le trigger
                       left: 0,
                       background: "white",
                       padding: "15px 20px",
@@ -174,11 +175,19 @@ export default function Navbar() {
                   ? "bold"
                   : 500,
               padding:
-                item.name === "Demande d’accès" ? "8px 15px" : "5px 10px",
+                item.name === "Demande d’accès" || item.name === "Connexion"
+                  ? "8px 15px"
+                  : "5px 10px",
               backgroundColor:
                 item.name === "Demande d’accès" ? "#111" : "transparent",
-              color: item.name === "Demande d’accès" ? "white" : "#111",
-              borderRadius: item.name === "Demande d’accès" ? "8px" : 5,
+              color:
+                item.name === "Demande d’accès" || item.name === "Connexion"
+                  ? "white"
+                  : "#111",
+              borderRadius:
+                item.name === "Demande d’accès" || item.name === "Connexion"
+                  ? "8px"
+                  : 5,
               fontSize: "1rem",
               whiteSpace: "nowrap",
             }}
