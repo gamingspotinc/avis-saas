@@ -46,5 +46,7 @@ export default function DashboardLayout({
 const sidebarLink = {
   textDecoration: "none",
   color: "white",
-  opacity: 0.8,
+  opacity: 0.85,
+  padding: "8px 0",
+  transition: "0.2s",
 };

@@ -32,17 +32,27 @@ export default function DashboardPage() {
     const loadData = async () => {
       setLoading(true);
 
+      // 🔐 vérifier utilisateur
       const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) return setLoading(false);
 
+      if (!userData.user) {
+        window.location.replace("/");
+        return;
+      }
+
+      // récupérer profile
       const { data: profile } = await supabase
         .from("profiles")
         .select("company_id")
         .eq("id", userData.user.id)
         .single();
 
-      if (!profile) return setLoading(false);
+      if (!profile) {
+        window.location.replace("/");
+        return;
+      }
 
+      // récupérer slug company
       const { data: company } = await supabase
         .from("companies")
         .select("slug")
@@ -51,6 +61,7 @@ export default function DashboardPage() {
 
       setCompanySlug(company?.slug || null);
 
+      // query avis
       let query = supabase
         .from("feedback")
         .select("*")
@@ -65,6 +76,7 @@ export default function DashboardPage() {
       }
 
       const { data } = await query;
+
       setFeedbacks(data || []);
       setLoading(false);
     };
@@ -74,19 +86,25 @@ export default function DashboardPage() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    window.location.href = "/";
+
+    localStorage.clear();
+    sessionStorage.clear();
+
+    window.location.replace("/");
   };
 
   if (loading) return <p>Chargement...</p>;
 
-  // KPI
   const total = feedbacks.length;
+
   const positives = feedbacks.filter(
     (f) => f.satisfaction === "positive"
   ).length;
+
   const negatives = feedbacks.filter(
     (f) => f.satisfaction === "negative"
   ).length;
+
   const redirected = feedbacks.filter(
     (f) => f.google_redirect === true
   ).length;
@@ -98,8 +116,8 @@ export default function DashboardPage() {
     ? `https://avis-saas-xi.vercel.app/avis/${companySlug}`
     : "";
 
-  // Graph data
   const grouped: { [key: string]: number } = {};
+
   feedbacks.forEach((f) => {
     const date = new Date(f.created_at).toLocaleDateString();
     grouped[date] = (grouped[date] || 0) + 1;
@@ -117,25 +135,22 @@ export default function DashboardPage() {
 
   return (
     <div style={{ paddingBottom: 60 }}>
-      {/* HEADER PREMIUM */}
+      {/* HEADER */}
       <div
         style={{
-          background: "linear-gradient(135deg, #111, #333)",
+          background: "linear-gradient(135deg,#111,#333)",
           color: "white",
           padding: "40px",
           borderRadius: "20px",
           marginBottom: "40px",
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
         }}
       >
         <div>
-          <h1 style={{ fontSize: "2.5rem", marginBottom: 10 }}>
-            Tableau de bord
-          </h1>
+          <h1 style={{ fontSize: "2.5rem" }}>Tableau de bord</h1>
           <p style={{ opacity: 0.8 }}>
-            Analysez et développez votre réputation en ligne.
+            Analysez et développez votre réputation.
           </p>
         </div>
 
@@ -154,29 +169,28 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      {/* QR + LINK EN HAUT */}
+      {/* QR */}
       {companySlug && (
         <div
           style={{
             background: "white",
             padding: 30,
             borderRadius: 20,
-            boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
             marginBottom: 40,
             display: "flex",
-            alignItems: "center",
             gap: 40,
           }}
         >
           <QRCodeCanvas value={publicUrl} size={130} />
+
           <div>
-            <h2 style={{ marginBottom: 10 }}>Lien public</h2>
-            <p style={{ wordBreak: "break-all" }}>{publicUrl}</p>
+            <h2>Lien public</h2>
+            <p>{publicUrl}</p>
           </div>
         </div>
       )}
 
-      {/* FILTERS */}
+      {/* FILTRES */}
       <div style={{ marginBottom: 30 }}>
         <FilterButton label="7 jours" onClick={() => setRange(7)} />
         <FilterButton label="30 jours" onClick={() => setRange(30)} />
@@ -189,7 +203,7 @@ export default function DashboardPage() {
         style={{
           display: "grid",
           gap: 20,
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))",
           marginBottom: 40,
         }}
       >
@@ -199,7 +213,7 @@ export default function DashboardPage() {
         <Card title="Avis négatifs" value={negatives.toString()} />
       </div>
 
-      {/* GRAPHS COMPACT */}
+      {/* GRAPHS */}
       <div
         style={{
           display: "grid",
@@ -231,31 +245,22 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* AVIS EN BAS */}
+      {/* AVIS */}
       <div
         style={{
           background: "white",
           padding: 30,
           borderRadius: 20,
-          boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
         }}
       >
-        <h2 style={{ marginBottom: 20 }}>Avis récents</h2>
-
-        {feedbacks.length === 0 && <p>Aucun avis.</p>}
+        <h2>Avis récents</h2>
 
         {feedbacks
           .slice()
           .reverse()
           .slice(0, 5)
           .map((avis) => (
-            <div
-              key={avis.id}
-              style={{
-                padding: "15px 0",
-                borderBottom: "1px solid #eee",
-              }}
-            >
+            <div key={avis.id} style={{ padding: "15px 0" }}>
               <p>{avis.comment}</p>
               <strong>
                 {avis.satisfaction === "positive"
@@ -271,8 +276,6 @@ export default function DashboardPage() {
   );
 }
 
-/* COMPONENTS */
-
 function Card({ title, value }: { title: string; value: string }) {
   return (
     <div
@@ -280,11 +283,10 @@ function Card({ title, value }: { title: string; value: string }) {
         background: "white",
         padding: 20,
         borderRadius: 15,
-        boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
       }}
     >
-      <p style={{ color: "#777" }}>{title}</p>
-      <h2 style={{ fontSize: "1.8rem" }}>{value}</h2>
+      <p>{title}</p>
+      <h2>{value}</h2>
     </div>
   );
 }
