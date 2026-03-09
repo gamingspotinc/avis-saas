@@ -31,7 +31,7 @@ export default function Navbar() {
     { name: "Accueil", href: "/" },
     { name: "Tarifs", href: "/pricing" },
     { name: "Demande d’accès", href: "/start" },
-    { name: "Connexion", href: "/login" },
+    { name: "Se Connecter", href: "/login" }, // <-- texte changé ici
   ];
 
   return (
@@ -149,21 +149,21 @@ export default function Navbar() {
       </div>
 
       {/* Menu droite */}
-      <div style={{ display: "flex", gap: "12px", alignItems: "center", flexShrink: 0, paddingRight: "30px" }}> {/* <-- padding forcé à droite */}
+      <div style={{ display: "flex", gap: "12px", alignItems: "center", flexShrink: 0, paddingRight: "30px" }}>
         {rightItems.map((item, idx) => (
           <Link
             key={item.name}
             href={item.href}
             style={{
               textDecoration: "none",
-              fontWeight: item.name === "Demande d’accès" || item.name === "Connexion" ? "bold" : 500,
+              fontWeight: item.name === "Demande d’accès" || item.name === "Se Connecter" ? "bold" : 500,
               padding: "8px 12px",
               backgroundColor: item.name === "Demande d’accès" ? "#111" : "transparent",
-              color: item.name === "Demande d’accès" || item.name === "Connexion" ? "white" : "#111",
+              color: item.name === "Se Connecter" ? "#111" : item.name === "Demande d’accès" ? "white" : "#111", // <-- texte noir pour Se Connecter
               borderRadius: "8px",
               fontSize: "1rem",
               whiteSpace: "nowrap",
-              marginRight: idx === rightItems.length - 1 ? "10px" : "0", // <-- force un petit espace pour Connexion
+              marginRight: idx === rightItems.length - 1 ? "10px" : "0",
             }}
           >
             {item.name}
