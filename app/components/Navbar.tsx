@@ -2,11 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 
 export default function Navbar() {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-
   const iconMap: Record<string, string> = {
     "Restaurants": "/icone/icone-restaurant.jpg",
     "Salons de coiffure": "/icone/icone-salon de coiffure.jpg",
@@ -17,19 +14,19 @@ export default function Navbar() {
     "Cliniques dentaires": "/icone/icone-cliniques dentaires.jpg",
     "Garages automobiles": "/icone/icone-garage automobiles.jpg",
     "Agences immobilières": "/icone/icone-agence immobiliere.jpg",
-    "Autres secteurs": "/icone/icone-autres-secteurs.jpg",
+    "Autres secteurs": "/icone/icone-autres secteurs.jpg",
   };
 
   const menuItems = [
     { name: "Solution", href: "/solution" },
-    { name: "Industries", href: "#" },
+    { name: "Industries", href: "/industries", dropdown: true },
     { name: "Fonctionnalités", href: "/fonctionnalites" },
     { name: "À propos", href: "/a-propos" },
   ];
 
   const rightItems = [
     { name: "Accueil", href: "/" },
-    { name: "Tarifs", href: "/pricing" },
+    { name: "Tarif", href: "/pricing" },
     { name: "Demande d’accès", href: "/start" },
     { name: "Connexion", href: "/login" },
   ];
@@ -40,121 +37,93 @@ export default function Navbar() {
         position: "fixed",
         top: 0,
         width: "100%",
-        padding: "20px 80px 20px 60px",
         display: "flex",
-        justifyContent: "space-between",
         alignItems: "center",
+        padding: "20px 40px",
         backgroundColor: "rgba(255,255,255,0.95)",
         backdropFilter: "blur(8px)",
         borderBottom: "1px solid #eee",
         zIndex: 1000,
-        fontFamily: "sans-serif",
       }}
     >
-      {/* Logo */}
-      <Link
-        href="/"
-        style={{
-          textDecoration: "none",
-          color: "#111",
-          fontWeight: "bold",
-          fontSize: "1.3rem",
-        }}
-      >
-        AvisPME
-      </Link>
+      {/* LOGO */}
+      <div style={{ flex: "0 0 auto" }}>
+        <Link
+          href="/"
+          style={{
+            textDecoration: "none",
+            color: "#111",
+            fontWeight: "bold",
+            fontSize: "1.2rem",
+          }}
+        >
+          AvisPME
+        </Link>
+      </div>
 
-      {/* Menu central */}
-      <div style={{ display: "flex", gap: "40px", alignItems: "center" }}>
+      {/* MENU CENTRE */}
+      <div style={{ flex: 1, display: "flex", justifyContent: "center", gap: "35px" }}>
         {menuItems.map((item) => {
-          if (item.name === "Industries") {
+          if (item.dropdown) {
             return (
-              <div
-                key={item.name}
-                style={{ position: "relative" }}
-                onMouseEnter={() => setDropdownOpen(true)}
-                onMouseLeave={() => setDropdownOpen(false)}
-              >
-                {/* Trigger + Menu wrapper pour éviter disparition */}
+              <div key={item.name} className="dropdown" style={{ position: "relative" }}>
                 <span
-                  style={{
-                    fontSize: "1rem",
-                    fontWeight: 500,
-                    cursor: "pointer",
-                    userSelect: "none",
-                  }}
+                  style={{ cursor: "pointer", fontWeight: 500, fontSize: "1rem" }}
                 >
                   {item.name} ▾
                 </span>
-
-                {dropdownOpen && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "100%", // collé juste sous le trigger
-                      left: 0,
-                      background: "white",
-                      padding: "15px 20px",
-                      borderRadius: 10,
-                      boxShadow: "0 5px 25px rgba(0,0,0,0.2)",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "10px",
-                      minWidth: 350,
-                      zIndex: 2000,
-                    }}
-                  >
-                    {[
-                      { name: "Restaurants", href: "/industries/restaurants" },
-                      { name: "Salons de coiffure", href: "/industries/salon-coiffure" },
-                      { name: "Clinique esthétique", href: "/industries/clinique-esthetique" },
-                      { name: "Services aux entreprises", href: "/industries/services-entreprises" },
-                      { name: "Hôtellerie", href: "/industries/hotellerie" },
-                      { name: "Travailleur autonome", href: "/industries/travailleur-autonome" },
-                      { name: "Cliniques dentaires", href: "/industries/dentistes" },
-                      { name: "Garages automobiles", href: "/industries/garages" },
-                      { name: "Agences immobilières", href: "/industries/immobilier" },
-                      { name: "Autres secteurs", href: "/industries/autres-secteurs" },
-                    ].map((subItem) => (
-                      <Link
-                        key={subItem.name}
-                        href={subItem.href}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "10px",
-                          padding: "8px 12px",
-                          textDecoration: "none",
-                          color: "#111",
-                          fontWeight: 500,
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        <Image
-                          src={iconMap[subItem.name]}
-                          alt={`Icône ${subItem.name}`}
-                          width={24}
-                          height={24}
-                        />
-                        {subItem.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                <div
+                  className="dropdown-menu"
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    background: "white",
+                    minWidth: "250px",
+                    boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+                    borderRadius: 8,
+                    padding: "10px 0",
+                    display: "none",
+                  }}
+                >
+                  {[
+                    { name: "Restaurants", href: "/industries/restaurants" },
+                    { name: "Salons de coiffure", href: "/industries/salon-coiffure" },
+                    { name: "Clinique esthétique", href: "/industries/clinique-esthetique" },
+                    { name: "Services aux entreprises", href: "/industries/services-entreprises" },
+                    { name: "Hôtellerie", href: "/industries/hotellerie" },
+                    { name: "Travailleur autonome", href: "/industries/travailleur-autonome" },
+                    { name: "Cliniques dentaires", href: "/industries/dentistes" },
+                    { name: "Garages automobiles", href: "/industries/garages" },
+                    { name: "Agences immobilières", href: "/industries/immobilier" },
+                    { name: "Autres secteurs", href: "/industries/autres-secteurs" },
+                  ].map((subItem) => (
+                    <Link
+                      key={subItem.name}
+                      href={subItem.href}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                        padding: "8px 15px",
+                        color: "#111",
+                        textDecoration: "none",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      <Image src={iconMap[subItem.name]} alt="" width={24} height={24} />
+                      {subItem.name}
+                    </Link>
+                  ))}
+                </div>
               </div>
             );
           }
-
           return (
             <Link
               key={item.name}
               href={item.href}
-              style={{
-                textDecoration: "none",
-                color: "#111",
-                fontWeight: 500,
-                fontSize: "1rem",
-              }}
+              style={{ textDecoration: "none", color: "#111", fontWeight: 500, fontSize: "1rem" }}
             >
               {item.name}
             </Link>
@@ -162,40 +131,26 @@ export default function Navbar() {
         })}
       </div>
 
-      {/* Menu droite */}
-      <div style={{ display: "flex", gap: "15px", alignItems: "center", paddingRight: "20px" }}> 
+      {/* MENU DROITE */}
+      <div style={{ flex: "0 0 auto", display: "flex", gap: "15px", alignItems: "center" }}>
         {rightItems.map((item) => (
-        <Link
-          key={item.name}
-          href={item.href}
-          style={{
-          textDecoration: "none",
-          fontWeight:
-          item.name === "Demande d’accès" || item.name === "Connexion"
-            ? "bold"
-            : 500,
-        padding:
-          item.name === "Demande d’accès" || item.name === "Connexion"
-            ? "8px 15px"
-            : "5px 10px",
-        backgroundColor:
-          item.name === "Demande d’accès" ? "#111" : "transparent",
-        color:
-          item.name === "Demande d’accès" || item.name === "Connexion"
-            ? "white"
-            : "#111",
-        borderRadius:
-          item.name === "Demande d’accès" || item.name === "Connexion"
-            ? "8px"
-            : 5,
-        fontSize: "1rem",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {item.name}
-    </Link>
-  ))}
-</div>
+          <Link
+            key={item.name}
+            href={item.href}
+            style={{
+              textDecoration: "none",
+              fontWeight: item.name === "Demande d’accès" || item.name === "Connexion" ? "bold" : 500,
+              padding: "8px 15px",
+              backgroundColor: item.name === "Demande d’accès" ? "#111" : "transparent",
+              color: item.name === "Demande d’accès" || item.name === "Connexion" ? "white" : "#111",
+              borderRadius: 8,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {item.name}
+          </Link>
+        ))}
+      </div>
     </nav>
   );
 }
