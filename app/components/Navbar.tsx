@@ -40,7 +40,7 @@ export default function Navbar() {
         position: "fixed",
         top: 0,
         width: "100%",
-        padding: "20px 60px",
+        padding: "20px 40px", // réduit padding horizontal pour gagner de la place
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -162,25 +162,19 @@ export default function Navbar() {
       </div>
 
       {/* Menu droite */}
-      <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
+      <div style={{ display: "flex", gap: "25px", alignItems: "center" }}> 
         {rightItems.map((item) => (
           <Link
             key={item.name}
             href={item.href}
             style={{
               textDecoration: "none",
-              fontWeight:
-                item.name === "Demande d’accès" ? "bold" : 500,
+              fontWeight: item.name === "Demande d’accès" ? "bold" : 500,
               padding:
-                item.name === "Demande d’accès"
-                  ? "8px 15px"
-                  : "5px 10px",
-              backgroundColor:
-                item.name === "Demande d’accès" ? "#111" : "transparent",
-              color:
-                item.name === "Demande d’accès" ? "white" : "#111",
-              borderRadius:
-                item.name === "Demande d’accès" ? "8px" : 5,
+                item.name === "Demande d’accès" ? "8px 15px" : "5px 12px",
+              backgroundColor: item.name === "Demande d’accès" ? "#111" : "transparent",
+              color: item.name === "Demande d’accès" ? "white" : "#111",
+              borderRadius: item.name === "Demande d’accès" ? "8px" : 5,
               fontSize: "1rem",
               whiteSpace: "nowrap",
             }}
