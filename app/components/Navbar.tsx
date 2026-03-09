@@ -30,46 +30,50 @@ export default function Navbar() {
         position: "fixed",
         top: 0,
         width: "100%",
-        padding: "20px 80px",
+        padding: "20px 60px",
         display: "flex",
-        justifyContent: "space-between",
         alignItems: "center",
+        justifyContent: "space-between",
         backgroundColor: "rgba(255,255,255,0.95)",
         backdropFilter: "blur(8px)",
         borderBottom: "1px solid #eee",
         zIndex: 1000,
       }}
     >
+      {/* LOGO */}
       <Link
         href="/"
         style={{
           textDecoration: "none",
           color: "#111",
           fontWeight: "bold",
-          fontSize: "1.2rem",
+          fontSize: "1.3rem",
+          whiteSpace: "nowrap",
         }}
       >
         AvisPME
       </Link>
 
+      {/* MENU CENTRE */}
       <div
         style={{
           display: "flex",
-          gap: "35px",
+          gap: "32px",
           alignItems: "center",
-          flex: 1,
-          justifyContent: "center",
         }}
       >
-        {/* MENU PRINCIPAL UNIFORME */}
         {menuItems.map((item) => {
           if (item.name === "Industries") {
-            // On garde le dropdown pour Industries
             return (
-              <div key={item.name} className="dropdown" style={{ fontSize: "1rem", fontWeight: 500 }}>
-                <span className="dropdown-trigger" style={{ fontSize: "1rem", fontWeight: 500 }}>
+              <div
+                key={item.name}
+                className="dropdown"
+                style={{ fontSize: "1rem", fontWeight: 500 }}
+              >
+                <span className="dropdown-trigger">
                   {item.name} ▾
                 </span>
+
                 <div className="dropdown-menu">
                   {[
                     { name: "Restaurants", href: "/industries/restaurants" },
@@ -92,14 +96,16 @@ export default function Navbar() {
                         alignItems: "center",
                         gap: "10px",
                         padding: "8px 12px",
-                        fontSize: "1.05rem",
+                        fontSize: "1rem",
+                        textDecoration: "none",
+                        color: "#111",
                       }}
                     >
                       <Image
                         src={iconMap[subItem.name]}
                         alt={`Icône ${subItem.name}`}
-                        width={24}
-                        height={24}
+                        width={22}
+                        height={22}
                       />
                       {subItem.name}
                     </Link>
@@ -117,23 +123,46 @@ export default function Navbar() {
                 textDecoration: "none",
                 color: "#111",
                 fontWeight: 500,
-                fontSize: "1rem", // uniforme pour tous
+                fontSize: "1rem",
+                whiteSpace: "nowrap",
               }}
             >
               {item.name}
             </Link>
           );
         })}
+      </div>
+
+      {/* ACTIONS DROITE */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "20px",
+        }}
+      >
+        <Link
+          href="/login"
+          style={{
+            textDecoration: "none",
+            color: "#111",
+            fontWeight: 500,
+            whiteSpace: "nowrap",
+          }}
+        >
+          Connexion
+        </Link>
 
         <Link
           href="/start"
           style={{
-            padding: "10px 20px",
+            padding: "10px 18px",
             borderRadius: "8px",
             backgroundColor: "#111",
             color: "white",
             textDecoration: "none",
             fontWeight: "bold",
+            whiteSpace: "nowrap",
           }}
         >
           Demande d’accès
