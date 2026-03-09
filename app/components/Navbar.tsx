@@ -40,7 +40,7 @@ export default function Navbar() {
         position: "fixed",
         top: 0,
         width: "100%",
-        padding: "20px 20px", // réduit padding horizontal
+        padding: "20px 15px", // padding réduit
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -99,7 +99,7 @@ export default function Navbar() {
                       display: "flex",
                       flexDirection: "column",
                       gap: "10px",
-                      minWidth: 350,
+                      minWidth: 380, // dropdown plus large
                       zIndex: 2000,
                     }}
                   >
@@ -162,24 +162,36 @@ export default function Navbar() {
       </div>
 
       {/* Menu droite */}
-      <div style={{ display: "flex", gap: "30px", alignItems: "center", marginLeft: "20px" }}> 
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          alignItems: "center",
+          minWidth: 250, // s'assure que tout est visible
+        }}
+      >
         {rightItems.map((item) => (
           <Link
             key={item.name}
             href={item.href}
             style={{
               textDecoration: "none",
-              fontWeight: item.name === "Demande d’accès" ? "bold" : 500,
+              fontWeight:
+                item.name === "Demande d’accès" || item.name === "Connexion"
+                  ? "bold"
+                  : 500,
               padding:
                 item.name === "Demande d’accès" || item.name === "Connexion"
-                  ? "8px 15px"
-                  : "5px 12px",
-              backgroundColor: item.name === "Demande d’accès" ? "#111" : "transparent",
+                  ? "8px 12px"
+                  : "5px 10px",
+              backgroundColor:
+                item.name === "Demande d’accès" ? "#111" : "transparent",
               color:
                 item.name === "Demande d’accès" || item.name === "Connexion"
                   ? "white"
                   : "#111",
-              borderRadius: item.name === "Demande d’accès" ? "8px" : 5,
+              borderRadius:
+                item.name === "Demande d’accès" ? "8px" : 5,
               fontSize: "1rem",
               whiteSpace: "nowrap",
             }}
