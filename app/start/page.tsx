@@ -48,16 +48,44 @@ export default function StartPage() {
       >
         <h3 style={{ margin: 0 }}>AvisPME</h3>
 
-        <div style={{ display: "flex", gap: "25px" }}>
-          <Link href="/" style={{ color: "white", textDecoration: "none" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "25px",
+            alignItems: "center",
+          }}
+        >
+          <Link
+            href="/"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+            }}
+          >
             Accueil
           </Link>
 
-          <Link href="/pricing" style={{ color: "white", textDecoration: "none" }}>
+          <Link
+            href="/pricing"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+            }}
+          >
             Tarifs
           </Link>
 
-          <Link href="/dashboard" style={{ color: "white", textDecoration: "none" }}>
+          {/* ✅ lien corrigé */}
+          <Link
+            href="/login"
+            style={{
+              color: "white",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
+            }}
+          >
             Connexion
           </Link>
         </div>
