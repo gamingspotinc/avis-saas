@@ -149,7 +149,7 @@ export default function Navbar() {
       </div>
 
       {/* Menu droite */}
-      <div style={{ display: "flex", gap: "15px", alignItems: "center", flexShrink: 0 }}>
+      <div style={{ display: "flex", gap: "10px", alignItems: "center", flexShrink: 0 }}> {/* <-- gap réduit */}
         {rightItems.map((item) => (
           <Link
             key={item.name}
@@ -157,7 +157,7 @@ export default function Navbar() {
             style={{
               textDecoration: "none",
               fontWeight: item.name === "Demande d’accès" || item.name === "Connexion" ? "bold" : 500,
-              padding: "8px 12px",
+              padding: "6px 10px",  /* <-- padding réduit */
               backgroundColor: item.name === "Demande d’accès" ? "#111" : "transparent",
               color: item.name === "Demande d’accès" || item.name === "Connexion" ? "white" : "#111",
               borderRadius: "8px",
