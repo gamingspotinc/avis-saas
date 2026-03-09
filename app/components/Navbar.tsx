@@ -40,15 +40,15 @@ export default function Navbar() {
         position: "fixed",
         top: 0,
         width: "100%",
-        padding: "20px 15px", // padding réduit
+        padding: "10px 30px",
         display: "flex",
-        justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: "rgba(255,255,255,0.95)",
         backdropFilter: "blur(8px)",
         borderBottom: "1px solid #eee",
         zIndex: 1000,
         fontFamily: "sans-serif",
+        justifyContent: "space-between",
       }}
     >
       {/* Logo */}
@@ -59,13 +59,14 @@ export default function Navbar() {
           color: "#111",
           fontWeight: "bold",
           fontSize: "1.3rem",
+          flexShrink: 0,
         }}
       >
         AvisPME
       </Link>
 
       {/* Menu central */}
-      <div style={{ display: "flex", gap: "40px", alignItems: "center" }}>
+      <div style={{ display: "flex", gap: "25px", alignItems: "center", flexShrink: 1, overflow: "visible" }}>
         {menuItems.map((item) => {
           if (item.name === "Industries") {
             return (
@@ -75,17 +76,9 @@ export default function Navbar() {
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
               >
-                <span
-                  style={{
-                    fontSize: "1rem",
-                    fontWeight: 500,
-                    cursor: "pointer",
-                    userSelect: "none",
-                  }}
-                >
+                <span style={{ fontSize: "1rem", fontWeight: 500, cursor: "pointer", userSelect: "none" }}>
                   {item.name} ▾
                 </span>
-
                 {dropdownOpen && (
                   <div
                     style={{
@@ -99,7 +92,7 @@ export default function Navbar() {
                       display: "flex",
                       flexDirection: "column",
                       gap: "10px",
-                      minWidth: 380, // dropdown plus large
+                      minWidth: 380,
                       zIndex: 2000,
                     }}
                   >
@@ -143,17 +136,11 @@ export default function Navbar() {
               </div>
             );
           }
-
           return (
             <Link
               key={item.name}
               href={item.href}
-              style={{
-                textDecoration: "none",
-                color: "#111",
-                fontWeight: 500,
-                fontSize: "1rem",
-              }}
+              style={{ textDecoration: "none", color: "#111", fontWeight: 500, fontSize: "1rem", whiteSpace: "nowrap" }}
             >
               {item.name}
             </Link>
@@ -162,36 +149,18 @@ export default function Navbar() {
       </div>
 
       {/* Menu droite */}
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          alignItems: "center",
-          minWidth: 250, // s'assure que tout est visible
-        }}
-      >
+      <div style={{ display: "flex", gap: "15px", alignItems: "center", flexShrink: 0 }}>
         {rightItems.map((item) => (
           <Link
             key={item.name}
             href={item.href}
             style={{
               textDecoration: "none",
-              fontWeight:
-                item.name === "Demande d’accès" || item.name === "Connexion"
-                  ? "bold"
-                  : 500,
-              padding:
-                item.name === "Demande d’accès" || item.name === "Connexion"
-                  ? "8px 12px"
-                  : "5px 10px",
-              backgroundColor:
-                item.name === "Demande d’accès" ? "#111" : "transparent",
-              color:
-                item.name === "Demande d’accès" || item.name === "Connexion"
-                  ? "white"
-                  : "#111",
-              borderRadius:
-                item.name === "Demande d’accès" ? "8px" : 5,
+              fontWeight: item.name === "Demande d’accès" || item.name === "Connexion" ? "bold" : 500,
+              padding: "8px 12px",
+              backgroundColor: item.name === "Demande d’accès" ? "#111" : "transparent",
+              color: item.name === "Demande d’accès" || item.name === "Connexion" ? "white" : "#111",
+              borderRadius: "8px",
               fontSize: "1rem",
               whiteSpace: "nowrap",
             }}
