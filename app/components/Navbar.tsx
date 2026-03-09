@@ -163,39 +163,39 @@ export default function Navbar() {
       </div>
 
       {/* Menu droite */}
-      <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
+      <div style={{ display: "flex", gap: "15px", alignItems: "center", paddingRight: "20px" }}> 
         {rightItems.map((item) => (
-          <Link
-            key={item.name}
-            href={item.href}
-            style={{
-              textDecoration: "none",
-              fontWeight:
-                item.name === "Demande d’accès" || item.name === "Connexion"
-                  ? "bold"
-                  : 500,
-              padding:
-                item.name === "Demande d’accès" || item.name === "Connexion"
-                  ? "8px 15px"
-                  : "5px 10px",
-              backgroundColor:
-                item.name === "Demande d’accès" ? "#111" : "transparent",
-              color:
-                item.name === "Demande d’accès" || item.name === "Connexion"
-                  ? "white"
-                  : "#111",
-              borderRadius:
-                item.name === "Demande d’accès" || item.name === "Connexion"
-                  ? "8px"
-                  : 5,
-              fontSize: "1rem",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {item.name}
-          </Link>
-        ))}
-      </div>
+        <Link
+          key={item.name}
+          href={item.href}
+          style={{
+          textDecoration: "none",
+          fontWeight:
+          item.name === "Demande d’accès" || item.name === "Connexion"
+            ? "bold"
+            : 500,
+        padding:
+          item.name === "Demande d’accès" || item.name === "Connexion"
+            ? "8px 15px"
+            : "5px 10px",
+        backgroundColor:
+          item.name === "Demande d’accès" ? "#111" : "transparent",
+        color:
+          item.name === "Demande d’accès" || item.name === "Connexion"
+            ? "white"
+            : "#111",
+        borderRadius:
+          item.name === "Demande d’accès" || item.name === "Connexion"
+            ? "8px"
+            : 5,
+        fontSize: "1rem",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {item.name}
+    </Link>
+  ))}
+</div>
     </nav>
   );
 }
