@@ -37,7 +37,7 @@ export default function Navbar() {
         position: "fixed",
         top: 0,
         width: "100%",
-        padding: "15px 60px",
+        padding: "20px 80px",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
@@ -61,15 +61,7 @@ export default function Navbar() {
       </Link>
 
       {/* MENU PRINCIPAL AU CENTRE */}
-      <div
-        style={{
-          display: "flex",
-          gap: "35px",
-          alignItems: "center",
-          justifyContent: "center",
-          flex: 1,
-        }}
-      >
+      <div style={{ display: "flex", gap: "35px", alignItems: "center", justifyContent: "center", flex: 1 }}>
         {mainMenu.map((item) => {
           if (item.name === "Industries") {
             return (

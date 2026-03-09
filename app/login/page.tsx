@@ -11,11 +11,11 @@ export default function LoginPage() {
     e.preventDefault();
 
     const { error } = await supabase.auth.signInWithOtp({
-  email,
-  options: {
-    emailRedirectTo: `${window.location.origin}/dashboard`,
-  },
-});
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
 
     if (error) {
       setMessage("Erreur : " + error.message);
@@ -32,7 +32,9 @@ export default function LoginPage() {
         justifyContent: "center",
         alignItems: "center",
         fontFamily: "sans-serif",
-        backgroundColor: "#f8f9fb",
+        background: "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/5stars.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
       <div
@@ -45,9 +47,7 @@ export default function LoginPage() {
           boxShadow: "0 20px 50px rgba(0,0,0,0.1)",
         }}
       >
-        <h1 style={{ textAlign: "center", marginBottom: 25 }}>
-          Connexion
-        </h1>
+        <h1 style={{ textAlign: "center", marginBottom: 25 }}>Connexion</h1>
 
         <form onSubmit={handleLogin}>
           <input
