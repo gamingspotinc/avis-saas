@@ -6,11 +6,6 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
 
-  if (!code) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // ✅ IMPORTANT : await ici
   const cookieStore = await cookies();
 
   const supabase = createServerClient(
@@ -30,7 +25,13 @@ export async function GET(request: Request) {
     }
   );
 
-  await supabase.auth.exchangeCodeForSession(code);
+  // 🔥 SAFE FLOW (gère aussi les magic links sans code)
+  if (code) {
+    await supabase.auth.exchangeCodeForSession(code);
+  } else {
+    // fallback (important pour magic link legacy)
+    await supabase.auth.getSession();
+  }
 
   return NextResponse.redirect(new URL("/dashboard", request.url));
 }

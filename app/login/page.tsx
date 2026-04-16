@@ -6,16 +6,22 @@ import { supabase } from "@/lib/supabaseClient";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage("");
 
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
+        // ✅ IMPORTANT : passer par callback (pas dashboard direct)
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     });
+
+    setLoading(false);
 
     if (error) {
       setMessage("Erreur : " + error.message);
@@ -32,7 +38,8 @@ export default function LoginPage() {
         justifyContent: "center",
         alignItems: "center",
         fontFamily: "sans-serif",
-        background: "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/5stars.jpg')",
+        background:
+          "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/5stars.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -47,7 +54,9 @@ export default function LoginPage() {
           boxShadow: "0 20px 50px rgba(0,0,0,0.1)",
         }}
       >
-        <h1 style={{ textAlign: "center", marginBottom: 25 }}>Connexion</h1>
+        <h1 style={{ textAlign: "center", marginBottom: 25 }}>
+          Connexion
+        </h1>
 
         <form onSubmit={handleLogin}>
           <input
@@ -68,6 +77,7 @@ export default function LoginPage() {
 
           <button
             type="submit"
+            disabled={loading}
             style={{
               width: "100%",
               padding: "14px",
@@ -77,9 +87,10 @@ export default function LoginPage() {
               borderRadius: "10px",
               fontWeight: "bold",
               cursor: "pointer",
+              opacity: loading ? 0.7 : 1,
             }}
           >
-            Envoyer le lien magique
+            {loading ? "Envoi..." : "Envoyer le lien magique"}
           </button>
         </form>
 
