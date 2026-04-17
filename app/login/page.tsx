@@ -1,12 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  // 🔥 IMPORTANT : écoute la connexion automatique
+  useEffect(() => {
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          router.push("/dashboard");
+        }
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,8 +33,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        // ✅ IMPORTANT : passer par callback (pas dashboard direct)
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        emailRedirectTo: `${window.location.origin}/login`, // 👈 IMPORTANT
       },
     });
 
