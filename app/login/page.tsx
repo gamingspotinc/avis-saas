@@ -9,11 +9,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let mounted = true;
+
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
 
-      if (data.session) {
-        window.location.href = "/dashboard";
+      if (mounted && data.session) {
+        window.location.replace("/dashboard"); // évite boucle
       }
     };
 
@@ -22,12 +24,13 @@ export default function LoginPage() {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         if (session) {
-          window.location.href = "/dashboard";
+          window.location.replace("/dashboard");
         }
       }
     );
 
     return () => {
+      mounted = false;
       listener.subscription.unsubscribe();
     };
   }, []);
@@ -40,7 +43,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/login`,
+        emailRedirectTo: `${window.location.origin}/login`, // IMPORTANT
       },
     });
 
