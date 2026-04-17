@@ -2,30 +2,27 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
-  // 🔥 détecte session au chargement (CRUCIAL)
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
 
       if (data.session) {
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       }
     };
 
     checkSession();
 
     const { data: listener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (event === "SIGNED_IN" && session) {
-          router.push("/dashboard");
+      (_event, session) => {
+        if (session) {
+          window.location.href = "/dashboard";
         }
       }
     );
@@ -33,7 +30,7 @@ export default function LoginPage() {
     return () => {
       listener.subscription.unsubscribe();
     };
-  }, [router]);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
