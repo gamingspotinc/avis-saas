@@ -14,24 +14,16 @@ export default function LoginPage() {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
 
-      if (mounted && data.session) {
-        window.location.replace("/dashboard"); // évite boucle
+      // 🔥 IMPORTANT : seulement si session EXISTE ET utilisateur valide
+      if (mounted && data?.session?.user) {
+        window.location.replace("/dashboard");
       }
     };
 
     checkSession();
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (session) {
-          window.location.replace("/dashboard");
-        }
-      }
-    );
-
     return () => {
       mounted = false;
-      listener.subscription.unsubscribe();
     };
   }, []);
 
@@ -43,7 +35,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/login`, // IMPORTANT
+        emailRedirectTo: `${window.location.origin}/login`,
       },
     });
 
