@@ -10,8 +10,18 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // 🔥 IMPORTANT : écoute la connexion automatique
+  // 🔥 détecte session au chargement (CRUCIAL)
   useEffect(() => {
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+
+      if (data.session) {
+        router.push("/dashboard");
+      }
+    };
+
+    checkSession();
+
     const { data: listener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === "SIGNED_IN" && session) {
@@ -33,7 +43,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/login`, // 👈 IMPORTANT
+        emailRedirectTo: `${window.location.origin}/login`,
       },
     });
 
