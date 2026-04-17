@@ -8,14 +8,14 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // 🔥 CHECK SESSION UNE SEULE FOIS (ANTI LOOP)
   useEffect(() => {
-    let mounted = true;
+    let active = true;
 
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
 
-      // 🔥 IMPORTANT : seulement si session EXISTE ET utilisateur valide
-      if (mounted && data?.session?.user) {
+      if (active && data?.session?.user) {
         window.location.replace("/dashboard");
       }
     };
@@ -23,7 +23,7 @@ export default function LoginPage() {
     checkSession();
 
     return () => {
-      mounted = false;
+      active = false;
     };
   }, []);
 
