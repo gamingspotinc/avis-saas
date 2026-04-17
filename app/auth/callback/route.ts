@@ -4,7 +4,9 @@ import { cookies } from "next/headers";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const code = url.searchParams.get("code");
+
+  const token = url.searchParams.get("token");
+  const type = url.searchParams.get("type");
 
   const cookieStore = await cookies();
 
@@ -13,10 +15,8 @@ export async function GET(request: Request) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
+        getAll: () => cookieStore.getAll(),
+        setAll: (cookiesToSet) => {
           cookiesToSet.forEach(({ name, value, options }) => {
             cookieStore.set(name, value, options);
           });
@@ -25,12 +25,17 @@ export async function GET(request: Request) {
     }
   );
 
-  // 🔥 SAFE FLOW (gère aussi les magic links sans code)
-  if (code) {
-    await supabase.auth.exchangeCodeForSession(code);
-  } else {
-    // fallback (important pour magic link legacy)
-    await supabase.auth.getSession();
+  // 🔥 MAGIC LINK FLOW (TON CAS)
+  if (token && type === "magiclink") {
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash: token,
+      type: "magiclink",
+    });
+
+    if (error) {
+      console.error("Auth error:", error);
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
   }
 
   return NextResponse.redirect(new URL("/dashboard", request.url));
